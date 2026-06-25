@@ -206,6 +206,187 @@
             color: var(--rojo);
         }
 
+        .page-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .search-form {
+            display: flex;
+            gap: 10px;
+            width: 100%;
+            max-width: 480px;
+        }
+
+        .search-form input {
+            flex: 1;
+        }
+
+        .btn {
+            display: inline-block;
+            border: none;
+            padding: 10px 14px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            text-decoration: none;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background: var(--dorado);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #F1EBDD;
+            color: var(--texto);
+        }
+
+        .btn-danger {
+            background: var(--rojo);
+            color: white;
+        }
+
+        .btn-success {
+            background: var(--verde);
+            color: white;
+        }
+
+        .btn-sm {
+            padding: 7px 10px;
+            font-size: 12px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 18px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group.full {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            display: block;
+            font-weight: 700;
+            margin-bottom: 7px;
+            font-size: 14px;
+        }
+
+        input,
+        textarea,
+        select {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid var(--borde);
+            border-radius: 12px;
+            outline: none;
+            font-size: 14px;
+            background: white;
+            color: var(--texto);
+        }
+
+        textarea {
+            min-height: 110px;
+            resize: vertical;
+        }
+
+        input:focus,
+        textarea:focus,
+        select:focus {
+            border-color: var(--dorado);
+            box-shadow: 0 0 0 3px rgba(201,162,39,0.15);
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 18px;
+        }
+
+        .alert {
+            padding: 13px 15px;
+            border-radius: 12px;
+            margin-bottom: 18px;
+            font-size: 14px;
+        }
+
+        .alert-success {
+            background: rgba(46,125,50,0.12);
+            color: var(--verde);
+            border: 1px solid rgba(46,125,50,0.25);
+        }
+
+        .alert-error {
+            background: rgba(198,40,40,0.12);
+            color: var(--rojo);
+            border: 1px solid rgba(198,40,40,0.25);
+        }
+
+        .actions {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .client-photo {
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
+            object-fit: cover;
+            border: 1px solid var(--borde);
+            background: var(--fondo);
+        }
+
+        .empty-photo {
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
+            background: rgba(201,162,39,0.16);
+            color: var(--dorado);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+        }
+
+        .detail-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 18px;
+        }
+
+        .detail-item {
+            background: var(--fondo);
+            border: 1px solid var(--borde);
+            border-radius: 14px;
+            padding: 14px;
+        }
+
+        .detail-item span {
+            display: block;
+            color: var(--gris);
+            font-size: 13px;
+            margin-bottom: 5px;
+        }
+
+        .detail-item strong {
+            font-size: 15px;
+        }
+
+        .pagination {
+            margin-top: 18px;
+        }
         @media (max-width: 900px) {
             .sidebar {
                 position: static;
@@ -262,7 +443,7 @@
 
         <nav class="menu">
             <a href="{{ route('dashboard') }}" class="{{ request()->routeIs('dashboard') ? 'active' : '' }}">Dashboard</a>
-            <a href="#">Clientes</a>
+            <a href="{{ route('clientes.index') }}" class="{{ request()->routeIs('clientes.*') ? 'active' : '' }}">Clientes</a>
             <a href="#">Clientes inactivos</a>
             <a href="#">Citas</a>
             <a href="#">Agenda</a>
@@ -292,7 +473,19 @@
                 <div>{{ auth()->user()->nombre ?? 'Usuario' }} · {{ now()->format('d/m/Y') }}</div>
             </div>
         </div>
+        @if (session('success'))
+            <div class="alert alert-success">
+                {{ session('success') }}
+            </div>
+        @endif
 
+        @if (session('error'))
+            <div class="alert alert-error">
+                {{ session('error') }}
+            </div>
+        @endif
+
+        
         @yield('content')
     </main>
 </div>
