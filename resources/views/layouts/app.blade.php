@@ -387,6 +387,49 @@
         .pagination {
             margin-top: 18px;
         }
+
+        .filter-tabs {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 18px;
+        }
+
+        .filter-tab {
+            padding: 10px 14px;
+            border-radius: 999px;
+            text-decoration: none;
+            color: var(--texto);
+            background: #F1EBDD;
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        .filter-tab.active {
+            background: var(--dorado);
+            color: white;
+        }
+
+        .inactive-days {
+            font-weight: 800;
+            color: var(--rojo);
+        }
+
+        .whatsapp-btn {
+            background: #25D366;
+            color: white;
+        }
+
+        .warning-box {
+            background: rgba(201,162,39,0.14);
+            border: 1px solid rgba(201,162,39,0.35);
+            color: var(--texto);
+            padding: 14px;
+            border-radius: 14px;
+            margin-bottom: 18px;
+            font-size: 14px;
+        }
+
         @media (max-width: 900px) {
             .sidebar {
                 position: static;
@@ -444,7 +487,7 @@
         <nav class="menu">
             <a href="{{ route('dashboard') }}" class="{{ request()->routeIs('dashboard') ? 'active' : '' }}">Dashboard</a>
             <a href="{{ route('clientes.index') }}" class="{{ request()->routeIs('clientes.*') ? 'active' : '' }}">Clientes</a>
-            <a href="#">Clientes inactivos</a>
+            <a href="{{ route('clientes.inactivos') }}" class="{{ request()->routeIs('clientes.inactivos') ? 'active' : '' }}">Clientes inactivos</a>
             <a href="#">Citas</a>
             <a href="#">Agenda</a>
             <a href="#">Servicios</a>

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Web;
 
+use Carbon\Carbon;
 use App\Http\Controllers\Controller;
 use App\Models\Cliente;
 use Illuminate\Http\Request;
@@ -33,6 +34,61 @@ class ClienteController extends Controller
 
         return view('clientes.index', compact('clientes', 'buscar'));
     }
+
+        public function inactivos(Request $request)
+        {
+            $usuario = Auth::user();
+            $idBarberia = $usuario->id_barberia ?? 1;
+
+            $hoy = Carbon::today();
+            $diasLimite = 20;
+            $fechaLimite = $hoy->copy()->subDays($diasLimite);
+
+            $filtro = $request->input('filtro', 'todos');
+
+            $clientes = Cliente::with(['citas' => function ($query) use ($hoy) {
+                    $query->where('estado', 'pendiente')
+                        ->whereDate('fecha', '>=', $hoy)
+                        ->orderBy('fecha')
+                        ->orderBy('hora_inicio');
+                }])
+                ->where('id_barberia', $idBarberia)
+                ->where('activo', 1)
+                ->whereNotNull('ultima_visita')
+                ->whereDate('ultima_visita', '<=', $fechaLimite)
+                ->get()
+                ->map(function ($cliente) use ($hoy) {
+                    $cliente->dias_sin_venir = Carbon::parse($cliente->ultima_visita)->diffInDays($hoy);
+                    $cliente->tiene_cita_pendiente = $cliente->citas->isNotEmpty();
+
+                    return $cliente;
+                });
+
+            if ($filtro === 'con_cita') {
+                $clientes = $clientes->filter(function ($cliente) {
+                    return $cliente->tiene_cita_pendiente;
+                });
+            }
+
+            if ($filtro === 'sin_cita') {
+                $clientes = $clientes->filter(function ($cliente) {
+                    return !$cliente->tiene_cita_pendiente;
+                });
+            }
+
+            $clientes = $clientes
+                ->sortByDesc('dias_sin_venir')
+                ->values();
+
+            $totalInactivos = $clientes->count();
+
+            return view('clientes.inactivos', compact(
+                'clientes',
+                'filtro',
+                'diasLimite',
+                'totalInactivos'
+            ));
+        }
 
     public function create()
     {
