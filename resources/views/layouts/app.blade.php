@@ -490,7 +490,7 @@
             <a href="{{ route('clientes.inactivos') }}" class="{{ request()->routeIs('clientes.inactivos') ? 'active' : '' }}">Clientes inactivos</a>
             <a href="#">Citas</a>
             <a href="#">Agenda</a>
-            <a href="#">Servicios</a>
+            <a href="{{ route('servicios.index') }}" class="{{ request()->routeIs('servicios.*') ? 'active' : '' }}">Servicios</a>
             <a href="#">Productos</a>
             <a href="#">Recompensas</a>
             <a href="#">Estadísticas</a>

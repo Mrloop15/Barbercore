@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Web\ServicioController;
 use App\Http\Controllers\Web\AuthController;
 use App\Http\Controllers\Web\DashboardController;
 use App\Http\Controllers\Web\ClienteController;
@@ -19,6 +20,6 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/clientes-inactivos', [ClienteController::class, 'inactivos'])->name('clientes.inactivos');
     Route::resource('clientes', ClienteController::class);
-
+    Route::resource('servicios', ServicioController::class)->except(['show']);
     Route::post('/logout', [AuthController::class, 'cerrarSesion'])->name('logout');
 });
