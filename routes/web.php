@@ -47,4 +47,11 @@ Route::middleware('auth')->group(function () {
 
     Route::view('/pwa/login', 'pwa.login')->name('pwa.login');
     Route::view('/pwa/dashboard', 'pwa.dashboard')->name('pwa.dashboard');
+    Route::view('/pwa/clientes', 'pwa.clientes')->name('pwa.clientes');
+    Route::view('/pwa/agenda', 'pwa.agenda')->name('pwa.agenda');
+    Route::view('/pwa/productos', 'pwa.productos')->name('pwa.productos');
+    Route::view('/pwa/citas', 'pwa.citas')->name('pwa.citas');
+    Route::view('/pwa/ventas', 'pwa.ventas')->name('pwa.ventas');
+    Route::view('/pwa/recompensas', 'pwa.recompensas')->name('pwa.recompensas');
+    Route::view('/pwa/estadisticas', 'pwa.estadisticas')->name('pwa.estadisticas');
 });

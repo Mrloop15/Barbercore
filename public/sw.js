@@ -1,4 +1,4 @@
-const CACHE_NAME = "barbercore-cache-v1";
+const CACHE_NAME = "barbercore-cache-v2";
 
 const STATIC_ASSETS = ["/", "/offline.html", "/manifest.json"];
 
