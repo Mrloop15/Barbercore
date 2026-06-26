@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Web\CitaController;
 use App\Http\Controllers\Web\ServicioController;
 use App\Http\Controllers\Web\AuthController;
 use App\Http\Controllers\Web\DashboardController;
@@ -21,5 +22,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/clientes-inactivos', [ClienteController::class, 'inactivos'])->name('clientes.inactivos');
     Route::resource('clientes', ClienteController::class);
     Route::resource('servicios', ServicioController::class)->except(['show']);
+    Route::put('/citas/{cita}/cancelar', [CitaController::class, 'cancelar'])->name('citas.cancelar');
+    Route::put('/citas/{cita}/completar', [CitaController::class, 'completar'])->name('citas.completar');
+    Route::resource('citas', CitaController::class)->except(['show', 'destroy']);
     Route::post('/logout', [AuthController::class, 'cerrarSesion'])->name('logout');
 });
