@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Web\EstadisticaController;
 use App\Http\Controllers\Web\RecompensaController;
 use App\Http\Controllers\Web\ProductoController;
 use App\Http\Controllers\Web\AgendaController;
@@ -33,5 +34,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/recompensas-canjear', [RecompensaController::class, 'formCanjear'])->name('recompensas.formCanjear');
     Route::post('/recompensas-canjear', [RecompensaController::class, 'canjear'])->name('recompensas.canjear');
     Route::resource('recompensas', RecompensaController::class)->except(['show']);
+    Route::get('/estadisticas', [EstadisticaController::class, 'index'])->name('estadisticas.index');
     Route::post('/logout', [AuthController::class, 'cerrarSesion'])->name('logout');
 });

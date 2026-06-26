@@ -582,6 +582,74 @@
         }
 
 
+        .chart-list {
+            display: grid;
+            gap: 14px;
+        }
+
+        .chart-item {
+            display: grid;
+            grid-template-columns: 180px 1fr 90px;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .chart-label {
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        .chart-bar-bg {
+            background: #F1EBDD;
+            border-radius: 999px;
+            overflow: hidden;
+            height: 14px;
+        }
+
+        .chart-bar {
+            height: 14px;
+            background: var(--dorado);
+            border-radius: 999px;
+        }
+
+        .chart-value {
+            text-align: right;
+            font-weight: 800;
+            color: var(--dorado);
+        }
+
+        .stats-section {
+            margin-top: 22px;
+        }
+
+        .stats-two-columns {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 22px;
+        }
+
+        .month-filter {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        @media (max-width: 900px) {
+            .stats-two-columns {
+                grid-template-columns: 1fr;
+            }
+
+            .chart-item {
+                grid-template-columns: 1fr;
+                gap: 6px;
+            }
+
+            .chart-value {
+                text-align: left;
+            }
+        }
+
         @media (max-width: 600px) {
             .stats-grid {
                 grid-template-columns: 1fr;
@@ -614,7 +682,7 @@
             <a href="{{ route('servicios.index') }}" class="{{ request()->routeIs('servicios.*') ? 'active' : '' }}">Servicios</a>
             <a href="{{ route('productos.index') }}" class="{{ request()->routeIs('productos.*') ? 'active' : '' }}">Productos</a>
             <a href="{{ route('recompensas.index') }}" class="{{ request()->routeIs('recompensas.*') ? 'active' : '' }}">Recompensas</a>
-            <a href="#">Estadísticas</a>
+            <a href="{{ route('estadisticas.index') }}" class="{{ request()->routeIs('estadisticas.*') ? 'active' : '' }}">Estadísticas</a>
             <a href="#">Configuración</a>
 
             <form method="POST" action="{{ route('logout') }}">
