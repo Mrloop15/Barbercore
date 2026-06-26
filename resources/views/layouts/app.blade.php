@@ -430,6 +430,88 @@
             font-size: 14px;
         }
 
+        .agenda-header {
+            display: flex;
+            justify-content: space-between;
+            gap: 16px;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .agenda-tabs {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .agenda-tab {
+            padding: 10px 14px;
+            border-radius: 999px;
+            background: #F1EBDD;
+            color: var(--texto);
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        .agenda-tab.active {
+            background: var(--dorado);
+            color: white;
+        }
+
+        .agenda-filter {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .agenda-day-group {
+            margin-bottom: 22px;
+        }
+
+        .agenda-day-title {
+            background: var(--fondo);
+            border: 1px solid var(--borde);
+            border-radius: 14px;
+            padding: 12px 14px;
+            margin-bottom: 12px;
+            font-weight: 800;
+            color: var(--texto);
+        }
+
+        .agenda-time {
+            font-weight: 800;
+            color: var(--dorado);
+        }
+
+        .agenda-summary {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 14px;
+            margin-bottom: 20px;
+        }
+
+        .agenda-summary-card {
+            background: var(--fondo);
+            border: 1px solid var(--borde);
+            border-radius: 16px;
+            padding: 16px;
+        }
+
+        .agenda-summary-card span {
+            color: var(--gris);
+            font-size: 13px;
+        }
+
+        .agenda-summary-card strong {
+            display: block;
+            margin-top: 6px;
+            font-size: 22px;
+            color: var(--dorado);
+        }
+
+
         @media (max-width: 900px) {
             .sidebar {
                 position: static;
@@ -489,7 +571,7 @@
             <a href="{{ route('clientes.index') }}" class="{{ request()->routeIs('clientes.*') ? 'active' : '' }}">Clientes</a>
             <a href="{{ route('clientes.inactivos') }}" class="{{ request()->routeIs('clientes.inactivos') ? 'active' : '' }}">Clientes inactivos</a>
             <a href="{{ route('citas.index') }}" class="{{ request()->routeIs('citas.*') ? 'active' : '' }}">Citas</a>
-            <a href="#">Agenda</a>
+            <a href="{{ route('agenda.index') }}" class="{{ request()->routeIs('agenda.*') ? 'active' : '' }}">Agenda</a>
             <a href="{{ route('servicios.index') }}" class="{{ request()->routeIs('servicios.*') ? 'active' : '' }}">Servicios</a>
             <a href="#">Productos</a>
             <a href="#">Recompensas</a>
