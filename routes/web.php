@@ -44,4 +44,7 @@ Route::middleware('auth')->group(function () {
     Route::put('/configuracion/usuario', [ConfiguracionController::class, 'actualizarUsuario'])->name('configuracion.usuario');
     Route::put('/configuracion/password', [ConfiguracionController::class, 'actualizarPassword'])->name('configuracion.password');
     Route::post('/logout', [AuthController::class, 'cerrarSesion'])->name('logout');
+
+    Route::view('/pwa/login', 'pwa.login')->name('pwa.login');
+    Route::view('/pwa/dashboard', 'pwa.dashboard')->name('pwa.dashboard');
 });

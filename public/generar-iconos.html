@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="es">
+    <head>
+        <meta charset="UTF-8" />
+        <title>Generar iconos BarberCore</title>
+    </head>
+    <body>
+        <h1>Generar iconos BarberCore</h1>
+
+        <button onclick="generarIcono(192)">Descargar icon-192.png</button>
+        <button onclick="generarIcono(512)">Descargar icon-512.png</button>
+
+        <script>
+            function generarIcono(size) {
+                const canvas = document.createElement("canvas");
+                canvas.width = size;
+                canvas.height = size;
+
+                const ctx = canvas.getContext("2d");
+
+                // Fondo dorado BarberCore
+                ctx.fillStyle = "#C9A227";
+                ctx.fillRect(0, 0, size, size);
+
+                // Círculo blanco central
+                ctx.fillStyle = "#FFFFFF";
+                ctx.beginPath();
+                ctx.arc(size / 2, size / 2, size * 0.35, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Texto BC
+                ctx.fillStyle = "#1C1C1C";
+                ctx.font = `bold ${size * 0.28}px Arial`;
+                ctx.textAlign = "center";
+                ctx.textBaseline = "middle";
+                ctx.fillText("BC", size / 2, size / 2);
+
+                // Descargar PNG
+                const link = document.createElement("a");
+                link.download = `icon-${size}.png`;
+                link.href = canvas.toDataURL("image/png");
+                link.click();
+            }
+        </script>
+    </body>
+</html>

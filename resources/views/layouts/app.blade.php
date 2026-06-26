@@ -1,6 +1,63 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#C9A227">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="BarberCore">
+
+    <style>
+        .pwa-install-btn {
+            position: fixed;
+            right: 20px;
+            bottom: 20px;
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            border: none;
+            border-radius: 999px;
+            background: #C9A227;
+            color: #FFFFFF;
+            padding: 12px 18px;
+            font-weight: 700;
+            font-size: 14px;
+            cursor: pointer;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.18);
+        }
+
+        .pwa-install-btn:hover {
+            background: #b8921f;
+        }
+
+ .pwa-status-bar {
+        position: fixed;
+        top: 16px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 10000;
+        padding: 12px 20px;
+        border-radius: 999px;
+        font-size: 14px;
+        font-weight: 700;
+        box-shadow: 0 10px 24px rgba(0, 0, 0, 0.18);
+    }
+
+    .pwa-status-bar.online {
+        background: #2E7D32;
+        color: #FFFFFF;
+    }
+
+    .pwa-status-bar.offline {
+        background: #C62828;
+        color: #FFFFFF;
+    }
+
+
+    </style>
+
     <meta charset="UTF-8">
     <title>@yield('title', 'BarberCore')</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -710,6 +767,8 @@
 </head>
 <body>
 
+<div id="pwaStatusBar" class="pwa-status-bar" style="display: none;"></div>
+
 <div class="app">
     <aside class="sidebar">
         <div class="brand">
@@ -769,6 +828,24 @@
         @yield('content')
     </main>
 </div>
+<script>
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function () {
+            navigator.serviceWorker.register('/sw.js')
+                .then(function () {
+                    console.log('Service Worker registrado correctamente.');
+                })
+                .catch(function (error) {
+                    console.log('Error al registrar el Service Worker:', error);
+                });
+        });
+    }
+</script>
+<button id="installPwaBtn" class="pwa-install-btn" style="display: none;">
+    Instalar BarberCore
+</button>
 
+<script src="/js/pwa-install.js"></script>
+<script src="/js/pwa-status.js"></script>
 </body>
 </html>
