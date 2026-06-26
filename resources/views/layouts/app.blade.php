@@ -543,6 +543,21 @@
             }
         }
 
+        .stock-ok {
+            color: var(--verde);
+            font-weight: 800;
+        }
+
+        .stock-low {
+            color: var(--rojo);
+            font-weight: 800;
+        }
+
+        .product-profit {
+            color: var(--dorado);
+            font-weight: 800;
+        }
+
         @media (max-width: 600px) {
             .stats-grid {
                 grid-template-columns: 1fr;
@@ -573,7 +588,7 @@
             <a href="{{ route('citas.index') }}" class="{{ request()->routeIs('citas.*') ? 'active' : '' }}">Citas</a>
             <a href="{{ route('agenda.index') }}" class="{{ request()->routeIs('agenda.*') ? 'active' : '' }}">Agenda</a>
             <a href="{{ route('servicios.index') }}" class="{{ request()->routeIs('servicios.*') ? 'active' : '' }}">Servicios</a>
-            <a href="#">Productos</a>
+            <a href="{{ route('productos.index') }}" class="{{ request()->routeIs('productos.*') ? 'active' : '' }}">Productos</a>
             <a href="#">Recompensas</a>
             <a href="#">Estadísticas</a>
             <a href="#">Configuración</a>

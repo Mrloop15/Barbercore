@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Web\ProductoController;
 use App\Http\Controllers\Web\AgendaController;
 use App\Http\Controllers\Web\CitaController;
 use App\Http\Controllers\Web\ServicioController;
@@ -27,5 +28,6 @@ Route::middleware('auth')->group(function () {
     Route::put('/citas/{cita}/completar', [CitaController::class, 'completar'])->name('citas.completar');
     Route::resource('citas', CitaController::class)->except(['show', 'destroy']);
     Route::get('/agenda', [AgendaController::class, 'index'])->name('agenda.index');
+    Route::resource('productos', ProductoController::class)->except(['show']);
     Route::post('/logout', [AuthController::class, 'cerrarSesion'])->name('logout');
 });
