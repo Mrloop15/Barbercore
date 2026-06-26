@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Web\RecompensaController;
 use App\Http\Controllers\Web\ProductoController;
 use App\Http\Controllers\Web\AgendaController;
 use App\Http\Controllers\Web\CitaController;
@@ -29,5 +30,8 @@ Route::middleware('auth')->group(function () {
     Route::resource('citas', CitaController::class)->except(['show', 'destroy']);
     Route::get('/agenda', [AgendaController::class, 'index'])->name('agenda.index');
     Route::resource('productos', ProductoController::class)->except(['show']);
+    Route::get('/recompensas-canjear', [RecompensaController::class, 'formCanjear'])->name('recompensas.formCanjear');
+    Route::post('/recompensas-canjear', [RecompensaController::class, 'canjear'])->name('recompensas.canjear');
+    Route::resource('recompensas', RecompensaController::class)->except(['show']);
     Route::post('/logout', [AuthController::class, 'cerrarSesion'])->name('logout');
 });

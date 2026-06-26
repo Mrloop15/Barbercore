@@ -558,6 +558,30 @@
             font-weight: 800;
         }
 
+        .reward-points {
+            color: var(--dorado);
+            font-weight: 900;
+        }
+
+        .reward-type {
+            text-transform: capitalize;
+            font-weight: 700;
+        }
+
+        .points-box {
+            background: rgba(201,162,39,0.14);
+            border: 1px solid rgba(201,162,39,0.35);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 18px;
+        }
+
+        .points-box strong {
+            color: var(--dorado);
+            font-size: 24px;
+        }
+
+
         @media (max-width: 600px) {
             .stats-grid {
                 grid-template-columns: 1fr;
@@ -589,7 +613,7 @@
             <a href="{{ route('agenda.index') }}" class="{{ request()->routeIs('agenda.*') ? 'active' : '' }}">Agenda</a>
             <a href="{{ route('servicios.index') }}" class="{{ request()->routeIs('servicios.*') ? 'active' : '' }}">Servicios</a>
             <a href="{{ route('productos.index') }}" class="{{ request()->routeIs('productos.*') ? 'active' : '' }}">Productos</a>
-            <a href="#">Recompensas</a>
+            <a href="{{ route('recompensas.index') }}" class="{{ request()->routeIs('recompensas.*') ? 'active' : '' }}">Recompensas</a>
             <a href="#">Estadísticas</a>
             <a href="#">Configuración</a>
 
