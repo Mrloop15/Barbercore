@@ -650,6 +650,53 @@
             }
         }
 
+            .config-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 22px;
+        }
+
+        .logo-preview {
+            width: 110px;
+            height: 110px;
+            border-radius: 20px;
+            object-fit: cover;
+            border: 1px solid var(--borde);
+            background: var(--fondo);
+        }
+
+        .logo-placeholder {
+            width: 110px;
+            height: 110px;
+            border-radius: 20px;
+            background: rgba(201,162,39,0.16);
+            color: var(--dorado);
+            border: 1px solid var(--borde);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 38px;
+            font-weight: 900;
+        }
+
+        .config-section-title {
+            margin-top: 0;
+            margin-bottom: 6px;
+        }
+
+        .config-section-description {
+            color: var(--gris);
+            margin-top: 0;
+            margin-bottom: 18px;
+            font-size: 14px;
+        }
+
+        @media (max-width: 900px) {
+            .config-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
         @media (max-width: 600px) {
             .stats-grid {
                 grid-template-columns: 1fr;
@@ -684,7 +731,7 @@
             <a href="{{ route('ventas-productos.index') }}" class="{{ request()->routeIs('ventas-productos.*') ? 'active' : '' }}">Ventas</a>
             <a href="{{ route('recompensas.index') }}" class="{{ request()->routeIs('recompensas.*') ? 'active' : '' }}">Recompensas</a>
             <a href="{{ route('estadisticas.index') }}" class="{{ request()->routeIs('estadisticas.*') ? 'active' : '' }}">Estadísticas</a>
-            <a href="#">Configuración</a>
+            <a href="{{ route('configuracion.index') }}" class="{{ request()->routeIs('configuracion.*') ? 'active' : '' }}">Configuración</a>
 
             <form method="POST" action="{{ route('logout') }}">
                 @csrf

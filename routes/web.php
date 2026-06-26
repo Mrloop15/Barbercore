@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Web\ConfiguracionController;
 use App\Http\Controllers\Web\VentaProductoController;
 use App\Http\Controllers\Web\EstadisticaController;
 use App\Http\Controllers\Web\RecompensaController;
@@ -38,5 +39,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/recompensas-canjear', [RecompensaController::class, 'canjear'])->name('recompensas.canjear');
     Route::resource('recompensas', RecompensaController::class)->except(['show']);
     Route::get('/estadisticas', [EstadisticaController::class, 'index'])->name('estadisticas.index');
+    Route::get('/configuracion', [ConfiguracionController::class, 'index'])->name('configuracion.index');
+    Route::put('/configuracion/barberia', [ConfiguracionController::class, 'actualizarBarberia'])->name('configuracion.barberia');
+    Route::put('/configuracion/usuario', [ConfiguracionController::class, 'actualizarUsuario'])->name('configuracion.usuario');
+    Route::put('/configuracion/password', [ConfiguracionController::class, 'actualizarPassword'])->name('configuracion.password');
     Route::post('/logout', [AuthController::class, 'cerrarSesion'])->name('logout');
 });
