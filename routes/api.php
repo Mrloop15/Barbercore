@@ -30,8 +30,10 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('/dashboard/resumen', [DashboardApiController::class, 'resumen']);
 
-    Route::get('/clientes/inactivos', [ClienteApiController::class, 'inactivos']);
+    Route::name('api.')->group(function () {
+    Route::get('/clientes/inactivos', [ClienteApiController::class, 'inactivos'])->name('clientes.inactivos');
     Route::apiResource('/clientes', ClienteApiController::class);
+});
 
     Route::get('/servicios', [ServicioApiController::class, 'index']);
     Route::get('/servicios', [ServicioApiController::class, 'index']);

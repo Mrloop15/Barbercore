@@ -781,7 +781,7 @@
 
         <nav class="menu">
             <a href="{{ route('dashboard') }}" class="{{ request()->routeIs('dashboard') ? 'active' : '' }}">Dashboard</a>
-            <a href="{{ route('clientes.index') }}" class="{{ request()->routeIs('clientes.*') ? 'active' : '' }}">Clientes</a>
+            <a href="{{ route('clientes.index') }}" class="{{ request()->routeIs('clientes.index') ? 'active' : '' }}">Clientes</a>
             <a href="{{ route('clientes.inactivos') }}" class="{{ request()->routeIs('clientes.inactivos') ? 'active' : '' }}">Clientes inactivos</a>
             <a href="{{ route('citas.index') }}" class="{{ request()->routeIs('citas.*') ? 'active' : '' }}">Citas</a>
             <a href="{{ route('agenda.index') }}" class="{{ request()->routeIs('agenda.*') ? 'active' : '' }}">Agenda</a>
@@ -828,6 +828,7 @@
         @yield('content')
     </main>
 </div>
+
 <script>
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', function () {
@@ -841,11 +842,13 @@
         });
     }
 </script>
+
 <button id="installPwaBtn" class="pwa-install-btn" style="display: none;">
     Instalar BarberCore
 </button>
 
 <script src="/js/pwa-install.js"></script>
 <script src="/js/pwa-status.js"></script>
+
 </body>
 </html>
