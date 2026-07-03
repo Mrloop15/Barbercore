@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Web\UsuarioController;
 use App\Http\Controllers\Web\ConfiguracionController;
 use App\Http\Controllers\Web\VentaProductoController;
 use App\Http\Controllers\Web\EstadisticaController;
@@ -25,6 +26,13 @@ Route::middleware('guest')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
+    Route::get('/usuarios', [UsuarioController::class, 'index'])->name('usuarios.index');
+    Route::get('/usuarios/create', [UsuarioController::class, 'create'])->name('usuarios.create');
+    Route::post('/usuarios', [UsuarioController::class, 'store'])->name('usuarios.store');
+    Route::get('/usuarios/{usuario}/edit', [UsuarioController::class, 'edit'])->name('usuarios.edit');
+    Route::put('/usuarios/{usuario}', [UsuarioController::class, 'update'])->name('usuarios.update');
+    Route::put('/usuarios/{usuario}/estado', [UsuarioController::class, 'cambiarEstado'])->name('usuarios.estado');
+
     Route::get('/clientes-inactivos', [ClienteController::class, 'inactivos'])->name('clientes.inactivos');
     Route::resource('clientes', ClienteController::class);
     Route::resource('servicios', ServicioController::class)->except(['show']);
@@ -33,8 +41,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('citas', CitaController::class)->except(['show', 'destroy']);
     Route::get('/agenda', [AgendaController::class, 'index'])->name('agenda.index');
     Route::resource('productos', ProductoController::class)->except(['show']);
-    Route::resource('ventas-productos', VentaProductoController::class)
-    ->only(['index', 'create', 'store', 'show']);
+    Route::resource('ventas-productos', VentaProductoController::class)->only(['index', 'create', 'store', 'show']);
     Route::get('/recompensas-canjear', [RecompensaController::class, 'formCanjear'])->name('recompensas.formCanjear');
     Route::post('/recompensas-canjear', [RecompensaController::class, 'canjear'])->name('recompensas.canjear');
     Route::resource('recompensas', RecompensaController::class)->except(['show']);
