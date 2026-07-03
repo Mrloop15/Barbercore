@@ -50,6 +50,7 @@
     <table>
         <thead>
             <tr>
+                <th>Imagen</th>
                 <th>Producto</th>
                 <th>Precio compra</th>
                 <th>Precio venta</th>
@@ -69,6 +70,18 @@
                 @endphp
 
                 <tr>
+                    <td>
+                        @if ($producto->imagen)
+                            <img 
+                                src="{{ asset('storage/' . $producto->imagen) }}" 
+                                alt="{{ $producto->nombre }}"
+                                class="client-photo"
+                            >
+                        @else
+                            <div class="empty-photo">📦</div>
+                        @endif
+                    </td>
+
                     <td>
                         <strong>{{ $producto->nombre }}</strong>
                         <br>
@@ -126,7 +139,7 @@
                 </tr>
             @empty
                 <tr>
-                    <td colspan="8">No hay productos registrados.</td>
+                    <td colspan="9">No hay productos registrados.</td>
                 </tr>
             @endforelse
         </tbody>

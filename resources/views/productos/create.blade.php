@@ -6,7 +6,7 @@
 @section('content')
 
 <div class="content-card">
-    <form method="POST" action="{{ route('productos.store') }}">
+    <form method="POST" action="{{ route('productos.store') }}" enctype="multipart/form-data">
         @csrf
 
         @if ($errors->any())
@@ -25,6 +25,16 @@
                     value="{{ old('nombre') }}" 
                     placeholder="Ejemplo: Cera para cabello"
                     required
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="imagen">Imagen del producto</label>
+                <input 
+                    type="file" 
+                    name="imagen" 
+                    id="imagen"
+                    accept=".jpg,.jpeg,.png,.webp"
                 >
             </div>
 

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Producto;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class ProductoController extends Controller
 {
@@ -63,22 +64,33 @@ class ProductoController extends Controller
         $request->validate([
             'nombre' => 'required|string|max:120',
             'descripcion' => 'nullable|string',
+            'imagen' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:4096',
             'precio_compra' => 'required|numeric|min:0',
             'precio_venta' => 'required|numeric|min:0',
             'stock' => 'required|integer|min:0',
             'stock_minimo' => 'required|integer|min:0',
         ], [
             'nombre.required' => 'El nombre del producto es obligatorio.',
+            'imagen.image' => 'El archivo seleccionado debe ser una imagen válida.',
+            'imagen.mimes' => 'La imagen debe ser JPG, JPEG, PNG o WEBP.',
+            'imagen.max' => 'La imagen no debe superar los 4 MB.',
             'precio_compra.required' => 'El precio de compra es obligatorio.',
             'precio_venta.required' => 'El precio de venta es obligatorio.',
             'stock.required' => 'El stock es obligatorio.',
             'stock_minimo.required' => 'El stock mínimo es obligatorio.',
         ]);
 
+        $rutaImagen = null;
+
+        if ($request->hasFile('imagen')) {
+            $rutaImagen = $request->file('imagen')->store('productos', 'public');
+        }
+
         Producto::create([
             'id_barberia' => $idBarberia,
             'nombre' => $request->nombre,
             'descripcion' => $request->descripcion,
+            'imagen' => $rutaImagen,
             'precio_compra' => $request->precio_compra,
             'precio_venta' => $request->precio_venta,
             'stock' => $request->stock,
@@ -115,26 +127,40 @@ class ProductoController extends Controller
         $request->validate([
             'nombre' => 'required|string|max:120',
             'descripcion' => 'nullable|string',
+            'imagen' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:4096',
             'precio_compra' => 'required|numeric|min:0',
             'precio_venta' => 'required|numeric|min:0',
             'stock' => 'required|integer|min:0',
             'stock_minimo' => 'required|integer|min:0',
         ], [
             'nombre.required' => 'El nombre del producto es obligatorio.',
+            'imagen.image' => 'El archivo seleccionado debe ser una imagen válida.',
+            'imagen.mimes' => 'La imagen debe ser JPG, JPEG, PNG o WEBP.',
+            'imagen.max' => 'La imagen no debe superar los 4 MB.',
             'precio_compra.required' => 'El precio de compra es obligatorio.',
             'precio_venta.required' => 'El precio de venta es obligatorio.',
             'stock.required' => 'El stock es obligatorio.',
             'stock_minimo.required' => 'El stock mínimo es obligatorio.',
         ]);
 
-        $producto->update([
+        $datos = [
             'nombre' => $request->nombre,
             'descripcion' => $request->descripcion,
             'precio_compra' => $request->precio_compra,
             'precio_venta' => $request->precio_venta,
             'stock' => $request->stock,
             'stock_minimo' => $request->stock_minimo,
-        ]);
+        ];
+
+        if ($request->hasFile('imagen')) {
+            if ($producto->imagen && Storage::disk('public')->exists($producto->imagen)) {
+                Storage::disk('public')->delete($producto->imagen);
+            }
+
+            $datos['imagen'] = $request->file('imagen')->store('productos', 'public');
+        }
+
+        $producto->update($datos);
 
         return redirect()
             ->route('productos.index')

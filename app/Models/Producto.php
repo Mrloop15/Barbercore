@@ -13,6 +13,7 @@ class Producto extends Model
         'id_barberia',
         'nombre',
         'descripcion',
+        'imagen',
         'precio_compra',
         'precio_venta',
         'stock',

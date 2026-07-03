@@ -7,6 +7,8 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="BarberCore">
+    <link rel="icon" type="image/png" sizes="192x192" href="{{ asset('images/branding/barbercore-192.png') }}">
+    <link rel="apple-touch-icon" href="{{ asset('images/branding/barbercore-192.png') }}">
 
     <style>
         .pwa-install-btn {
@@ -32,30 +34,28 @@
             background: #b8921f;
         }
 
- .pwa-status-bar {
-        position: fixed;
-        top: 16px;
-        left: 50%;
-        transform: translateX(-50%);
-        z-index: 10000;
-        padding: 12px 20px;
-        border-radius: 999px;
-        font-size: 14px;
-        font-weight: 700;
-        box-shadow: 0 10px 24px rgba(0, 0, 0, 0.18);
-    }
+        .pwa-status-bar {
+            position: fixed;
+            top: 16px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10000;
+            padding: 12px 20px;
+            border-radius: 999px;
+            font-size: 14px;
+            font-weight: 700;
+            box-shadow: 0 10px 24px rgba(0, 0, 0, 0.18);
+        }
 
-    .pwa-status-bar.online {
-        background: #2E7D32;
-        color: #FFFFFF;
-    }
+        .pwa-status-bar.online {
+            background: #2E7D32;
+            color: #FFFFFF;
+        }
 
-    .pwa-status-bar.offline {
-        background: #C62828;
-        color: #FFFFFF;
-    }
-
-
+        .pwa-status-bar.offline {
+            background: #C62828;
+            color: #FFFFFF;
+        }
     </style>
 
     <meta charset="UTF-8">
@@ -85,9 +85,25 @@
             color: var(--texto);
         }
 
+        body.sidebar-open {
+            overflow: hidden;
+        }
+
         .app {
             display: flex;
             min-height: 100vh;
+        }
+
+        .mobile-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.38);
+            z-index: 90;
+        }
+
+        .mobile-overlay.show {
+            display: block;
         }
 
         .sidebar {
@@ -99,6 +115,27 @@
             left: 0;
             top: 0;
             bottom: 0;
+            z-index: 100;
+            overflow-y: auto;
+            transition: transform 0.28s ease;
+        }
+
+        .sidebar-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .sidebar-close {
+            display: none;
+            border: none;
+            background: transparent;
+            color: var(--texto);
+            font-size: 28px;
+            line-height: 1;
+            cursor: pointer;
+            padding: 0;
         }
 
         .brand {
@@ -106,6 +143,17 @@
             align-items: center;
             gap: 12px;
             margin-bottom: 35px;
+            min-width: 0;
+        }
+
+        .brand-logo {
+            width: 45px;
+            height: 45px;
+            border-radius: 14px;
+            object-fit: cover;
+            border: 1px solid var(--borde);
+            background: var(--blanco);
+            flex-shrink: 0;
         }
 
         .brand-icon {
@@ -118,6 +166,7 @@
             align-items: center;
             justify-content: center;
             font-size: 22px;
+            flex-shrink: 0;
         }
 
         .brand-text strong {
@@ -174,7 +223,52 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            gap: 16px;
             box-shadow: 0 8px 20px rgba(0,0,0,0.04);
+        }
+
+        .topbar-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            min-width: 0;
+        }
+
+        .menu-toggle {
+            display: none;
+            width: 42px;
+            height: 42px;
+            border: 1px solid var(--borde);
+            border-radius: 12px;
+            background: var(--blanco);
+            cursor: pointer;
+            padding: 0;
+            flex-shrink: 0;
+        }
+
+        .menu-toggle span,
+        .menu-toggle span::before,
+        .menu-toggle span::after {
+            display: block;
+            width: 18px;
+            height: 2px;
+            background: var(--texto);
+            border-radius: 999px;
+            position: relative;
+            content: "";
+            margin: 0 auto;
+        }
+
+        .menu-toggle span::before {
+            position: absolute;
+            top: -6px;
+            left: 0;
+        }
+
+        .menu-toggle span::after {
+            position: absolute;
+            top: 6px;
+            left: 0;
         }
 
         .topbar h2 {
@@ -568,38 +662,6 @@
             color: var(--dorado);
         }
 
-
-        @media (max-width: 900px) {
-            .sidebar {
-                position: static;
-                width: 100%;
-                border-right: none;
-                border-bottom: 1px solid var(--borde);
-            }
-
-            .app {
-                display: block;
-            }
-
-            .main {
-                margin-left: 0;
-                width: 100%;
-            }
-
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            .topbar {
-                display: block;
-            }
-
-            .topbar-info {
-                text-align: left;
-                margin-top: 8px;
-            }
-        }
-
         .stock-ok {
             color: var(--verde);
             font-weight: 800;
@@ -637,7 +699,6 @@
             color: var(--dorado);
             font-size: 24px;
         }
-
 
         .chart-list {
             display: grid;
@@ -692,22 +753,7 @@
             flex-wrap: wrap;
         }
 
-        @media (max-width: 900px) {
-            .stats-two-columns {
-                grid-template-columns: 1fr;
-            }
-
-            .chart-item {
-                grid-template-columns: 1fr;
-                gap: 6px;
-            }
-
-            .chart-value {
-                text-align: left;
-            }
-        }
-
-            .config-grid {
+        .config-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 22px;
@@ -749,6 +795,105 @@
         }
 
         @media (max-width: 900px) {
+            .sidebar {
+                position: fixed;
+                width: 260px;
+                max-width: 85%;
+                transform: translateX(-100%);
+                box-shadow: 0 8px 30px rgba(0,0,0,0.20);
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .app {
+                display: block;
+            }
+
+            .main {
+                margin-left: 0;
+                width: 100%;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .topbar {
+                display: flex;
+                gap: 12px;
+                align-items: flex-start;
+            }
+
+            .topbar-info {
+                text-align: left;
+                margin-top: 8px;
+            }
+
+            .sidebar-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 20px;
+            }
+
+            .mobile-menu-btn {
+                display: inline-flex !important;
+                align-items: center;
+                justify-content: center;
+                width: 42px;
+                height: 42px;
+                border-radius: 12px;
+                border: 1px solid var(--borde);
+                background: var(--blanco);
+                cursor: pointer;
+                font-size: 20px;
+                flex-shrink: 0;
+            }
+
+            .mobile-close-btn {
+                display: inline-flex !important;
+                align-items: center;
+                justify-content: center;
+                width: 38px;
+                height: 38px;
+                border: none;
+                background: transparent;
+                color: var(--texto);
+                cursor: pointer;
+                font-size: 22px;
+            }
+
+            .mobile-overlay {
+                display: none;
+                position: fixed;
+                inset: 0;
+                background: rgba(0,0,0,0.35);
+                z-index: 999;
+            }
+
+            .mobile-overlay.show {
+                display: block;
+            }
+        }
+
+        @media (max-width: 900px) {
+            .stats-two-columns {
+                grid-template-columns: 1fr;
+            }
+
+            .chart-item {
+                grid-template-columns: 1fr;
+                gap: 6px;
+            }
+
+            .chart-value {
+                text-align: left;
+            }
+        }
+
+        @media (max-width: 900px) {
             .config-grid {
                 grid-template-columns: 1fr;
             }
@@ -762,21 +907,52 @@
             .main {
                 padding: 16px;
             }
+
+            .page-actions,
+            .agenda-header,
+            .search-form,
+            .form-actions {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .search-form {
+                max-width: 100%;
+            }
+
+            table {
+                min-width: 720px;
+            }
+        }
+
+        .mobile-menu-btn,
+        .mobile-close-btn {
+            display: none;
         }
     </style>
 </head>
 <body>
 
 <div id="pwaStatusBar" class="pwa-status-bar" style="display: none;"></div>
+<div id="mobileOverlay" class="mobile-overlay"></div>
 
 <div class="app">
-    <aside class="sidebar">
-        <div class="brand">
-            <div class="brand-icon">✂</div>
-            <div class="brand-text">
-                <strong>BarberCore</strong>
-                <span>Panel administrativo</span>
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="brand">
+                <img src="{{ asset('images/branding/barbercore-192.png') }}"
+                     alt="BarberCore"
+                     class="brand-logo"
+                     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                <div class="brand-icon" style="display:none;">✂</div>
+
+                <div class="brand-text">
+                    <strong>BarberCore</strong>
+                    <span>Panel administrativo</span>
+                </div>
             </div>
+
+            <button type="button" class="mobile-close-btn" id="closeSidebar">✕</button>
         </div>
 
         <nav class="menu">
@@ -803,15 +979,19 @@
 
     <main class="main">
         <div class="topbar">
-            <div>
-                <h2>@yield('page-title', 'Panel BarberCore')</h2>
+            <div style="display:flex; align-items:center; gap:12px; min-width:0;">
+                <button type="button" class="mobile-menu-btn" id="openSidebar">☰</button>
+                <div>
+                    <h2>@yield('page-title', 'Panel BarberCore')</h2>
+                </div>
             </div>
 
             <div class="topbar-info">
                 <div>{{ auth()->user()->barberia->nombre ?? 'BarberCore Studio' }}</div>
-                <div>{{ auth()->user()->nombre ?? 'Usuario' }} · {{ now()->format('d/m/Y') }}</div>
+                <div>{{ auth()->user()->nombre ?? auth()->user()->name ?? 'Usuario' }} · {{ now()->format('d/m/Y') }}</div>
             </div>
         </div>
+
         @if (session('success'))
             <div class="alert alert-success">
                 {{ session('success') }}
@@ -824,10 +1004,42 @@
             </div>
         @endif
 
-        
         @yield('content')
     </main>
 </div>
+
+<script>
+    (function () {
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('mobileOverlay');
+        const openBtn = document.getElementById('openSidebar');
+        const closeBtn = document.getElementById('closeSidebar');
+
+        function openSidebar() {
+            if (window.innerWidth <= 900) {
+                sidebar.classList.add('open');
+                overlay.classList.add('show');
+                document.body.classList.add('sidebar-open');
+            }
+        }
+
+        function closeSidebar() {
+            sidebar.classList.remove('open');
+            overlay.classList.remove('show');
+            document.body.classList.remove('sidebar-open');
+        }
+
+        if (openBtn) openBtn.addEventListener('click', openSidebar);
+        if (closeBtn) closeBtn.addEventListener('click', closeSidebar);
+        if (overlay) overlay.addEventListener('click', closeSidebar);
+
+        window.addEventListener('resize', function () {
+            if (window.innerWidth > 900) {
+                closeSidebar();
+            }
+        });
+    })();
+</script>
 
 <script>
     if ('serviceWorker' in navigator) {

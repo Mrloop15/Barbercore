@@ -6,7 +6,7 @@
 @section('content')
 
 <div class="content-card">
-    <form method="POST" action="{{ route('productos.update', $producto->id_producto) }}">
+    <form method="POST" action="{{ route('productos.update', $producto->id_producto) }}" enctype="multipart/form-data">
         @csrf
         @method('PUT')
 
@@ -26,6 +26,30 @@
                     value="{{ old('nombre', $producto->nombre) }}" 
                     required
                 >
+            </div>
+
+            <div class="form-group">
+                <label for="imagen">Cambiar imagen del producto</label>
+                <input 
+                    type="file" 
+                    name="imagen" 
+                    id="imagen"
+                    accept=".jpg,.jpeg,.png,.webp"
+                >
+            </div>
+
+            <div class="form-group full">
+                <label>Imagen actual</label>
+
+                @if ($producto->imagen)
+                    <img 
+                        src="{{ asset('storage/' . $producto->imagen) }}" 
+                        alt="{{ $producto->nombre }}"
+                        class="logo-preview"
+                    >
+                @else
+                    <div class="logo-placeholder">📦</div>
+                @endif
             </div>
 
             <div class="form-group">
