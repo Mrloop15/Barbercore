@@ -23,6 +23,8 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
         }
 
         .brand {
@@ -144,6 +146,16 @@
             color: #FFFFFF;
             font-weight: 700;
         }
+
+        @media (max-width: 700px) {
+            .container {
+                padding: 16px;
+            }
+
+            .welcome h1 {
+                font-size: 22px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -165,47 +177,50 @@
         </section>
 
         <section class="section">
+            <h2>Módulos rápidos</h2>
 
-        <h2>Módulos rápidos</h2>
+            <div class="list">
+                <a class="item" href="/pwa/clientes" style="text-decoration: none; color: inherit;">
+                    <strong>Clientes</strong>
+                    <small>Consultar clientes registrados desde la API.</small>
+                </a>
 
-        <div class="list">
-            <a class="item" href="/pwa/clientes" style="text-decoration: none; color: inherit;">
-                <strong>Clientes</strong>
-                <small>Consultar clientes registrados desde la API.</small>
-            </a>
+                <a class="item" href="/pwa/usuarios" id="moduloUsuarios" style="text-decoration: none; color: inherit; display: none;">
+                    <strong>Usuarios</strong>
+                    <small>Crear, consultar y activar o desactivar usuarios desde la PWA.</small>
+                </a>
 
-            <a class="item" href="/pwa/agenda" style="text-decoration: none; color: inherit;">
-                <strong>Agenda</strong>
-                <small>Consultar citas por día, semana o mes.</small>
-            </a>
+                <a class="item" href="/pwa/agenda" style="text-decoration: none; color: inherit;">
+                    <strong>Agenda</strong>
+                    <small>Consultar citas por día, semana o mes.</small>
+                </a>
 
-            <a class="item" href="/pwa/citas" style="text-decoration: none; color: inherit;">
-                <strong>Citas</strong>
-                <small>Crear, completar o cancelar citas desde la PWA.</small>
-            </a>
+                <a class="item" href="/pwa/citas" style="text-decoration: none; color: inherit;">
+                    <strong>Citas</strong>
+                    <small>Crear, completar o cancelar citas desde la PWA.</small>
+                </a>
 
-            <a class="item" href="/pwa/productos" style="text-decoration: none; color: inherit;">
-                <strong>Productos</strong>
-                <small>Consultar inventario, bajo stock y actualizar existencias.</small>
-            </a>
+                <a class="item" href="/pwa/productos" style="text-decoration: none; color: inherit;">
+                    <strong>Productos</strong>
+                    <small>Consultar inventario, bajo stock y actualizar existencias.</small>
+                </a>
 
-            <a class="item" href="/pwa/ventas" style="text-decoration: none; color: inherit;">
-                <strong>Ventas</strong>
-                <small>Registrar ventas de productos, descontar stock y sumar puntos.</small>
-            </a>
+                <a class="item" href="/pwa/ventas" style="text-decoration: none; color: inherit;">
+                    <strong>Ventas</strong>
+                    <small>Registrar ventas de productos, descontar stock y sumar puntos.</small>
+                </a>
 
-            <a class="item" href="/pwa/recompensas" style="text-decoration: none; color: inherit;">
-                <strong>Recompensas</strong>
-                <small>Crear recompensas y canjear puntos de clientes.</small>
-            </a>
+                <a class="item" href="/pwa/recompensas" style="text-decoration: none; color: inherit;">
+                    <strong>Recompensas</strong>
+                    <small>Crear recompensas y canjear puntos de clientes.</small>
+                </a>
 
-            <a class="item" href="/pwa/estadisticas" style="text-decoration: none; color: inherit;">
-                <strong>Estadísticas</strong>
-                <small>Consultar ingresos, clientes, productos y servicios.</small>
-            </a>
-
-        </div>
-    </section>
+                <a class="item" href="/pwa/estadisticas" style="text-decoration: none; color: inherit;">
+                    <strong>Estadísticas</strong>
+                    <small>Consultar ingresos, clientes, productos y servicios.</small>
+                </a>
+            </div>
+        </section>
 
         <section class="grid">
             <div class="card">

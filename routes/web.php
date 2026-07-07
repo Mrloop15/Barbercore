@@ -56,6 +56,7 @@ Route::middleware('auth')->group(function () {
     Route::view('/pwa/clientes', 'pwa.clientes')->name('pwa.clientes');
     Route::view('/pwa/agenda', 'pwa.agenda')->name('pwa.agenda');
     Route::view('/pwa/productos', 'pwa.productos')->name('pwa.productos');
+    Route::view('/pwa/usuarios', 'pwa.usuarios')->name('pwa.usuarios');
     Route::view('/pwa/citas', 'pwa.citas')->name('pwa.citas');
     Route::view('/pwa/ventas', 'pwa.ventas')->name('pwa.ventas');
     Route::view('/pwa/recompensas', 'pwa.recompensas')->name('pwa.recompensas');

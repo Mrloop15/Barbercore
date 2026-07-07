@@ -1,5 +1,6 @@
 const token = localStorage.getItem("barbercore_token");
 const message = document.getElementById("message");
+const moduloUsuarios = document.getElementById("moduloUsuarios");
 
 if (!token) {
     window.location.href = "/pwa/login";
@@ -17,6 +18,16 @@ function formatoMoneda(valor) {
         style: "currency",
         currency: "MXN",
     });
+}
+
+function mostrarModuloUsuariosSegunRol(usuario) {
+    if (!moduloUsuarios) return;
+
+    if (usuario && usuario.rol === "admin") {
+        moduloUsuarios.style.display = "block";
+    } else {
+        moduloUsuarios.style.display = "none";
+    }
 }
 
 async function apiGet(url) {
@@ -47,6 +58,11 @@ async function cargarUsuario() {
     const data = await apiGet("/api/me");
 
     const usuario = data.usuario || data.user || data.data || data;
+
+    if (usuario) {
+        localStorage.setItem("barbercore_user", JSON.stringify(usuario));
+        mostrarModuloUsuariosSegunRol(usuario);
+    }
 
     if (usuario && usuario.nombre) {
         document.getElementById("welcomeTitle").textContent =
@@ -137,6 +153,11 @@ document.getElementById("logoutBtn").addEventListener("click", async () => {
 
 async function iniciarDashboard() {
     try {
+        const usuarioGuardado = JSON.parse(
+            localStorage.getItem("barbercore_user") || "null",
+        );
+        mostrarModuloUsuariosSegunRol(usuarioGuardado);
+
         await cargarUsuario();
         await cargarDashboard();
     } catch (error) {

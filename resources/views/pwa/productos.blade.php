@@ -23,6 +23,8 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
         }
 
         .brand {
@@ -124,8 +126,41 @@
             background: #FFFFFF;
             border: 1px solid #E5E0D6;
             border-radius: 18px;
-            padding: 18px;
+            overflow: hidden;
             box-shadow: 0 10px 26px rgba(0, 0, 0, 0.06);
+        }
+
+        .producto-image-wrap {
+            height: 180px;
+            background: linear-gradient(135deg, rgba(201,162,39,0.14), rgba(255,255,255,0.08)), #f7f3eb;
+            border-bottom: 1px solid #E5E0D6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .producto-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .producto-placeholder {
+            width: 70px;
+            height: 70px;
+            border-radius: 18px;
+            background: rgba(201,162,39,0.16);
+            color: #C9A227;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            font-weight: 900;
+        }
+
+        .producto-body {
+            padding: 18px;
         }
 
         .producto-card h3 {
@@ -137,6 +172,13 @@
             margin: 5px 0;
             color: #6B6B6B;
             font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .precio {
+            color: #1C1C1C !important;
+            font-weight: 800;
+            font-size: 15px !important;
         }
 
         .stock {
@@ -192,6 +234,24 @@
             padding: 24px;
             text-align: center;
             color: #6B6B6B;
+        }
+
+        @media (max-width: 640px) {
+            .container {
+                padding: 16px;
+            }
+
+            .header-section h1 {
+                font-size: 22px;
+            }
+
+            .stock-form {
+                flex-direction: column;
+            }
+
+            .stock-form button {
+                width: 100%;
+            }
         }
     </style>
 </head>
