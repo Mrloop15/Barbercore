@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Web\LandingController;
 use App\Http\Controllers\Web\UsuarioController;
 use App\Http\Controllers\Web\ConfiguracionController;
 use App\Http\Controllers\Web\VentaProductoController;
@@ -14,9 +15,7 @@ use App\Http\Controllers\Web\DashboardController;
 use App\Http\Controllers\Web\ClienteController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return redirect()->route('login');
-});
+Route::get('/', [LandingController::class, 'index'])->name('landing');
 
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'mostrarLogin'])->name('login');
