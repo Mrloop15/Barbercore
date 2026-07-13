@@ -40,10 +40,16 @@
             left: 50%;
             transform: translateX(-50%);
             z-index: 10000;
+            width: max-content;
+            max-width: calc(100vw - 32px);
             padding: 12px 20px;
             border-radius: 999px;
             font-size: 14px;
             font-weight: 700;
+            line-height: 1.25;
+            text-align: center;
+            white-space: normal;
+            pointer-events: none;
             box-shadow: 0 10px 24px rgba(0, 0, 0, 0.18);
         }
 
@@ -79,10 +85,20 @@
             font-family: Arial, sans-serif;
         }
 
+        html {
+            width: 100%;
+            min-height: 100%;
+            overflow-x: hidden;
+        }
+
         body {
             margin: 0;
+            min-width: 0;
+            min-height: 100%;
+            overflow-x: hidden;
             background: var(--fondo);
             color: var(--texto);
+            -webkit-text-size-adjust: 100%;
         }
 
         body.sidebar-open {
@@ -91,23 +107,33 @@
 
         .app {
             display: flex;
+            width: 100%;
+            min-width: 0;
             min-height: 100vh;
         }
 
         .mobile-overlay {
-            display: none;
+            display: block;
             position: fixed;
             inset: 0;
             background: rgba(0, 0, 0, 0.38);
-            z-index: 90;
+            z-index: 1090;
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transition: opacity 0.28s ease, visibility 0.28s ease;
         }
 
         .mobile-overlay.show {
-            display: block;
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
         }
 
         .sidebar {
             width: 260px;
+            height: 100vh;
+            height: 100dvh;
             background: var(--blanco);
             border-right: 1px solid var(--borde);
             padding: 24px 18px;
@@ -115,9 +141,20 @@
             left: 0;
             top: 0;
             bottom: 0;
-            z-index: 100;
+            z-index: 1100;
+            overflow-x: hidden;
             overflow-y: auto;
-            transition: transform 0.28s ease;
+            overscroll-behavior: contain;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            transition: transform 0.28s ease, visibility 0.28s ease;
+        }
+
+        .sidebar::-webkit-scrollbar {
+            width: 0;
+            height: 0;
+            display: none;
         }
 
         .sidebar-header {
@@ -169,9 +206,14 @@
             flex-shrink: 0;
         }
 
+        .brand-text {
+            min-width: 0;
+        }
+
         .brand-text strong {
             display: block;
             font-size: 20px;
+            overflow-wrap: break-word;
         }
 
         .brand-text span {
@@ -193,6 +235,8 @@
             border: none;
             background: transparent;
             cursor: pointer;
+            overflow-wrap: break-word;
+            touch-action: manipulation;
         }
 
         .menu a:hover,
@@ -210,7 +254,9 @@
         .main {
             margin-left: 260px;
             width: calc(100% - 260px);
+            min-width: 0;
             min-height: 100vh;
+            overflow-x: hidden;
             padding: 24px;
         }
 
@@ -224,6 +270,7 @@
             justify-content: space-between;
             align-items: center;
             gap: 16px;
+            min-width: 0;
             box-shadow: 0 8px 20px rgba(0,0,0,0.04);
         }
 
@@ -274,19 +321,28 @@
         .topbar h2 {
             margin: 0;
             font-size: 22px;
+            line-height: 1.25;
+            overflow-wrap: break-word;
         }
 
         .topbar-info {
+            min-width: 0;
             text-align: right;
             color: var(--gris);
             font-size: 14px;
+            line-height: 1.45;
+            overflow-wrap: break-word;
         }
 
         .content-card {
+            min-width: 0;
+            max-width: 100%;
             background: var(--blanco);
             border: 1px solid var(--borde);
             border-radius: 18px;
             padding: 22px;
+            overflow-wrap: break-word;
+            word-break: normal;
             box-shadow: 0 8px 20px rgba(0,0,0,0.04);
         }
 
@@ -298,10 +354,13 @@
         }
 
         .stat-card {
+            min-width: 0;
             background: var(--blanco);
             border: 1px solid var(--borde);
             border-radius: 18px;
             padding: 20px;
+            overflow-wrap: break-word;
+            word-break: normal;
             box-shadow: 0 8px 20px rgba(0,0,0,0.04);
         }
 
@@ -318,7 +377,26 @@
 
         table {
             width: 100%;
+            max-width: 100%;
             border-collapse: collapse;
+            table-layout: auto;
+        }
+
+        .table-responsive {
+            width: 100%;
+            max-width: 100%;
+            overflow-x: auto;
+            overflow-y: hidden;
+            overscroll-behavior-x: contain;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .table-responsive::-webkit-scrollbar {
+            width: 0;
+            height: 0;
+            display: none;
         }
 
         th {
@@ -327,12 +405,16 @@
             font-size: 14px;
             padding: 12px;
             border-bottom: 1px solid var(--borde);
+            overflow-wrap: normal;
+            word-break: normal;
         }
 
         td {
             padding: 12px;
             border-bottom: 1px solid var(--borde);
             font-size: 14px;
+            overflow-wrap: normal;
+            word-break: normal;
         }
 
         .badge {
@@ -363,6 +445,11 @@
             align-items: center;
             gap: 16px;
             margin-bottom: 20px;
+            min-width: 0;
+        }
+
+        .page-actions > * {
+            min-width: 0;
         }
 
         .search-form {
@@ -370,22 +457,31 @@
             gap: 10px;
             width: 100%;
             max-width: 480px;
+            min-width: 0;
         }
 
         .search-form input {
-            flex: 1;
+            flex: 1 1 0;
+            min-width: 0;
+            min-height: 44px;
+            height: auto;
         }
 
         .btn {
-            display: inline-block;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
             border: none;
             padding: 10px 14px;
             border-radius: 12px;
             font-size: 14px;
             font-weight: 700;
+            line-height: 1.2;
+            white-space: nowrap;
             cursor: pointer;
             text-decoration: none;
             text-align: center;
+            flex-shrink: 0;
         }
 
         .btn-primary {
@@ -438,6 +534,7 @@
         textarea,
         select {
             width: 100%;
+            min-width: 0;
             padding: 12px 14px;
             border: 1px solid var(--borde);
             border-radius: 12px;
@@ -559,6 +656,12 @@
         .filter-tab.active {
             background: var(--dorado);
             color: white;
+        }
+
+        .filter-tab,
+        .agenda-tab,
+        .badge {
+            white-space: nowrap;
         }
 
         .inactive-days {
@@ -796,15 +899,20 @@
 
         @media (max-width: 900px) {
             .sidebar {
-                position: fixed;
                 width: 260px;
-                max-width: 85%;
-                transform: translateX(-100%);
+                max-width: 85vw;
+                padding-top: calc(24px + env(safe-area-inset-top));
+                padding-bottom: calc(24px + env(safe-area-inset-bottom));
+                transform: translate3d(-100%, 0, 0);
+                visibility: hidden;
+                pointer-events: none;
                 box-shadow: 0 8px 30px rgba(0,0,0,0.20);
             }
 
             .sidebar.open {
-                transform: translateX(0);
+                transform: translate3d(0, 0, 0);
+                visibility: visible;
+                pointer-events: auto;
             }
 
             .app {
@@ -817,25 +925,90 @@
             }
 
             .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
+                grid-template-columns: repeat(2, minmax(0, 1fr));
             }
 
             .topbar {
-                display: flex;
                 gap: 12px;
-                align-items: flex-start;
+                align-items: center;
+                flex-wrap: wrap;
+            }
+
+            .topbar-left {
+                flex: 1 1 240px;
             }
 
             .topbar-info {
+                flex: 1 1 220px;
                 text-align: left;
-                margin-top: 8px;
+                margin-top: 0;
+            }
+
+            .page-actions {
+                flex-wrap: wrap;
+            }
+
+            .search-form {
+                flex: 1 1 320px;
+                flex-wrap: wrap;
+            }
+
+            /*
+             * Solo la tabla se desplaza horizontalmente.
+             * Los buscadores, botones y demás contenido permanecen fijos
+             * dentro de la card y no se recortan.
+             */
+            .table-responsive {
+                overflow-x: auto;
+                overflow-y: hidden;
+                overscroll-behavior-x: contain;
+                -webkit-overflow-scrolling: touch;
+                scrollbar-width: none;
+                -ms-overflow-style: none;
+            }
+
+            .table-responsive::-webkit-scrollbar {
+                width: 0;
+                height: 0;
+                display: none;
+            }
+
+            .table-responsive table {
+                width: max-content;
+                min-width: 100%;
+                max-width: none;
+            }
+
+            .table-responsive th {
+                white-space: nowrap;
+                overflow-wrap: normal;
+                word-break: normal;
+            }
+
+            .table-responsive td {
+                min-width: 110px;
+                max-width: 280px;
+                white-space: normal;
+                overflow-wrap: break-word;
+                word-break: normal;
+                vertical-align: middle;
+            }
+
+            .table-responsive .actions {
+                min-width: max-content;
+                flex-wrap: nowrap;
             }
 
             .sidebar-header {
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
+                gap: 12px;
                 margin-bottom: 20px;
+            }
+
+            .sidebar-header .brand {
+                margin-bottom: 0;
             }
 
             .mobile-menu-btn {
@@ -847,9 +1020,12 @@
                 border-radius: 12px;
                 border: 1px solid var(--borde);
                 background: var(--blanco);
+                color: var(--texto);
                 cursor: pointer;
                 font-size: 20px;
+                line-height: 1;
                 flex-shrink: 0;
+                touch-action: manipulation;
             }
 
             .mobile-close-btn {
@@ -863,18 +1039,9 @@
                 color: var(--texto);
                 cursor: pointer;
                 font-size: 22px;
-            }
-
-            .mobile-overlay {
-                display: none;
-                position: fixed;
-                inset: 0;
-                background: rgba(0,0,0,0.35);
-                z-index: 999;
-            }
-
-            .mobile-overlay.show {
-                display: block;
+                line-height: 1;
+                flex-shrink: 0;
+                touch-action: manipulation;
             }
         }
 
@@ -900,11 +1067,37 @@
         }
 
         @media (max-width: 600px) {
-            .stats-grid {
+            .stats-grid,
+            .form-grid,
+            .detail-grid,
+            .agenda-summary {
                 grid-template-columns: 1fr;
             }
 
             .main {
+                padding-top: 16px;
+                padding-right: max(16px, env(safe-area-inset-right));
+                padding-bottom: calc(16px + env(safe-area-inset-bottom));
+                padding-left: max(16px, env(safe-area-inset-left));
+            }
+
+            .topbar {
+                padding: 16px;
+                border-radius: 16px;
+            }
+
+            .topbar-left,
+            .topbar-info {
+                flex-basis: 100%;
+                width: 100%;
+            }
+
+            .topbar h2 {
+                font-size: 20px;
+            }
+
+            .content-card,
+            .stat-card {
                 padding: 16px;
             }
 
@@ -917,11 +1110,51 @@
             }
 
             .search-form {
+                flex: 0 0 auto;
+                width: 100%;
                 max-width: 100%;
             }
 
-            table {
-                min-width: 720px;
+            .search-form input {
+                flex: 0 0 auto;
+                width: 100%;
+                min-height: 44px;
+                height: 44px;
+            }
+
+            .page-actions > .btn,
+            .page-actions > a.btn,
+            .search-form .btn,
+            .form-actions .btn {
+                width: 100%;
+            }
+
+            th {
+                white-space: nowrap;
+                overflow-wrap: normal;
+                word-break: normal;
+            }
+
+            .pwa-status-bar {
+                top: auto;
+                bottom: calc(16px + env(safe-area-inset-bottom));
+                max-width: calc(100vw - 24px);
+                padding: 10px 14px;
+                border-radius: 16px;
+                font-size: 13px;
+            }
+
+            .pwa-install-btn {
+                right: max(12px, env(safe-area-inset-right));
+                bottom: calc(12px + env(safe-area-inset-bottom));
+                max-width: calc(100vw - 24px);
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .sidebar,
+            .mobile-overlay {
+                transition: none;
             }
         }
 
@@ -934,10 +1167,10 @@
 <body>
 
 <div id="pwaStatusBar" class="pwa-status-bar" style="display: none;"></div>
-<div id="mobileOverlay" class="mobile-overlay"></div>
+<div id="mobileOverlay" class="mobile-overlay" aria-hidden="true"></div>
 
 <div class="app">
-    <aside class="sidebar" id="sidebar">
+    <aside class="sidebar" id="sidebar" aria-label="Menú principal">
         <div class="sidebar-header">
             <div class="brand">
                 <img src="{{ asset('images/branding/barbercore-192.png') }}"
@@ -952,10 +1185,16 @@
                 </div>
             </div>
 
-            <button type="button" class="mobile-close-btn" id="closeSidebar">✕</button>
+            <button
+                type="button"
+                class="mobile-close-btn"
+                id="closeSidebar"
+                aria-label="Cerrar menú"
+                aria-controls="sidebar"
+            >✕</button>
         </div>
 
-        <nav class="menu">
+        <nav class="menu" aria-label="Módulos de BarberCore">
             <a href="{{ route('dashboard') }}" class="{{ request()->routeIs('dashboard') ? 'active' : '' }}">Dashboard</a>
             <a href="{{ route('clientes.index') }}" class="{{ request()->routeIs('clientes.index') ? 'active' : '' }}">Clientes</a>
             <a href="{{ route('clientes.inactivos') }}" class="{{ request()->routeIs('clientes.inactivos') ? 'active' : '' }}">Clientes inactivos</a>
@@ -982,8 +1221,15 @@
 
     <main class="main">
         <div class="topbar">
-            <div style="display:flex; align-items:center; gap:12px; min-width:0;">
-                <button type="button" class="mobile-menu-btn" id="openSidebar">☰</button>
+            <div class="topbar-left">
+                <button
+                    type="button"
+                    class="mobile-menu-btn"
+                    id="openSidebar"
+                    aria-label="Abrir menú"
+                    aria-controls="sidebar"
+                    aria-expanded="false"
+                >☰</button>
                 <div>
                     <h2>@yield('page-title', 'Panel BarberCore')</h2>
                 </div>
@@ -1013,35 +1259,131 @@
 
 <script>
     (function () {
+        const MOBILE_BREAKPOINT = 900;
         const sidebar = document.getElementById('sidebar');
         const overlay = document.getElementById('mobileOverlay');
         const openBtn = document.getElementById('openSidebar');
         const closeBtn = document.getElementById('closeSidebar');
+        const menuLinks = sidebar ? sidebar.querySelectorAll('.menu a') : [];
+        let previousFocus = null;
 
-        function openSidebar() {
-            if (window.innerWidth <= 900) {
-                sidebar.classList.add('open');
-                overlay.classList.add('show');
-                document.body.classList.add('sidebar-open');
+        function isMobileView() {
+            return window.innerWidth <= MOBILE_BREAKPOINT;
+        }
+
+        function updateAccessibility(isOpen) {
+            if (openBtn) {
+                openBtn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+            }
+
+            if (overlay) {
+                overlay.setAttribute('aria-hidden', isOpen ? 'false' : 'true');
+            }
+
+            if (sidebar) {
+                sidebar.setAttribute('aria-hidden', isMobileView() && !isOpen ? 'true' : 'false');
             }
         }
 
-        function closeSidebar() {
+        function openSidebar() {
+            if (!isMobileView() || !sidebar || !overlay) {
+                return;
+            }
+
+            previousFocus = document.activeElement;
+            sidebar.classList.add('open');
+            overlay.classList.add('show');
+            document.body.classList.add('sidebar-open');
+            updateAccessibility(true);
+
+            window.requestAnimationFrame(function () {
+                if (closeBtn) {
+                    closeBtn.focus();
+                }
+            });
+        }
+
+        function closeSidebar(restoreFocus = true) {
+            if (!sidebar || !overlay) {
+                return;
+            }
+
             sidebar.classList.remove('open');
             overlay.classList.remove('show');
             document.body.classList.remove('sidebar-open');
+            updateAccessibility(false);
+
+            if (restoreFocus && previousFocus && typeof previousFocus.focus === 'function') {
+                previousFocus.focus();
+            }
+
+            previousFocus = null;
         }
 
-        if (openBtn) openBtn.addEventListener('click', openSidebar);
-        if (closeBtn) closeBtn.addEventListener('click', closeSidebar);
-        if (overlay) overlay.addEventListener('click', closeSidebar);
+        if (openBtn) {
+            openBtn.addEventListener('click', openSidebar);
+        }
 
-        window.addEventListener('resize', function () {
-            if (window.innerWidth > 900) {
+        if (closeBtn) {
+            closeBtn.addEventListener('click', function () {
+                closeSidebar();
+            });
+        }
+
+        if (overlay) {
+            overlay.addEventListener('click', function () {
+                closeSidebar();
+            });
+        }
+
+        menuLinks.forEach(function (link) {
+            link.addEventListener('click', function () {
+                if (isMobileView()) {
+                    closeSidebar(false);
+                }
+            });
+        });
+
+        document.addEventListener('keydown', function (event) {
+            if (event.key === 'Escape' && sidebar && sidebar.classList.contains('open')) {
                 closeSidebar();
             }
         });
+
+        window.addEventListener('resize', function () {
+            if (!isMobileView()) {
+                closeSidebar(false);
+                updateAccessibility(false);
+            } else if (sidebar && !sidebar.classList.contains('open')) {
+                updateAccessibility(false);
+            }
+        });
+
+        updateAccessibility(sidebar ? sidebar.classList.contains('open') : false);
     })();
+</script>
+
+<script>
+    /*
+     * Envuelve automáticamente las tablas de las vistas en un contenedor
+     * desplazable. Así no es necesario modificar cada módulo por separado.
+     */
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('.content-card table').forEach(function (table) {
+            if (table.parentElement && table.parentElement.classList.contains('table-responsive')) {
+                return;
+            }
+
+            const wrapper = document.createElement('div');
+            wrapper.className = 'table-responsive';
+            wrapper.setAttribute('tabindex', '0');
+            wrapper.setAttribute('role', 'region');
+            wrapper.setAttribute('aria-label', 'Tabla desplazable horizontalmente');
+
+            table.parentNode.insertBefore(wrapper, table);
+            wrapper.appendChild(table);
+        });
+    });
 </script>
 
 <script>
