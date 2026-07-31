@@ -13,10 +13,21 @@ class Servicio extends Model
         'id_barberia',
         'nombre',
         'descripcion',
+        'imagen',
         'precio',
         'duracion_minutos',
         'activo',
+        'mostrar_landing',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'activo' => 'boolean',
+            'mostrar_landing' => 'boolean',
+            'precio' => 'decimal:2',
+        ];
+    }
 
     public function barberia()
     {

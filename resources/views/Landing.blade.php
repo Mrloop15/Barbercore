@@ -83,12 +83,22 @@
         .copy { margin: 0; color: var(--gris); font-size: 15px; line-height: 1.8; }
 
         .services { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
+        .carousel-controls { display: flex; justify-content: flex-end; gap: 9px; margin: -24px 0 18px; }
+        .carousel-button { width: 44px; height: 44px; display: grid; place-items: center; border: 1px solid var(--borde); background: var(--blanco); color: var(--texto); cursor: pointer; transition: border-color .2s ease, background .2s ease, color .2s ease; }
+        .carousel-button:hover:not(:disabled) { border-color: var(--dorado); background: var(--dorado); color: var(--blanco); }
+        .carousel-button:disabled { opacity: .35; cursor: default; }
+        .services-carousel.is-active .services { grid-template-columns: none; grid-auto-flow: column; grid-auto-columns: calc((100% - 54px) / 4); overflow-x: auto; padding: 7px 2px 22px; scroll-behavior: smooth; scroll-snap-type: x mandatory; scroll-padding-inline: 2px; overscroll-behavior-inline: contain; scrollbar-width: none; }
+        .services-carousel.is-active .services::-webkit-scrollbar { display: none; }
+        .services-carousel.is-active .service { scroll-snap-align: start; }
         .service { min-height: 470px; display: flex; flex-direction: column; overflow: hidden; border: 1px solid var(--borde); background: var(--blanco); box-shadow: 0 10px 28px rgba(17,17,17,.045); transition: background .25s ease, transform .25s ease, box-shadow .25s ease; }
         .service:hover { position: relative; z-index: 2; background: var(--oscuro); color: var(--blanco); transform: translateY(-7px); box-shadow: 0 24px 46px rgba(17,17,17,.15); }
         .service-media { position: relative; height: 205px; overflow: hidden; background: var(--oscuro); }
         .service-media::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 55%, rgba(17,17,17,.38)); pointer-events: none; }
         .service-media img { width: 100%; height: 100%; object-fit: cover; transition: transform .45s ease; }
         .service:hover .service-media img { transform: scale(1.045); }
+        .service-media-empty { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; color: rgba(229, 224, 214, .68); background: linear-gradient(145deg, #191919, #0e0e0e); }
+        .service-media-empty .icon { width: 38px; height: 38px; color: var(--dorado); opacity: .8; }
+        .service-media-empty span { font-size: 10px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
         .service-body { flex: 1; display: flex; flex-direction: column; padding: 24px 24px 26px; }
         .service-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
         .service-icon { width: 48px; height: 48px; display: grid; place-items: center; border: 1px solid var(--borde); color: var(--dorado); }
@@ -100,6 +110,8 @@
         .price { color: var(--dorado); font-size: 20px; font-weight: 900; }
         .duration { display: inline-flex; align-items: center; gap: 6px; color: var(--gris); font-size: 11px; }
         .duration .icon { width: 14px; height: 14px; }
+        .services-empty { grid-column: 1 / -1; padding: 38px; border: 1px solid var(--borde); background: var(--blanco); text-align: center; }
+        .services-empty strong { display: block; margin-bottom: 8px; font-family: Georgia, serif; font-size: 22px; }
 
         .standard { background: var(--blanco); }
         .standard-grid { display: grid; grid-template-columns: .85fr 1.15fr; min-height: 570px; }
@@ -188,6 +200,7 @@
             .nav-left { display: none; }
             .nav-right .nav-link { display: none; }
             .services { grid-template-columns: repeat(2, 1fr); }
+            .services-carousel.is-active .services { grid-auto-columns: calc((100% - 18px) / 2); }
             .standard-grid { grid-template-columns: 1fr 1fr; }
             .standard-dark { padding: 45px; }
             .standards-list { padding: 40px; }
@@ -229,6 +242,8 @@
             .hero-actions .btn { width: 100%; }
             .hero-signature { display: none; }
             .services { grid-template-columns: 1fr; }
+            .services-carousel.is-active .services { grid-auto-columns: 88%; }
+            .carousel-controls { margin-top: -28px; }
             .service { min-height: 455px; }
             .standard-dark { min-height: 390px; padding: 32px; }
             .standard-logo { width: 86px; height: 86px; }
@@ -255,18 +270,7 @@
             ? asset('storage/' . $logoGuardado)
             : asset('images/branding/icon_512_Barbaercore.png');
         $logoFondoOscuro = asset('images/branding/barbercore-logo-dark-transparent.png');
-        $imagenesServicios = [
-            1 => 'images/services/service-classic-cut.jpg',
-            2 => 'images/services/service-cut-beard.jpg',
-            3 => 'images/services/service-beard.jpg',
-            5 => 'images/services/service-premium-fade.jpg',
-        ];
-        $imagenesDemo = [
-            'images/services/service-classic-cut.jpg',
-            'images/services/service-beard.jpg',
-            'images/services/service-cut-beard.jpg',
-            'images/services/service-premium-fade.jpg',
-        ];
+        $usarCarrusel = $servicios->count() > 4;
     @endphp
 
     <div class="topbar">
@@ -330,11 +334,30 @@
                     <p class="copy">Opciones claras, atención sin prisas y resultados pensados para tu imagen y rutina.</p>
                 </div>
 
-                <div class="services">
+                @if($usarCarrusel)
+                    <div class="carousel-controls" aria-label="Controles del carrusel de servicios">
+                        <button class="carousel-button" type="button" data-carousel-prev aria-label="Ver servicios anteriores">
+                            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>
+                        </button>
+                        <button class="carousel-button" type="button" data-carousel-next aria-label="Ver más servicios">
+                            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+                        </button>
+                    </div>
+                @endif
+
+                <div class="services-carousel {{ $usarCarrusel ? 'is-active' : '' }}" @if($usarCarrusel) data-services-carousel @endif>
+                <div class="services" @if($usarCarrusel) data-carousel-track tabindex="0" aria-label="Servicios disponibles" @endif>
                     @forelse($servicios as $servicio)
                         <article class="service">
                             <div class="service-media">
-                                <img src="{{ asset($imagenesServicios[$servicio->id_servicio] ?? $imagenesDemo[($loop->iteration - 1) % count($imagenesDemo)]) }}" alt="{{ $servicio->nombre }} en {{ $nombreBarberia }}" loading="lazy">
+                                @if($servicio->imagen)
+                                    <img src="{{ asset('storage/' . $servicio->imagen) }}" alt="{{ $servicio->nombre }} en {{ $nombreBarberia }}" loading="lazy">
+                                @else
+                                    <div class="service-media-empty" role="img" aria-label="Imagen no disponible para {{ $servicio->nombre }}">
+                                        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m3 16 4.5-4.5 4 4 2.5-2.5 7 7"/></svg>
+                                        <span>Imagen no disponible</span>
+                                    </div>
+                                @endif
                             </div>
                             <div class="service-body">
                                 <div class="service-top">
@@ -358,10 +381,12 @@
                             </div>
                         </article>
                     @empty
-                        @foreach(['Corte clásico', 'Barba y perfilado', 'Corte + barba', 'Cuidado premium'] as $servicioDemo)
-                            <article class="service"><div class="service-media"><img src="{{ asset($imagenesDemo[$loop->index]) }}" alt="{{ $servicioDemo }} en {{ $nombreBarberia }}" loading="lazy"></div><div class="service-body"><div class="service-top"><span class="service-icon"><svg class="icon" viewBox="0 0 24 24"><circle cx="6" cy="7" r="3"/><circle cx="6" cy="17" r="3"/><path d="m8.6 8.5 11.4 7M8.6 15.5 20 8"/></svg></span><span class="service-index">{{ str_pad($loop->iteration, 2, '0', STR_PAD_LEFT) }}</span></div><h3>{{ $servicioDemo }}</h3><p>Una experiencia profesional y cuidada, hecha a tu medida.</p><div class="service-footer"><span class="price">Consultar</span></div></div></article>
-                        @endforeach
+                        <div class="services-empty">
+                            <strong>Próximamente nuevos servicios</strong>
+                            <span class="copy">Contáctanos por WhatsApp para conocer las opciones disponibles.</span>
+                        </div>
                     @endforelse
+                </div>
                 </div>
             </div>
         </section>
@@ -463,6 +488,33 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('[data-services-carousel]').forEach((carousel) => {
+                const track = carousel.querySelector('[data-carousel-track]');
+                const controls = carousel.previousElementSibling;
+                const previous = controls?.querySelector('[data-carousel-prev]');
+                const next = controls?.querySelector('[data-carousel-next]');
+
+                if (!track || !previous || !next) return;
+
+                const updateControls = () => {
+                    const maximum = track.scrollWidth - track.clientWidth;
+                    previous.disabled = track.scrollLeft <= 2;
+                    next.disabled = track.scrollLeft >= maximum - 2;
+                };
+
+                const move = (direction) => {
+                    const card = track.querySelector('.service');
+                    const gap = Number.parseFloat(getComputedStyle(track).columnGap) || 0;
+                    track.scrollBy({ left: direction * ((card?.getBoundingClientRect().width || track.clientWidth) + gap), behavior: 'smooth' });
+                };
+
+                previous.addEventListener('click', () => move(-1));
+                next.addEventListener('click', () => move(1));
+                track.addEventListener('scroll', updateControls, { passive: true });
+                window.addEventListener('resize', updateControls);
+                updateControls();
+            });
+
             const widget = document.getElementById('whatsapp-widget');
             const panel = document.getElementById('whatsapp-panel');
             const toggle = widget.querySelector('.whatsapp-toggle');

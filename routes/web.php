@@ -34,6 +34,7 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/clientes-inactivos', [ClienteController::class, 'inactivos'])->name('clientes.inactivos');
     Route::resource('clientes', ClienteController::class);
+    Route::patch('/servicios/{servicio}/landing', [ServicioController::class, 'cambiarVisibilidadLanding'])->name('servicios.landing');
     Route::resource('servicios', ServicioController::class)->except(['show']);
     Route::put('/citas/{cita}/cancelar', [CitaController::class, 'cancelar'])->name('citas.cancelar');
     Route::put('/citas/{cita}/completar', [CitaController::class, 'completar'])->name('citas.completar');
