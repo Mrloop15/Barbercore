@@ -157,6 +157,7 @@
             }
         }
     </style>
+    <link rel="stylesheet" href="/css/pwa-redesign.css">
 </head>
 <body>
     <header class="topbar">

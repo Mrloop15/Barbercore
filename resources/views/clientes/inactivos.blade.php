@@ -115,26 +115,29 @@
 
                     <td>
                         <div class="actions">
-                            <a href="{{ route('clientes.show', $cliente->id_cliente) }}" class="btn btn-secondary btn-sm">
-                                Ver
+                            <a href="{{ route('clientes.show', $cliente->id_cliente) }}" class="btn btn-secondary btn-icon" title="Ver cliente" aria-label="Ver cliente">
+                                <x-icon name="eye" /><span class="sr-only">Ver cliente</span>
                             </a>
 
                             @if ($telefonoLimpio)
                                 <a 
                                     href="https://wa.me/52{{ $telefonoLimpio }}?text={{ $mensaje }}" 
                                     target="_blank" 
-                                    class="btn btn-sm whatsapp-btn"
+                                    rel="noopener noreferrer"
+                                    class="btn btn-icon whatsapp-btn"
+                                    title="Enviar mensaje por WhatsApp"
+                                    aria-label="Enviar mensaje por WhatsApp a {{ $cliente->nombre }}"
                                 >
-                                    Enviar mensaje
+                                    <x-icon name="whatsapp" size="20" /><span class="sr-only">Enviar mensaje por WhatsApp</span>
                                 </a>
                             @else
-                                <button class="btn btn-sm btn-secondary" disabled>
-                                    Sin teléfono
+                                <button class="btn btn-icon btn-secondary" disabled title="Cliente sin teléfono" aria-label="Cliente sin teléfono">
+                                    <x-icon name="phone-off" /><span class="sr-only">Cliente sin teléfono</span>
                                 </button>
                             @endif
 
-                            <a href="{{ route('clientes.edit', $cliente->id_cliente) }}" class="btn btn-primary btn-sm">
-                                Editar
+                            <a href="{{ route('clientes.edit', $cliente->id_cliente) }}" class="btn btn-primary btn-icon" title="Editar cliente" aria-label="Editar cliente">
+                                <x-icon name="edit" /><span class="sr-only">Editar cliente</span>
                             </a>
                         </div>
                     </td>

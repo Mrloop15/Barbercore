@@ -69,20 +69,20 @@
 
                     <td>
                         <div class="actions">
-                            <a href="{{ route('clientes.show', $cliente->id_cliente) }}" class="btn btn-secondary btn-sm">
-                                Ver
+                            <a href="{{ route('clientes.show', $cliente->id_cliente) }}" class="btn btn-secondary btn-icon" title="Ver cliente" aria-label="Ver cliente">
+                                <x-icon name="eye" /><span class="sr-only">Ver cliente</span>
                             </a>
 
-                            <a href="{{ route('clientes.edit', $cliente->id_cliente) }}" class="btn btn-primary btn-sm">
-                                Editar
+                            <a href="{{ route('clientes.edit', $cliente->id_cliente) }}" class="btn btn-primary btn-icon" title="Editar cliente" aria-label="Editar cliente">
+                                <x-icon name="edit" /><span class="sr-only">Editar cliente</span>
                             </a>
 
                             <form method="POST" action="{{ route('clientes.destroy', $cliente->id_cliente) }}" onsubmit="return confirm('¿Seguro que deseas eliminar este cliente?');">
                                 @csrf
                                 @method('DELETE')
 
-                                <button type="submit" class="btn btn-danger btn-sm">
-                                    Eliminar
+                                <button type="submit" class="btn btn-danger btn-icon" title="Eliminar cliente" aria-label="Eliminar cliente">
+                                    <x-icon name="trash" /><span class="sr-only">Eliminar cliente</span>
                                 </button>
                             </form>
                         </div>

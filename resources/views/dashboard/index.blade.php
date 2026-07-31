@@ -5,7 +5,15 @@
 
 @section('content')
 
-<div class="stats-grid">
+<div class="dashboard-intro">
+    <div>
+        <span>Resumen del negocio</span>
+        <h3>Todo lo importante, en un vistazo</h3>
+    </div>
+    <a href="{{ route('citas.create') }}" class="btn btn-primary">Nueva cita</a>
+</div>
+
+<div class="stats-grid dashboard-stats">
     <div class="stat-card">
         <span>Clientes registrados</span>
         <h3>{{ $totalClientes }}</h3>

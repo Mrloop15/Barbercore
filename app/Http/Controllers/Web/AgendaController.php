@@ -57,6 +57,24 @@ class AgendaController extends Controller
         $ingresosEstimados = $citas->where('estado', 'pendiente')->sum('precio');
         $ingresosGenerados = $citas->where('estado', 'completada')->sum('precio');
 
+        // El rango visual se adapta a las citas, conservando una jornada base de 08:00 a 20:00.
+        $horaInicioAgenda = 8;
+        $horaFinAgenda = 20;
+
+        if ($citas->isNotEmpty()) {
+            $primeraHora = $citas->min(fn ($cita) => Carbon::parse($cita->hora_inicio)->hour);
+            $ultimaHora = $citas->max(function ($cita) {
+                $finCita = Carbon::parse($cita->hora_fin);
+                return $finCita->minute > 0 ? $finCita->hour + 1 : $finCita->hour;
+            });
+
+            $horaInicioAgenda = min($horaInicioAgenda, $primeraHora);
+            $horaFinAgenda = max($horaFinAgenda, $ultimaHora);
+        }
+
+        $marcadoresHorario = range($horaInicioAgenda, $horaFinAgenda);
+        $duracionJornadaMinutos = ($horaFinAgenda - $horaInicioAgenda) * 60;
+
         return view('agenda.index', compact(
             'vista',
             'fechaBase',
@@ -68,7 +86,11 @@ class AgendaController extends Controller
             'completadas',
             'canceladas',
             'ingresosEstimados',
-            'ingresosGenerados'
+            'ingresosGenerados',
+            'horaInicioAgenda',
+            'horaFinAgenda',
+            'marcadoresHorario',
+            'duracionJornadaMinutos'
         ));
     }
 }

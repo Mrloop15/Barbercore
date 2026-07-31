@@ -95,16 +95,16 @@
 
                     <td>
                         <div class="actions">
-                            <a href="{{ route('recompensas.edit', $recompensa->id_recompensa) }}" class="btn btn-primary btn-sm">
-                                Editar
+                            <a href="{{ route('recompensas.edit', $recompensa->id_recompensa) }}" class="btn btn-primary btn-icon" title="Editar recompensa" aria-label="Editar recompensa">
+                                <x-icon name="edit" /><span class="sr-only">Editar recompensa</span>
                             </a>
 
                             <form method="POST" action="{{ route('recompensas.destroy', $recompensa->id_recompensa) }}" onsubmit="return confirm('¿Seguro que deseas eliminar esta recompensa?');">
                                 @csrf
                                 @method('DELETE')
 
-                                <button type="submit" class="btn btn-danger btn-sm">
-                                    Eliminar
+                                <button type="submit" class="btn btn-danger btn-icon" title="Eliminar recompensa" aria-label="Eliminar recompensa">
+                                    <x-icon name="trash" /><span class="sr-only">Eliminar recompensa</span>
                                 </button>
                             </form>
                         </div>

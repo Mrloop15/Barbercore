@@ -5,7 +5,7 @@
 
 @section('content')
 
-<div class="content-card">
+<div class="content-card appointment-form-card">
     <form method="POST" action="{{ route('citas.store') }}">
         @csrf
 
@@ -57,36 +57,50 @@
                 </select>
             </div>
 
-            <div class="form-group">
-                <label for="fecha">Fecha *</label>
+            <div class="form-group appointment-date-group">
+                <label for="fecha">Fecha de la cita *</label>
+                <div class="date-shortcuts">
+                    <button type="button" class="date-shortcut" data-date="{{ now()->toDateString() }}">Hoy</button>
+                    <button type="button" class="date-shortcut" data-date="{{ now()->addDay()->toDateString() }}">Mañana</button>
+                    <button type="button" class="date-shortcut" data-date="{{ now()->next('saturday')->toDateString() }}">Sábado</button>
+                </div>
                 <input 
                     type="date" 
                     name="fecha" 
                     id="fecha" 
                     value="{{ old('fecha', date('Y-m-d')) }}" 
+                    min="{{ now()->toDateString() }}"
                     required
                 >
+                <small class="field-help" id="fechaLegible"></small>
             </div>
 
-            <div class="form-group">
+            <div class="form-group appointment-time-group">
                 <label for="hora_inicio">Hora de inicio *</label>
                 <input 
                     type="time" 
                     name="hora_inicio" 
                     id="hora_inicio" 
                     value="{{ old('hora_inicio') }}" 
+                    step="900"
                     required
                 >
+                <div class="time-shortcuts">
+                    @foreach (['09:00', '11:00', '13:00', '16:00', '18:00'] as $horaRapida)
+                        <button type="button" class="time-shortcut" data-time="{{ $horaRapida }}">{{ $horaRapida }}</button>
+                    @endforeach
+                </div>
             </div>
 
             <div class="form-group">
                 <label>Resumen del servicio</label>
-                <div class="detail-item">
+                <div class="detail-item appointment-summary">
                     <span>Precio</span>
                     <strong id="resumenPrecio">$0.00</strong>
                     <br><br>
                     <span>Duración aproximada</span>
                     <strong id="resumenDuracion">0 min</strong>
+                    <div class="appointment-window"><span>Horario estimado</span><strong id="resumenHorario">Selecciona fecha y hora</strong></div>
                 </div>
             </div>
 
@@ -116,6 +130,10 @@
     const servicioSelect = document.getElementById('id_servicio');
     const resumenPrecio = document.getElementById('resumenPrecio');
     const resumenDuracion = document.getElementById('resumenDuracion');
+    const resumenHorario = document.getElementById('resumenHorario');
+    const fechaInput = document.getElementById('fecha');
+    const horaInput = document.getElementById('hora_inicio');
+    const fechaLegible = document.getElementById('fechaLegible');
 
     function actualizarResumenServicio() {
         const selected = servicioSelect.options[servicioSelect.selectedIndex];
@@ -125,7 +143,25 @@
 
         resumenPrecio.textContent = '$' + parseFloat(precio).toFixed(2);
         resumenDuracion.textContent = duracion + ' min';
+        actualizarHorario();
     }
+
+    function actualizarHorario() {
+        const duracion = parseInt(servicioSelect.options[servicioSelect.selectedIndex]?.getAttribute('data-duracion') || 0, 10);
+        if (fechaInput.value) {
+            const fecha = new Date(fechaInput.value + 'T12:00:00');
+            fechaLegible.textContent = fecha.toLocaleDateString('es-MX', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+        }
+        if (!fechaInput.value || !horaInput.value) { resumenHorario.textContent = 'Selecciona fecha y hora'; return; }
+        const inicio = new Date(fechaInput.value + 'T' + horaInput.value);
+        const fin = new Date(inicio.getTime() + duracion * 60000);
+        resumenHorario.textContent = inicio.toLocaleTimeString('es-MX', {hour:'2-digit', minute:'2-digit'}) + ' – ' + fin.toLocaleTimeString('es-MX', {hour:'2-digit', minute:'2-digit'});
+    }
+
+    document.querySelectorAll('.date-shortcut').forEach(btn => btn.addEventListener('click', () => { fechaInput.value = btn.dataset.date; fechaInput.dispatchEvent(new Event('change', { bubbles: true })); }));
+    document.querySelectorAll('.time-shortcut').forEach(btn => btn.addEventListener('click', () => { horaInput.value = btn.dataset.time; horaInput.dispatchEvent(new Event('change', { bubbles: true })); }));
+    fechaInput.addEventListener('change', actualizarHorario);
+    horaInput.addEventListener('change', actualizarHorario);
 
     servicioSelect.addEventListener('change', actualizarResumenServicio);
     actualizarResumenServicio();
