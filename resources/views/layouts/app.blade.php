@@ -7,8 +7,8 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="BarberCore">
-    <link rel="icon" type="image/png" sizes="192x192" href="{{ asset('images/branding/barbercore-192.png') }}">
-    <link rel="apple-touch-icon" href="{{ asset('images/branding/barbercore-192.png') }}">
+    <link rel="icon" type="image/png" sizes="192x192" href="{{ asset('images/branding/icon_192_Barbercore.png') }}">
+    <link rel="apple-touch-icon" href="{{ asset('images/branding/icon_192_Barbercore.png') }}">
 
     <style>
         .pwa-install-btn {
@@ -61,6 +61,9 @@
     <meta charset="UTF-8">
     <title>@yield('title', 'BarberCore')</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
 
     <style>
         :root {
@@ -374,6 +377,22 @@
 
         .search-form input {
             flex: 1;
+            min-width: 0;
+        }
+
+        .search-form select {
+            width: auto;
+            min-width: 145px;
+            flex: 0 0 auto;
+        }
+
+        .search-form .btn {
+            flex: 0 0 auto;
+            white-space: nowrap;
+        }
+
+        .product-search-form {
+            max-width: 650px;
         }
 
         .btn {
@@ -569,6 +588,18 @@
         .whatsapp-btn {
             background: #25D366;
             color: white;
+        }
+
+        .whatsapp-btn:hover {
+            background: #1fbd5a;
+            box-shadow: 0 8px 18px rgba(37,211,102,.28);
+        }
+
+        .btn-icon:disabled {
+            opacity: .42;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
         }
 
         .warning-box {
@@ -920,6 +951,11 @@
                 max-width: 100%;
             }
 
+            .search-form select,
+            .search-form .btn {
+                width: 100%;
+            }
+
             table {
                 min-width: 720px;
             }
@@ -929,6 +965,104 @@
         .mobile-close-btn {
             display: none;
         }
+
+        /* Nueva dirección visual conservando la paleta original. */
+        * { font-family: 'DM Sans', Arial, sans-serif; }
+        html, body, .sidebar, .main, .content-card {
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+        html::-webkit-scrollbar,
+        body::-webkit-scrollbar,
+        .sidebar::-webkit-scrollbar,
+        .main::-webkit-scrollbar,
+        .content-card::-webkit-scrollbar {
+            display: none;
+            width: 0;
+            height: 0;
+        }
+        body { background: radial-gradient(circle at 90% 0%, rgba(201,162,39,.10), transparent 28rem), var(--fondo); }
+        h1, h2, h3, .brand-text strong { font-family: 'Manrope', 'DM Sans', sans-serif; }
+        .sidebar { width: 278px; padding: 28px 20px 22px; border-right: 0; box-shadow: 12px 0 40px rgba(28,28,28,.06); }
+        .brand { margin-bottom: 26px; padding: 0 8px; }
+        .brand-logo, .brand-icon { width: 48px; height: 48px; border-radius: 16px; }
+        .brand-text strong { font-size: 19px; letter-spacing: -.5px; }
+        .brand-text span { font-size: 11px; text-transform: uppercase; letter-spacing: 1.1px; }
+        .menu-label { display: block; margin: 22px 12px 8px; color: var(--gris); font-size: 10px; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; }
+        .menu a, .logout-button { display: flex; align-items: center; gap: 12px; margin-bottom: 4px; padding: 11px 13px; border-radius: 11px; font-weight: 600; transition: .2s ease; }
+        .menu a::before { content: ''; width: 7px; height: 7px; border: 2px solid var(--borde); border-radius: 50%; flex: 0 0 auto; transition: .2s ease; }
+        .menu a:hover { transform: translateX(3px); }
+        .menu a.active { background: var(--texto); color: var(--blanco); box-shadow: 0 9px 20px rgba(28,28,28,.14); }
+        .menu a.active::before { border-color: var(--dorado); background: var(--dorado); }
+        .logout-button { border-top: 1px solid var(--borde); border-radius: 0; padding-top: 18px; }
+        .main { margin-left: 278px; width: calc(100% - 278px); padding: 30px 34px 42px; }
+        .topbar { background: transparent; border: 0; border-radius: 0; padding: 0 0 24px; margin-bottom: 8px; box-shadow: none; }
+        .topbar h2 { font-size: clamp(24px, 3vw, 32px); letter-spacing: -1px; }
+        .page-kicker { color: var(--dorado); font-size: 11px; font-weight: 800; letter-spacing: 1.6px; text-transform: uppercase; margin-bottom: 4px; }
+        .topbar-info { background: var(--blanco); border: 1px solid var(--borde); border-radius: 14px; padding: 10px 14px; line-height: 1.5; box-shadow: 0 7px 18px rgba(28,28,28,.04); }
+        .topbar-info div:first-child { color: var(--texto); font-weight: 700; }
+        .content-card, .stat-card { border: 1px solid rgba(229,224,214,.9); border-radius: 20px; box-shadow: 0 10px 30px rgba(28,28,28,.055); transition: transform .2s ease, box-shadow .2s ease; }
+        .content-card { padding: 26px; overflow: hidden; }
+        .stat-card { position: relative; padding: 22px; overflow: hidden; }
+        .stat-card::after { content: ''; position: absolute; right: -12px; bottom: -24px; width: 70px; height: 70px; border-radius: 50%; background: rgba(201,162,39,.10); }
+        .stat-card:hover { transform: translateY(-3px); box-shadow: 0 15px 34px rgba(28,28,28,.08); }
+        .stat-card h3 { font-size: 30px; letter-spacing: -1px; }
+        .stats-grid { gap: 16px; }
+        th { padding: 14px 12px; font-size: 11px; text-transform: uppercase; letter-spacing: .8px; background: var(--fondo); }
+        td { padding: 15px 12px; }
+        tbody tr { transition: background .18s ease; }
+        tbody tr:hover { background: rgba(201,162,39,.045); }
+        .btn { padding: 11px 16px; border-radius: 10px; transition: transform .18s ease, box-shadow .18s ease; }
+        .btn:hover { transform: translateY(-1px); box-shadow: 0 7px 16px rgba(28,28,28,.10); }
+        .btn-primary { box-shadow: 0 7px 16px rgba(201,162,39,.20); }
+        input, textarea, select { border-radius: 10px; padding: 13px 14px; transition: border-color .18s, box-shadow .18s; }
+        input[type="file"] {
+            padding: 8px; min-height: 58px; border: 1px dashed var(--borde); background: var(--fondo);
+            color: var(--gris); cursor: pointer;
+        }
+        input[type="file"]::file-selector-button {
+            border: 0; border-radius: 9px; background: var(--texto); color: var(--blanco);
+            padding: 10px 14px; margin-right: 12px; font-weight: 700; cursor: pointer;
+            transition: background .18s ease;
+        }
+        input[type="file"]:hover { border-color: var(--dorado); background: rgba(201,162,39,.055); }
+        input[type="file"]:hover::file-selector-button { background: var(--dorado); }
+        .image-selection-preview {
+            display: none; grid-template-columns: 76px minmax(0, 1fr); align-items: center; gap: 14px;
+            margin-top: 10px; padding: 10px; background: var(--blanco); border: 1px solid var(--borde); border-radius: 12px;
+        }
+        .image-selection-preview.show { display: grid; }
+        .image-selection-preview img { width: 76px; height: 76px; border-radius: 10px; object-fit: cover; background: var(--fondo); }
+        .image-selection-preview strong, .image-selection-preview span { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .image-selection-preview strong { font-size: 13px; margin-bottom: 4px; }
+        .image-selection-preview span { color: var(--gris); font-size: 12px; }
+        .detail-item, .agenda-summary-card { border-radius: 14px; }
+        .badge { display: inline-flex; align-items: center; padding: 6px 10px; }
+        .ui-icon { display: block; pointer-events: none; }
+        .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+        .btn-icon { width: 36px; height: 36px; padding: 0; display: inline-flex; align-items: center; justify-content: center; border-radius: 10px; }
+        .btn-icon:hover { transform: translateY(-2px); }
+        .actions { gap: 8px; align-items: center; }
+        .actions form { margin: 0; display: inline-flex; }
+        .page-actions { padding: 4px 0 22px; border-bottom: 1px solid var(--borde); margin-bottom: 8px; }
+        .content-card > table { margin: 0 -26px -26px; width: calc(100% + 52px); }
+        .content-card > table th:first-child, .content-card > table td:first-child { padding-left: 26px; }
+        .content-card > table th:last-child, .content-card > table td:last-child { padding-right: 26px; }
+        .agenda-summary-card { position: relative; overflow: hidden; background: var(--blanco); box-shadow: 0 8px 24px rgba(28,28,28,.045); }
+        .agenda-summary-card::after { content: ''; position: absolute; width: 54px; height: 54px; border: 10px solid rgba(201,162,39,.09); border-radius: 50%; right: -17px; top: -17px; }
+        .form-grid { gap: 20px 24px; }
+        .form-group { margin-bottom: 18px; }
+        label { font-size: 12px; letter-spacing: .25px; }
+        .form-actions { border-top: 1px solid var(--borde); padding-top: 20px; margin-top: 8px; }
+        .content-card h3 { letter-spacing: -.4px; }
+        .dashboard-intro { display: flex; align-items: end; justify-content: space-between; gap: 20px; margin-bottom: 20px; }
+        .dashboard-intro span { color: var(--dorado); text-transform: uppercase; letter-spacing: 1.2px; font-size: 11px; font-weight: 800; }
+        .dashboard-intro h3 { margin: 5px 0 0; font-size: 20px; }
+        .dashboard-stats .stat-card:nth-child(4n + 1) { border-top: 3px solid var(--dorado); }
+        .dashboard-stats .stat-card span { display: block; min-height: 34px; }
+        .empty-state { text-align: center; padding: 36px; color: var(--gris); }
+        @media (max-width: 900px) { .sidebar { width: 278px; z-index: 1001; } .mobile-overlay { z-index: 1000; } .main { margin-left: 0; width: 100%; padding: 22px; } }
+        @media (max-width: 600px) { .main { padding: 18px 14px 30px; } .topbar { align-items: center; } .topbar-info { display: none; } .content-card { padding: 18px; overflow-x: auto; } .content-card > table { margin-left: -18px; margin-right: -18px; width: calc(100% + 36px); } .content-card > table th:first-child, .content-card > table td:first-child { padding-left: 18px; } .content-card > table th:last-child, .content-card > table td:last-child { padding-right: 18px; } .stat-card { padding: 18px; } .dashboard-intro { align-items: stretch; flex-direction: column; } }
     </style>
 </head>
 <body>
@@ -940,7 +1074,7 @@
     <aside class="sidebar" id="sidebar">
         <div class="sidebar-header">
             <div class="brand">
-                <img src="{{ asset('images/branding/barbercore-192.png') }}"
+                <img src="{{ asset('images/branding/icon_192_Barbercore.png') }}"
                      alt="BarberCore"
                      class="brand-logo"
                      onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
@@ -956,18 +1090,21 @@
         </div>
 
         <nav class="menu">
+            <span class="menu-label">Principal</span>
             <a href="{{ route('dashboard') }}" class="{{ request()->routeIs('dashboard') ? 'active' : '' }}">Dashboard</a>
             <a href="{{ route('clientes.index') }}" class="{{ request()->routeIs('clientes.index') ? 'active' : '' }}">Clientes</a>
             <a href="{{ route('clientes.inactivos') }}" class="{{ request()->routeIs('clientes.inactivos') ? 'active' : '' }}">Clientes inactivos</a>
             @if(auth()->check() && auth()->user()->rol === 'admin')
                 <a href="{{ route('usuarios.index') }}" class="{{ request()->routeIs('usuarios.*') ? 'active' : '' }}">Usuarios</a>
             @endif
+            <span class="menu-label">Operación</span>
             <a href="{{ route('citas.index') }}" class="{{ request()->routeIs('citas.*') ? 'active' : '' }}">Citas</a>
             <a href="{{ route('agenda.index') }}" class="{{ request()->routeIs('agenda.*') ? 'active' : '' }}">Agenda</a>
             <a href="{{ route('servicios.index') }}" class="{{ request()->routeIs('servicios.*') ? 'active' : '' }}">Servicios</a>
             <a href="{{ route('productos.index') }}" class="{{ request()->routeIs('productos.*') ? 'active' : '' }}">Productos</a>
             <a href="{{ route('ventas-productos.index') }}" class="{{ request()->routeIs('ventas-productos.*') ? 'active' : '' }}">Ventas</a>
             <a href="{{ route('recompensas.index') }}" class="{{ request()->routeIs('recompensas.*') ? 'active' : '' }}">Recompensas</a>
+            <span class="menu-label">Análisis</span>
             <a href="{{ route('estadisticas.index') }}" class="{{ request()->routeIs('estadisticas.*') ? 'active' : '' }}">Estadísticas</a>
             <a href="{{ route('configuracion.index') }}" class="{{ request()->routeIs('configuracion.*') ? 'active' : '' }}">Configuración</a>
 
@@ -985,6 +1122,7 @@
             <div style="display:flex; align-items:center; gap:12px; min-width:0;">
                 <button type="button" class="mobile-menu-btn" id="openSidebar">☰</button>
                 <div>
+                    <div class="page-kicker">Panel administrativo</div>
                     <h2>@yield('page-title', 'Panel BarberCore')</h2>
                 </div>
             </div>
@@ -1040,6 +1178,37 @@
             if (window.innerWidth > 900) {
                 closeSidebar();
             }
+        });
+    })();
+</script>
+
+<script>
+    (function () {
+        const imageInputs = document.querySelectorAll('input[type="file"][accept*="image"], input[type="file"][accept*="jpg"], input[type="file"][accept*="png"]');
+
+        imageInputs.forEach(function (input) {
+            const preview = document.createElement('div');
+            preview.className = 'image-selection-preview';
+            preview.setAttribute('aria-live', 'polite');
+            preview.innerHTML = '<img alt="Vista previa de la imagen seleccionada"><div><strong></strong><span></span></div>';
+            input.insertAdjacentElement('afterend', preview);
+
+            input.addEventListener('change', function () {
+                const file = input.files && input.files[0];
+                if (!file) {
+                    preview.classList.remove('show');
+                    return;
+                }
+
+                const image = preview.querySelector('img');
+                const name = preview.querySelector('strong');
+                const meta = preview.querySelector('span');
+                image.src = URL.createObjectURL(file);
+                image.onload = function () { URL.revokeObjectURL(image.src); };
+                name.textContent = file.name;
+                meta.textContent = (file.size / 1024 / 1024).toFixed(2) + ' MB · imagen lista para guardar';
+                preview.classList.add('show');
+            });
         });
     })();
 </script>

@@ -233,6 +233,7 @@
             color: #6B6B6B;
         }
     </style>
+    <link rel="stylesheet" href="/css/pwa-redesign.css">
 </head>
 <body>
     <header class="topbar">

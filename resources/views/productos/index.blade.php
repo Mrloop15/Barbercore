@@ -24,7 +24,7 @@
 
 <div class="content-card">
     <div class="page-actions">
-        <form method="GET" action="{{ route('productos.index') }}" class="search-form">
+        <form method="GET" action="{{ route('productos.index') }}" class="search-form product-search-form">
             <input 
                 type="text" 
                 name="buscar" 
@@ -122,16 +122,16 @@
 
                     <td>
                         <div class="actions">
-                            <a href="{{ route('productos.edit', $producto->id_producto) }}" class="btn btn-primary btn-sm">
-                                Editar
+                            <a href="{{ route('productos.edit', $producto->id_producto) }}" class="btn btn-primary btn-icon" title="Editar producto" aria-label="Editar producto">
+                                <x-icon name="edit" /><span class="sr-only">Editar producto</span>
                             </a>
 
                             <form method="POST" action="{{ route('productos.destroy', $producto->id_producto) }}" onsubmit="return confirm('¿Seguro que deseas eliminar este producto?');">
                                 @csrf
                                 @method('DELETE')
 
-                                <button type="submit" class="btn btn-danger btn-sm">
-                                    Eliminar
+                                <button type="submit" class="btn btn-danger btn-icon" title="Eliminar producto" aria-label="Eliminar producto">
+                                    <x-icon name="trash" /><span class="sr-only">Eliminar producto</span>
                                 </button>
                             </form>
                         </div>

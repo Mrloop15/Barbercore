@@ -64,16 +64,16 @@
 
                     <td>
                         <div class="actions">
-                            <a href="{{ route('servicios.edit', $servicio->id_servicio) }}" class="btn btn-primary btn-sm">
-                                Editar
+                            <a href="{{ route('servicios.edit', $servicio->id_servicio) }}" class="btn btn-primary btn-icon" title="Editar servicio" aria-label="Editar servicio">
+                                <x-icon name="edit" /><span class="sr-only">Editar servicio</span>
                             </a>
 
                             <form method="POST" action="{{ route('servicios.destroy', $servicio->id_servicio) }}" onsubmit="return confirm('¿Seguro que deseas eliminar este servicio?');">
                                 @csrf
                                 @method('DELETE')
 
-                                <button type="submit" class="btn btn-danger btn-sm">
-                                    Eliminar
+                                <button type="submit" class="btn btn-danger btn-icon" title="Eliminar servicio" aria-label="Eliminar servicio">
+                                    <x-icon name="trash" /><span class="sr-only">Eliminar servicio</span>
                                 </button>
                             </form>
                         </div>

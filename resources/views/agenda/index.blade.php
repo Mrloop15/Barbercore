@@ -141,8 +141,8 @@
 
                             <td>
                                 @if ($cita->estado === 'pendiente')
-                                    <a href="{{ route('citas.edit', $cita->id_cita) }}" class="btn btn-primary btn-sm">
-                                        Editar
+                                    <a href="{{ route('citas.edit', $cita->id_cita) }}" class="btn btn-primary btn-icon" title="Editar cita" aria-label="Editar cita">
+                                        <x-icon name="edit" /><span class="sr-only">Editar cita</span>
                                     </a>
                                 @else
                                     <span style="color: var(--gris); font-size: 13px;">

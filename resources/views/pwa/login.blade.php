@@ -93,6 +93,7 @@
             display: none;
         }
     </style>
+    <link rel="stylesheet" href="/css/pwa-redesign.css">
 </head>
 <body>
     <div class="login-card">

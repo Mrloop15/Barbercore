@@ -82,16 +82,16 @@
                     </td>
                     <td>
                         <div class="actions">
-                            <a href="{{ route('usuarios.edit', $usuario->id_usuario) }}" class="btn btn-primary btn-sm">
-                                Editar
+                            <a href="{{ route('usuarios.edit', $usuario->id_usuario) }}" class="btn btn-primary btn-icon" title="Editar usuario" aria-label="Editar usuario">
+                                <x-icon name="edit" /><span class="sr-only">Editar usuario</span>
                             </a>
 
                             <form method="POST" action="{{ route('usuarios.estado', $usuario->id_usuario) }}">
                                 @csrf
                                 @method('PUT')
 
-                                <button type="submit" class="btn {{ $usuario->activo ? 'btn-danger' : 'btn-success' }} btn-sm">
-                                    {{ $usuario->activo ? 'Desactivar' : 'Activar' }}
+                                <button type="submit" class="btn {{ $usuario->activo ? 'btn-danger' : 'btn-success' }} btn-icon" title="{{ $usuario->activo ? 'Desactivar usuario' : 'Activar usuario' }}" aria-label="{{ $usuario->activo ? 'Desactivar usuario' : 'Activar usuario' }}">
+                                    <x-icon name="power" /><span class="sr-only">{{ $usuario->activo ? 'Desactivar usuario' : 'Activar usuario' }}</span>
                                 </button>
                             </form>
                         </div>

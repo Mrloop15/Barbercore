@@ -78,16 +78,16 @@
                     <td>
                         <div class="actions">
                             @if ($cita->estado === 'pendiente')
-                                <a href="{{ route('citas.edit', $cita->id_cita) }}" class="btn btn-primary btn-sm">
-                                    Editar
+                                <a href="{{ route('citas.edit', $cita->id_cita) }}" class="btn btn-primary btn-icon" title="Editar cita" aria-label="Editar cita">
+                                    <x-icon name="edit" /><span class="sr-only">Editar cita</span>
                                 </a>
 
                                 <form method="POST" action="{{ route('citas.completar', $cita->id_cita) }}" onsubmit="return confirm('¿Deseas finalizar esta cita?');">
                                     @csrf
                                     @method('PUT')
 
-                                    <button type="submit" class="btn btn-success btn-sm">
-                                        Completar
+                                    <button type="submit" class="btn btn-success btn-icon" title="Completar cita" aria-label="Completar cita">
+                                        <x-icon name="check" /><span class="sr-only">Completar cita</span>
                                     </button>
                                 </form>
 
@@ -95,8 +95,8 @@
                                     @csrf
                                     @method('PUT')
 
-                                    <button type="submit" class="btn btn-danger btn-sm">
-                                        Cancelar
+                                    <button type="submit" class="btn btn-danger btn-icon" title="Cancelar cita" aria-label="Cancelar cita">
+                                        <x-icon name="close" /><span class="sr-only">Cancelar cita</span>
                                     </button>
                                 </form>
                             @else

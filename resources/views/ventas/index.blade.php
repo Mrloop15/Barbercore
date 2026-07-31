@@ -74,8 +74,8 @@
                     </td>
 
                     <td>
-                        <a href="{{ route('ventas-productos.show', $venta->id_venta) }}" class="btn btn-secondary btn-sm">
-                            Ver detalle
+                        <a href="{{ route('ventas-productos.show', $venta->id_venta) }}" class="btn btn-secondary btn-icon" title="Ver detalle de venta" aria-label="Ver detalle de venta">
+                            <x-icon name="eye" /><span class="sr-only">Ver detalle de venta</span>
                         </a>
                     </td>
                 </tr>
