@@ -7,6 +7,7 @@ const btnTodos = document.getElementById("btnTodos");
 const btnBajoStock = document.getElementById("btnBajoStock");
 
 let productosOriginales = [];
+let modoActual = "todos";
 
 if (!token) {
     window.location.href = "/pwa/login";
@@ -27,6 +28,25 @@ function formatoMoneda(valor) {
         style: "currency",
         currency: "MXN",
     });
+}
+
+function escaparHtml(texto) {
+    return String(texto ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+}
+
+function actualizarEstadoBotones() {
+    if (modoActual === "todos") {
+        btnTodos.classList.remove("secondary");
+        btnBajoStock.classList.add("secondary");
+    } else {
+        btnTodos.classList.add("secondary");
+        btnBajoStock.classList.remove("secondary");
+    }
 }
 
 async function apiGet(url) {
@@ -55,25 +75,24 @@ async function apiGet(url) {
 
 function extraerProductos(data) {
     if (Array.isArray(data)) return data;
-
     if (Array.isArray(data.data)) return data.data;
-
     if (data.data && Array.isArray(data.data.data)) return data.data.data;
-
     if (data.productos && Array.isArray(data.productos)) return data.productos;
-
     return [];
 }
 
 async function cargarProductos() {
     try {
+        modoActual = "todos";
+        actualizarEstadoBotones();
+
         productosGrid.innerHTML =
             '<div class="empty">Cargando productos...</div>';
 
         const data = await apiGet("/api/productos");
 
         productosOriginales = extraerProductos(data);
-        pintarProductos(productosOriginales);
+        aplicarBusquedaActual();
     } catch (error) {
         mostrarMensaje(error.message || "No se pudieron cargar los productos.");
         productosGrid.innerHTML =
@@ -83,13 +102,16 @@ async function cargarProductos() {
 
 async function cargarBajoStock() {
     try {
+        modoActual = "bajo_stock";
+        actualizarEstadoBotones();
+
         productosGrid.innerHTML =
             '<div class="empty">Cargando productos con bajo stock...</div>';
 
         const data = await apiGet("/api/productos/bajo-stock");
 
         productosOriginales = extraerProductos(data);
-        pintarProductos(productosOriginales);
+        aplicarBusquedaActual();
     } catch (error) {
         mostrarMensaje(
             error.message ||
@@ -98,6 +120,30 @@ async function cargarBajoStock() {
         productosGrid.innerHTML =
             '<div class="empty">No se pudieron cargar los productos con bajo stock.</div>';
     }
+}
+
+function construirImagenProducto(producto) {
+    const nombre = escaparHtml(producto.nombre ?? "Producto");
+    const imagenUrl = producto.imagen_url ?? null;
+
+    if (imagenUrl) {
+        return `
+            <div class="producto-image-wrap">
+                <img
+                    src="${escaparHtml(imagenUrl)}"
+                    alt="${nombre}"
+                    class="producto-image"
+                    onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=&quot;producto-placeholder&quot;>📦</div>';"
+                >
+            </div>
+        `;
+    }
+
+    return `
+        <div class="producto-image-wrap">
+            <div class="producto-placeholder">📦</div>
+        </div>
+    `;
 }
 
 function pintarProductos(productos) {
@@ -118,24 +164,46 @@ function pintarProductos(productos) {
         card.className = "producto-card";
 
         card.innerHTML = `
-            <h3>${producto.nombre ?? "Producto sin nombre"}</h3>
-            <p><strong>Descripción:</strong> ${producto.descripcion ?? "Sin descripción"}</p>
-            <p><strong>Precio compra:</strong> ${formatoMoneda(producto.precio_compra)}</p>
-            <p><strong>Precio venta:</strong> ${formatoMoneda(producto.precio_venta)}</p>
-            <p><strong>Stock mínimo:</strong> ${stockMinimo}</p>
+            ${construirImagenProducto(producto)}
 
-            <span class="stock ${esBajo ? "bajo" : ""}">
-                Stock actual: ${stock}
-            </span>
+            <div class="producto-body">
+                <h3>${escaparHtml(producto.nombre ?? "Producto sin nombre")}</h3>
+                <p>${escaparHtml(producto.descripcion ?? "Sin descripción")}</p>
+                <p class="precio">Venta: ${formatoMoneda(producto.precio_venta)}</p>
+                <p>Compra: ${formatoMoneda(producto.precio_compra)}</p>
+                <p>Stock mínimo: ${stockMinimo}</p>
 
-            <div class="stock-form">
-                <input type="number" min="0" value="${stock}" id="stock-${producto.id_producto}">
-                <button onclick="actualizarStock(${producto.id_producto})">Guardar</button>
+                <span class="stock ${esBajo ? "bajo" : ""}">
+                    Stock actual: ${stock}
+                </span>
+
+                <div class="stock-form">
+                    <input type="number" min="0" value="${stock}" id="stock-${producto.id_producto}">
+                    <button type="button" onclick="actualizarStock(${producto.id_producto})">Guardar</button>
+                </div>
             </div>
         `;
 
         productosGrid.appendChild(card);
     });
+}
+
+function aplicarBusquedaActual() {
+    const texto = buscarProducto.value.toLowerCase().trim();
+
+    if (!texto) {
+        pintarProductos(productosOriginales);
+        return;
+    }
+
+    const filtrados = productosOriginales.filter((producto) => {
+        const nombre = `${producto.nombre ?? ""}`.toLowerCase();
+        const descripcion = `${producto.descripcion ?? ""}`.toLowerCase();
+
+        return nombre.includes(texto) || descripcion.includes(texto);
+    });
+
+    pintarProductos(filtrados);
 }
 
 async function actualizarStock(idProducto) {
@@ -174,26 +242,20 @@ async function actualizarStock(idProducto) {
         }
 
         mostrarMensaje("Stock actualizado correctamente.", "success");
-        cargarProductos();
+
+        if (modoActual === "bajo_stock") {
+            cargarBajoStock();
+        } else {
+            cargarProductos();
+        }
     } catch (error) {
         mostrarMensaje(error.message || "Error al actualizar stock.");
     }
 }
 
-buscarProducto.addEventListener("input", function () {
-    const texto = this.value.toLowerCase().trim();
-
-    const filtrados = productosOriginales.filter((producto) => {
-        const nombre = `${producto.nombre ?? ""}`.toLowerCase();
-        const descripcion = `${producto.descripcion ?? ""}`.toLowerCase();
-
-        return nombre.includes(texto) || descripcion.includes(texto);
-    });
-
-    pintarProductos(filtrados);
-});
-
+buscarProducto.addEventListener("input", aplicarBusquedaActual);
 btnTodos.addEventListener("click", cargarProductos);
 btnBajoStock.addEventListener("click", cargarBajoStock);
 
+actualizarEstadoBotones();
 cargarProductos();

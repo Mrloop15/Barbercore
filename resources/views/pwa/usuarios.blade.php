@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Productos - BarberCore PWA</title>
+    <title>Usuarios - BarberCore PWA</title>
 
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#C9A227">
@@ -76,27 +76,42 @@
             color: #6B6B6B;
         }
 
-        .toolbar {
+        .toolbar,
+        .form-box {
             background: #FFFFFF;
             border: 1px solid #E5E0D6;
             border-radius: 18px;
             padding: 16px;
             margin-bottom: 18px;
             box-shadow: 0 10px 26px rgba(0, 0, 0, 0.06);
+        }
+
+        .toolbar {
             display: grid;
             gap: 12px;
         }
 
-        input {
+        .toolbar-grid,
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        input,
+        select {
             width: 100%;
             box-sizing: border-box;
             border: 1px solid #E5E0D6;
             border-radius: 12px;
             padding: 13px 14px;
             font-size: 15px;
+            background: #FFFFFF;
         }
 
-        .buttons {
+        .buttons,
+        .form-actions,
+        .card-actions {
             display: flex;
             flex-wrap: wrap;
             gap: 10px;
@@ -116,101 +131,68 @@
             background: #1C1C1C;
         }
 
-        .productos-grid {
+        button.danger {
+            background: #C62828;
+        }
+
+        button.success {
+            background: #2E7D32;
+        }
+
+        .usuarios-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 16px;
         }
 
-        .producto-card {
+        .usuario-card {
             background: #FFFFFF;
             border: 1px solid #E5E0D6;
             border-radius: 18px;
-            overflow: hidden;
+            padding: 18px;
             box-shadow: 0 10px 26px rgba(0, 0, 0, 0.06);
         }
 
-        .producto-image-wrap {
-            height: 180px;
-            background: linear-gradient(135deg, rgba(201,162,39,0.14), rgba(255,255,255,0.08)), #f7f3eb;
-            border-bottom: 1px solid #E5E0D6;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .producto-image {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
-        }
-
-        .producto-placeholder {
-            width: 70px;
-            height: 70px;
-            border-radius: 18px;
-            background: rgba(201,162,39,0.16);
-            color: #C9A227;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 28px;
-            font-weight: 900;
-        }
-
-        .producto-body {
-            padding: 18px;
-        }
-
-        .producto-card h3 {
+        .usuario-card h3 {
             margin: 0 0 8px;
             font-size: 20px;
         }
 
-        .producto-card p {
+        .usuario-card p {
             margin: 5px 0;
             color: #6B6B6B;
             font-size: 14px;
             line-height: 1.5;
         }
 
-        .precio {
-            color: #1C1C1C !important;
-            font-weight: 800;
-            font-size: 15px !important;
-        }
-
-        .stock {
-            margin-top: 12px;
+        .badge {
             display: inline-block;
+            margin-top: 10px;
+            margin-right: 8px;
             padding: 8px 12px;
             border-radius: 999px;
             font-weight: 800;
             font-size: 13px;
+        }
+
+        .badge-admin {
+            background: rgba(201,162,39,0.16);
+            color: #C9A227;
+        }
+
+        .badge-barbero {
+            background: rgba(28,28,28,0.10);
+            color: #1C1C1C;
+        }
+
+        .badge-activo {
             background: #E4F6E8;
             color: #2E7D32;
         }
 
-        .stock.bajo {
+        .badge-inactivo {
             background: #FCE4E4;
             color: #C62828;
-        }
-
-        .stock-form {
-            margin-top: 14px;
-            display: flex;
-            gap: 8px;
-        }
-
-        .stock-form input {
-            margin: 0;
-            padding: 10px;
-        }
-
-        .stock-form button {
-            white-space: nowrap;
-            padding: 10px 12px;
         }
 
         .message {
@@ -236,31 +218,31 @@
             color: #6B6B6B;
         }
 
-        @media (max-width: 640px) {
+        .hidden {
+            display: none !important;
+        }
+
+        @media (max-width: 700px) {
             .container {
                 padding: 16px;
+            }
+
+            .toolbar-grid,
+            .form-grid {
+                grid-template-columns: 1fr;
             }
 
             .header-section h1 {
                 font-size: 22px;
             }
-
-            .stock-form {
-                flex-direction: column;
-            }
-
-            .stock-form button {
-                width: 100%;
-            }
         }
     </style>
-    <link rel="stylesheet" href="/css/pwa-redesign.css">
 </head>
 <body>
     <header class="topbar">
         <div class="brand">
             <div class="logo">BC</div>
-            <span>Productos</span>
+            <span>Usuarios</span>
         </div>
 
         <a href="/pwa/dashboard" class="back-link">Dashboard</a>
@@ -270,25 +252,62 @@
         <div id="message" class="message"></div>
 
         <section class="header-section">
-            <h1>Inventario</h1>
-            <p>Consulta productos, stock y actualiza existencias desde la API REST.</p>
+            <h1>Gestión de usuarios</h1>
+            <p>Administra usuarios de BarberCore desde la PWA.</p>
         </section>
 
         <section class="toolbar">
-            <input type="text" id="buscarProducto" placeholder="Buscar producto por nombre o descripción...">
+            <div class="toolbar-grid">
+                <input type="text" id="buscarUsuario" placeholder="Buscar por nombre o correo...">
+
+                <select id="filtroRol">
+                    <option value="">Todos los roles</option>
+                    <option value="admin">Admin</option>
+                    <option value="barbero">Barbero</option>
+                </select>
+
+                <select id="filtroEstado">
+                    <option value="">Todos los estados</option>
+                    <option value="1">Activos</option>
+                    <option value="0">Inactivos</option>
+                </select>
+            </div>
 
             <div class="buttons">
-                <button id="btnTodos">Todos los productos</button>
-                <button id="btnBajoStock" class="secondary">Bajo stock</button>
+                <button id="btnBuscarUsuarios">Filtrar</button>
+                <button id="btnRecargarUsuarios" class="secondary">Recargar</button>
             </div>
         </section>
 
-        <section id="productosGrid" class="productos-grid">
-            <div class="empty">Cargando productos...</div>
+        <section class="form-box">
+            <h2 id="formTitle" style="margin-top:0;">Crear usuario</h2>
+
+            <input type="hidden" id="editandoUsuarioId">
+
+            <div class="form-grid">
+                <input type="text" id="nuevoNombre" placeholder="Nombre completo">
+                <input type="email" id="nuevoCorreo" placeholder="Correo electrónico">
+                <select id="nuevoRol">
+                    <option value="">Selecciona un rol</option>
+                    <option value="admin">Admin</option>
+                    <option value="barbero">Barbero</option>
+                </select>
+                <input type="password" id="nuevoPassword" placeholder="Contraseña">
+                <input type="password" id="nuevoPasswordConfirm" placeholder="Confirmar contraseña">
+            </div>
+
+            <div class="form-actions" style="margin-top:12px;">
+                <button id="btnGuardarUsuario">Guardar usuario</button>
+                <button id="btnCancelarEdicion" class="secondary hidden" type="button">Cancelar edición</button>
+            </div>
+        </section>
+
+        <section id="usuariosGrid" class="usuarios-grid">
+            <div class="empty">Cargando usuarios...</div>
         </section>
     </main>
 
-    <script src="/js/pwa-productos.js"></script>
+    <script src="/js/pwa-usuarios.js"></script>
 
     <script>
         if ('serviceWorker' in navigator) {

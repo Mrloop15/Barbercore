@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Web\LandingController;
 use App\Http\Controllers\Web\UsuarioController;
 use App\Http\Controllers\Web\ConfiguracionController;
 use App\Http\Controllers\Web\VentaProductoController;
@@ -14,9 +15,7 @@ use App\Http\Controllers\Web\DashboardController;
 use App\Http\Controllers\Web\ClienteController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return redirect()->route('login');
-});
+Route::get('/', [LandingController::class, 'index'])->name('landing');
 
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'mostrarLogin'])->name('login');
@@ -57,6 +56,7 @@ Route::middleware('auth')->group(function () {
     Route::view('/pwa/clientes', 'pwa.clientes')->name('pwa.clientes');
     Route::view('/pwa/agenda', 'pwa.agenda')->name('pwa.agenda');
     Route::view('/pwa/productos', 'pwa.productos')->name('pwa.productos');
+    Route::view('/pwa/usuarios', 'pwa.usuarios')->name('pwa.usuarios');
     Route::view('/pwa/citas', 'pwa.citas')->name('pwa.citas');
     Route::view('/pwa/ventas', 'pwa.ventas')->name('pwa.ventas');
     Route::view('/pwa/recompensas', 'pwa.recompensas')->name('pwa.recompensas');
