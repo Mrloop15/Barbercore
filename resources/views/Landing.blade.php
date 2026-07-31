@@ -147,9 +147,40 @@
         .footer-links a:hover { color: var(--dorado); }
         .footer-bottom { display: flex; justify-content: space-between; gap: 20px; padding-top: 22px; border-top: 1px solid rgba(229,224,214,.16); color: var(--gris); font-size: 10px; }
 
-        .whatsapp { position: fixed; right: 22px; bottom: 22px; z-index: 60; width: 58px; height: 58px; display: grid; place-items: center; border: 3px solid var(--blanco); border-radius: 50%; background: var(--verde); color: var(--blanco); box-shadow: 0 14px 32px rgba(17,17,17,.25); transition: transform .2s ease; }
-        .whatsapp:hover { transform: translateY(-4px); }
-        .whatsapp svg { width: 27px; height: 27px; fill: currentColor; }
+        .whatsapp-widget { position: fixed; right: 22px; bottom: 22px; z-index: 70; font-family: Arial, Helvetica, sans-serif; }
+        .whatsapp-toggle { position: relative; width: 62px; height: 62px; display: grid; place-items: center; border: 3px solid var(--blanco); border-radius: 50%; background: var(--verde); color: var(--blanco); box-shadow: 0 14px 32px rgba(17,17,17,.25); cursor: pointer; transition: transform .2s ease, box-shadow .2s ease; }
+        .whatsapp-toggle:hover { transform: translateY(-4px); box-shadow: 0 18px 38px rgba(17,17,17,.3); }
+        .whatsapp-toggle svg { width: 28px; height: 28px; fill: currentColor; }
+        .whatsapp-badge { position: absolute; top: -2px; right: -2px; width: 18px; height: 18px; display: grid; place-items: center; border: 2px solid var(--blanco); border-radius: 50%; background: var(--dorado); color: var(--oscuro); font-size: 9px; font-weight: 900; }
+        .whatsapp-prompt { position: absolute; right: 74px; bottom: 8px; width: max-content; max-width: 210px; border: 1px solid var(--borde); border-radius: 10px; padding: 11px 14px; background: var(--blanco); color: var(--texto); box-shadow: 0 10px 28px rgba(17,17,17,.12); font-size: 12px; font-weight: 700; opacity: 0; visibility: hidden; transform: translateX(8px); transition: opacity .25s ease, transform .25s ease, visibility .25s ease; }
+        .whatsapp-prompt::after { content: ""; position: absolute; right: -6px; bottom: 15px; width: 10px; height: 10px; border-top: 1px solid var(--borde); border-right: 1px solid var(--borde); background: var(--blanco); transform: rotate(45deg); }
+        .whatsapp-widget.show-prompt:not(.is-open) .whatsapp-prompt { opacity: 1; visibility: visible; transform: translateX(0); }
+        .whatsapp-widget.is-open .whatsapp-badge { display: none; }
+
+        .whatsapp-panel { position: absolute; right: 0; bottom: 78px; width: 350px; overflow: hidden; border: 1px solid var(--borde); border-radius: 18px; background: var(--blanco); box-shadow: 0 24px 65px rgba(17,17,17,.23); opacity: 0; visibility: hidden; transform: translateY(16px) scale(.97); transform-origin: bottom right; transition: opacity .25s ease, transform .25s ease, visibility .25s ease; }
+        .whatsapp-widget.is-open .whatsapp-panel { opacity: 1; visibility: visible; transform: translateY(0) scale(1); }
+        .chat-header { display: grid; grid-template-columns: 48px 1fr 32px; gap: 12px; align-items: center; padding: 17px 16px; background: var(--oscuro); color: var(--blanco); }
+        .chat-avatar { position: relative; width: 48px; height: 48px; display: grid; place-items: center; border-radius: 50%; background: var(--blanco); }
+        .chat-avatar img { width: 42px; height: 42px; object-fit: contain; }
+        .chat-avatar::after { content: ""; position: absolute; right: 0; bottom: 1px; width: 11px; height: 11px; border: 2px solid var(--oscuro); border-radius: 50%; background: var(--verde); }
+        .chat-identity strong { display: block; margin-bottom: 3px; font-family: Georgia, serif; font-size: 15px; }
+        .chat-identity span { display: flex; align-items: center; gap: 6px; color: var(--borde); font-size: 10px; }
+        .chat-close { width: 32px; height: 32px; display: grid; place-items: center; border: 0; border-radius: 50%; background: rgba(255,255,255,.08); color: var(--blanco); cursor: pointer; }
+        .chat-close:hover { background: rgba(255,255,255,.16); }
+        .chat-close .icon { width: 16px; height: 16px; }
+        .chat-body { padding: 22px 17px 17px; background-color: var(--fondo); background-image: radial-gradient(rgba(201,162,39,.12) 1px, transparent 1px); background-size: 17px 17px; }
+        .chat-bubble { position: relative; max-width: 88%; border: 1px solid var(--borde); border-radius: 4px 14px 14px 14px; padding: 14px 15px 11px; background: var(--blanco); box-shadow: 0 6px 17px rgba(17,17,17,.06); color: var(--texto); font-size: 13px; line-height: 1.55; }
+        .chat-bubble strong { display: block; margin-bottom: 4px; }
+        .chat-time { display: block; margin-top: 8px; color: var(--gris); font-size: 9px; text-align: right; }
+        .chat-form { margin-top: 16px; }
+        .chat-label { display: block; margin-bottom: 7px; color: var(--gris); font-size: 10px; font-weight: 800; }
+        .chat-message { width: 100%; min-height: 74px; display: block; resize: vertical; border: 1px solid var(--borde); border-radius: 9px; padding: 11px 12px; background: var(--blanco); color: var(--texto); font: inherit; font-size: 12px; line-height: 1.5; outline: none; transition: border-color .2s ease, box-shadow .2s ease; }
+        .chat-message::placeholder { color: var(--gris); }
+        .chat-message:focus { border-color: var(--dorado); box-shadow: 0 0 0 3px rgba(201,162,39,.13); }
+        .chat-action { width: 100%; display: flex; align-items: center; justify-content: center; gap: 9px; margin-top: 10px; border: 0; border-radius: 9px; padding: 13px 16px; background: var(--verde); color: var(--blanco); font: inherit; font-size: 12px; font-weight: 900; cursor: pointer; transition: filter .2s ease, transform .2s ease; }
+        .chat-action:hover { filter: brightness(.95); transform: translateY(-1px); }
+        .chat-action svg { width: 18px; height: 18px; fill: currentColor; }
+        .chat-note { display: block; margin-top: 10px; color: var(--gris); font-size: 9px; text-align: center; }
 
         @media (max-width: 1050px) {
             .header-inner { grid-template-columns: auto 1fr auto; }
@@ -204,6 +235,9 @@
             .standards-list { padding: 25px; }
             .detail { padding: 22px; }
             .footer-bottom { display: block; line-height: 1.7; }
+            .whatsapp-widget { right: 15px; bottom: 15px; }
+            .whatsapp-panel { right: 0; width: min(350px, calc(100vw - 30px)); }
+            .whatsapp-prompt { display: none; }
         }
 
         @media (prefers-reduced-motion: reduce) {
@@ -387,6 +421,80 @@
         </div>
     </footer>
 
-    <a class="whatsapp" href="https://wa.me/{{ $telefonoWhatsapp }}?text=Hola,%20quiero%20informaci%C3%B3n%20sobre%20sus%20servicios" target="_blank" rel="noopener noreferrer" aria-label="Contactar por WhatsApp"><svg viewBox="0 0 24 24"><path d="M20.5 3.5A11.7 11.7 0 0 0 12.1 0C5.6 0 .3 5.3.3 11.8c0 2.1.5 4.1 1.6 5.9L.2 24l6.5-1.7a11.8 11.8 0 0 0 5.4 1.4c6.5 0 11.8-5.3 11.8-11.8 0-3.2-1.2-6.1-3.4-8.4Zm-8.4 18.2c-1.7 0-3.5-.5-5-1.4l-.4-.2-3.8 1 1-3.7-.2-.4a9.8 9.8 0 1 1 8.4 4.7Zm5.4-7.3c-.3-.1-1.7-.8-2-1-.3-.1-.5-.1-.7.2-.2.3-.8 1-.9 1.2-.2.2-.3.2-.6.1-1.7-.8-2.8-1.5-3.9-3.4-.3-.5.3-.5.8-1.6.1-.2 0-.4 0-.6l-.9-2.1c-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.6.1-.9.4-.3.3-1.2 1.2-1.2 2.9s1.2 3.3 1.4 3.5c.1.2 2.4 3.7 5.9 5.2 2.2.9 3.1 1 4.2.8.7-.1 1.7-.7 1.9-1.3.2-.7.2-1.2.2-1.3-.1-.1-.3-.2-.6-.3Z"/></svg></a>
+    <div class="whatsapp-widget" id="whatsapp-widget">
+        <span class="whatsapp-prompt" aria-hidden="true">Hola, ¿podemos ayudarte?</span>
+
+        <div class="whatsapp-panel" id="whatsapp-panel" role="dialog" aria-label="Contacto por WhatsApp" aria-hidden="true">
+            <div class="chat-header">
+                <span class="chat-avatar"><img src="{{ $logoBarberia }}" alt=""></span>
+                <div class="chat-identity">
+                    <strong>{{ $nombreBarberia }}</strong>
+                    <span>En línea · WhatsApp</span>
+                </div>
+                <button class="chat-close" type="button" aria-label="Cerrar chat">
+                    <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg>
+                </button>
+            </div>
+
+            <div class="chat-body">
+                <div class="chat-bubble">
+                    <strong>¡Hola! 👋</strong>
+                    Gracias por contactar a {{ $nombreBarberia }}. ¿Te gustaría conocer disponibilidad o agendar un servicio?
+                    <span class="chat-time">Ahora</span>
+                </div>
+
+                <form class="chat-form" action="https://wa.me/{{ $telefonoWhatsapp }}" method="get" target="_blank" rel="noopener noreferrer">
+                    <label class="chat-label" for="whatsapp-message">Escribe tu mensaje</label>
+                    <textarea class="chat-message" id="whatsapp-message" name="text" placeholder="Ej. Hola, quiero agendar un corte..." required maxlength="500"></textarea>
+                    <button class="chat-action" type="submit">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 3.5A11.7 11.7 0 0 0 12.1 0C5.6 0 .3 5.3.3 11.8c0 2.1.5 4.1 1.6 5.9L.2 24l6.5-1.7a11.8 11.8 0 0 0 5.4 1.4c6.5 0 11.8-5.3 11.8-11.8 0-3.2-1.2-6.1-3.4-8.4Zm-8.4 18.2c-1.7 0-3.5-.5-5-1.4l-.4-.2-3.8 1 1-3.7-.2-.4a9.8 9.8 0 1 1 8.4 4.7Zm5.4-7.3c-.3-.1-1.7-.8-2-1-.3-.1-.5-.1-.7.2-.2.3-.8 1-.9 1.2-.2.2-.3.2-.6.1-1.7-.8-2.8-1.5-3.9-3.4-.3-.5.3-.5.8-1.6.1-.2 0-.4 0-.6l-.9-2.1c-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.6.1-.9.4-.3.3-1.2 1.2-1.2 2.9s1.2 3.3 1.4 3.5c.1.2 2.4 3.7 5.9 5.2 2.2.9 3.1 1 4.2.8.7-.1 1.7-.7 1.9-1.3.2-.7.2-1.2.2-1.3-.1-.1-.3-.2-.6-.3Z"/></svg>
+                        Enviar por WhatsApp
+                    </button>
+                </form>
+                <span class="chat-note">Se abrirá WhatsApp en una nueva ventana.</span>
+            </div>
+        </div>
+
+        <button class="whatsapp-toggle" type="button" aria-label="Abrir chat de WhatsApp" aria-controls="whatsapp-panel" aria-expanded="false">
+            <span class="whatsapp-badge" aria-hidden="true">1</span>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 3.5A11.7 11.7 0 0 0 12.1 0C5.6 0 .3 5.3.3 11.8c0 2.1.5 4.1 1.6 5.9L.2 24l6.5-1.7a11.8 11.8 0 0 0 5.4 1.4c6.5 0 11.8-5.3 11.8-11.8 0-3.2-1.2-6.1-3.4-8.4Zm-8.4 18.2c-1.7 0-3.5-.5-5-1.4l-.4-.2-3.8 1 1-3.7-.2-.4a9.8 9.8 0 1 1 8.4 4.7Zm5.4-7.3c-.3-.1-1.7-.8-2-1-.3-.1-.5-.1-.7.2-.2.3-.8 1-.9 1.2-.2.2-.3.2-.6.1-1.7-.8-2.8-1.5-3.9-3.4-.3-.5.3-.5.8-1.6.1-.2 0-.4 0-.6l-.9-2.1c-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.6.1-.9.4-.3.3-1.2 1.2-1.2 2.9s1.2 3.3 1.4 3.5c.1.2 2.4 3.7 5.9 5.2 2.2.9 3.1 1 4.2.8.7-.1 1.7-.7 1.9-1.3.2-.7.2-1.2.2-1.3-.1-.1-.3-.2-.6-.3Z"/></svg>
+        </button>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const widget = document.getElementById('whatsapp-widget');
+            const panel = document.getElementById('whatsapp-panel');
+            const toggle = widget.querySelector('.whatsapp-toggle');
+            const close = widget.querySelector('.chat-close');
+
+            const setOpen = (open) => {
+                widget.classList.toggle('is-open', open);
+                widget.classList.remove('show-prompt');
+                toggle.setAttribute('aria-expanded', String(open));
+                toggle.setAttribute('aria-label', open ? 'Cerrar chat de WhatsApp' : 'Abrir chat de WhatsApp');
+                panel.setAttribute('aria-hidden', String(!open));
+            };
+
+            toggle.addEventListener('click', () => setOpen(!widget.classList.contains('is-open')));
+            close.addEventListener('click', () => {
+                setOpen(false);
+                toggle.focus();
+            });
+
+            document.addEventListener('click', (event) => {
+                if (!widget.contains(event.target)) setOpen(false);
+            });
+
+            document.addEventListener('keydown', (event) => {
+                if (event.key === 'Escape' && widget.classList.contains('is-open')) {
+                    setOpen(false);
+                    toggle.focus();
+                }
+            });
+
+            window.setTimeout(() => widget.classList.add('show-prompt'), 1400);
+        });
+    </script>
 </body>
 </html>
