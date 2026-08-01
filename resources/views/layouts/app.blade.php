@@ -1263,12 +1263,64 @@
         .brand-text span { font-size: 11px; text-transform: uppercase; letter-spacing: 1.1px; }
         .menu-label { display: block; margin: 22px 12px 8px; color: var(--gris); font-size: 10px; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; }
         .menu a, .logout-button { display: flex; align-items: center; gap: 12px; margin-bottom: 4px; padding: 11px 13px; border-radius: 11px; font-weight: 600; transition: .2s ease; }
-        .menu a::before { content: ''; width: 7px; height: 7px; border: 2px solid var(--borde); border-radius: 50%; flex: 0 0 auto; transition: .2s ease; }
+        .menu-icon { width: 20px; height: 20px; flex: 0 0 20px; display: inline-flex; align-items: center; justify-content: center; color: var(--gris); transition: color .2s ease; }
+        .menu-icon svg { width: 19px; height: 19px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+        .menu-text { min-width: 0; white-space: nowrap; }
         .menu a:hover { transform: translateX(3px); }
         .menu a.active { background: var(--texto); color: var(--blanco); box-shadow: 0 9px 20px rgba(28,28,28,.14); }
-        .menu a.active::before { border-color: var(--dorado); background: var(--dorado); }
+        .menu a:hover .menu-icon, .menu a.active .menu-icon { color: var(--dorado); }
         .logout-button { border-top: 1px solid var(--borde); border-radius: 0; padding-top: 18px; }
         .main { margin-left: 278px; width: calc(100% - 278px); padding: 30px 34px 42px; }
+        .sidebar, .main { transition: width .48s cubic-bezier(.22,.8,.24,1), margin-left .48s cubic-bezier(.22,.8,.24,1), padding .48s cubic-bezier(.22,.8,.24,1), transform .28s ease; }
+        .sidebar-header { position: relative; }
+        .sidebar-header .brand { padding-left: 0; padding-right: 44px; }
+        .sidebar-collapse-btn { position: absolute; right: 0; top: 7px; margin: 0; width: 34px; height: 34px; border: 1px solid var(--borde); border-radius: 10px; background: var(--blanco); color: var(--texto); cursor: pointer; display: inline-flex; align-items: center; justify-content: center; flex: 0 0 auto; transition: opacity .16s ease, color .2s ease, border-color .2s ease, background .2s ease; }
+        .sidebar-collapse-btn:hover { color: var(--dorado); border-color: var(--dorado); background: rgba(201,162,39,.08); }
+        .sidebar-collapse-btn svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 2; transition: transform .25s ease; }
+        body.sidebar-collapsed .sidebar { width: 84px; padding-left: 14px; padding-right: 14px; }
+        body.sidebar-collapsed .main { margin-left: 84px; width: calc(100% - 84px); }
+        body.sidebar-collapsed .brand { padding: 0; margin-bottom: 0; justify-content: center; }
+        body.sidebar-collapsed .brand-text, body.sidebar-collapsed .menu-text, body.sidebar-collapsed .menu-label { display: none; }
+        body.sidebar-collapsed .sidebar-header { display: block; min-height: 92px; }
+        body.sidebar-collapsed .sidebar-collapse-btn { top: 57px; left: 50%; right: auto; width: 30px; height: 30px; transform: translateX(-50%); }
+        body.sidebar-collapsed .sidebar-collapse-btn svg { transform: rotate(180deg); }
+        body.sidebar-collapsed .menu a, body.sidebar-collapsed .logout-button { justify-content: center; padding-left: 12px; padding-right: 12px; gap: 0; }
+        body.sidebar-collapsed .menu a:hover { transform: translateY(-1px); }
+        .menu-group-toggle { display: none; }
+        .menu-group-items { display: contents; }
+        body.sidebar-collapsed .sidebar { overflow: visible; }
+        body.sidebar-collapsed .menu-group { position: relative; }
+        body.sidebar-collapsed .menu-group-toggle { width: 100%; min-height: 44px; margin: 4px 0; padding: 0; border: 0; border-radius: 11px; background: transparent; color: var(--gris); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: .2s ease; }
+        body.sidebar-collapsed .menu-group-toggle:hover, body.sidebar-collapsed .menu-group.open .menu-group-toggle, body.sidebar-collapsed .menu-group:focus-within .menu-group-toggle { color: var(--dorado); background: rgba(201,162,39,.13); }
+        body.sidebar-collapsed .menu-group-toggle .menu-icon { color: inherit; }
+        body.sidebar-collapsed .menu-group-items { display: none; position: absolute; left: calc(100% + 12px); top: 0; width: 224px; padding: 10px; border: 1px solid var(--borde); border-radius: 14px; background: var(--blanco); box-shadow: 0 14px 34px rgba(28,28,28,.14); z-index: 1200; }
+        body.sidebar-collapsed .menu-group-items::before { content: ''; position: absolute; right: 100%; top: 0; width: 14px; height: 100%; }
+        body.sidebar-collapsed .menu-group:hover .menu-group-items, body.sidebar-collapsed .menu-group.open .menu-group-items, body.sidebar-collapsed .menu-group:focus-within .menu-group-items { display: block; }
+        body.sidebar-collapsed .menu-group-items::after { content: attr(data-label); display: block; padding: 4px 10px 9px; color: var(--gris); font-size: 10px; font-weight: 800; letter-spacing: 1.2px; text-transform: uppercase; order: -1; }
+        body.sidebar-collapsed .menu-group-items { display: none; }
+        body.sidebar-collapsed .menu-group:hover .menu-group-items, body.sidebar-collapsed .menu-group.open .menu-group-items, body.sidebar-collapsed .menu-group:focus-within .menu-group-items { display: flex; flex-direction: column; }
+        body.sidebar-collapsed .menu-group-items a { justify-content: flex-start; gap: 11px; padding: 10px 12px; }
+        body.sidebar-collapsed .menu-group-items .menu-text { display: block; }
+        @keyframes sidebarItemReveal { from { opacity: 0; transform: translateY(7px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes sidebarLabelHide { from { opacity: 1; transform: translateX(0); } to { opacity: 0; transform: translateX(-10px); } }
+        @keyframes groupMenuReveal { from { opacity: 0; transform: translateX(-9px) scale(.97); } to { opacity: 1; transform: translateX(0) scale(1); } }
+        body.sidebar-expanding .menu > a,
+        body.sidebar-expanding .menu-group > .menu-label,
+        body.sidebar-expanding .menu-group-items > a,
+        body.sidebar-expanding .menu > form { opacity: 0; animation: sidebarItemReveal .68s cubic-bezier(.22,.8,.24,1) forwards; animation-delay: calc(var(--item-index, 0) * 175ms + 180ms); }
+        body.sidebar-collapsing .brand-text,
+        body.sidebar-collapsing .menu-text,
+        body.sidebar-collapsing .menu-label { animation: sidebarLabelHide .16s ease forwards; }
+        body.sidebar-collapsing .sidebar-collapse-btn,
+        body.sidebar-expanding .sidebar-collapse-btn { opacity: 0; pointer-events: none; }
+        body.sidebar-collapsed .menu-group:hover .menu-group-items,
+        body.sidebar-collapsed .menu-group.open .menu-group-items,
+        body.sidebar-collapsed .menu-group:focus-within .menu-group-items { animation: groupMenuReveal .32s cubic-bezier(.22,.8,.24,1) both; }
+        @media (prefers-reduced-motion: reduce) {
+            body.sidebar-expanding .menu > a, body.sidebar-expanding .menu-group > .menu-label, body.sidebar-expanding .menu-group-items > a, body.sidebar-expanding .menu > form,
+            body.sidebar-collapsing .brand-text, body.sidebar-collapsing .menu-text, body.sidebar-collapsing .menu-label,
+            body.sidebar-collapsed .menu-group-items { animation: none !important; opacity: 1; }
+        }
         .topbar { background: transparent; border: 0; border-radius: 0; padding: 0 0 24px; margin-bottom: 8px; box-shadow: none; }
         .topbar h2 { font-size: clamp(24px, 3vw, 32px); letter-spacing: -1px; }
         .page-kicker { color: var(--dorado); font-size: 11px; font-weight: 800; letter-spacing: 1.6px; text-transform: uppercase; margin-bottom: 4px; }
@@ -1525,7 +1577,7 @@
         @media (max-width: 520px) { .appointment-modal { padding: 10px; } .appointment-modal-dialog { max-height: calc(100vh - 20px); border-radius: 19px; } .appointment-modal-header, .appointment-modal-body { padding: 18px; } .modal-appointment-heading { grid-template-columns: 52px 1fr; } .modal-appointment-heading > .badge { grid-column: 2; justify-self: start; } .modal-date-icon { width: 52px; height: 52px; } .modal-detail-grid { grid-template-columns: 1fr; } .modal-notes { grid-column: auto; } .appointment-modal-footer { padding: 14px 18px 18px; } }
         @media (max-width: 600px) { .search-form .custom-date-picker, .agenda-filter .custom-date-picker, .month-filter .custom-date-picker { width: 100%; flex-basis: auto; } }
         @media (max-width: 420px) { .custom-calendar, .custom-time-panel { position: fixed; left: 12px; right: 12px; top: 50%; width: auto; transform: translateY(-50%); } .custom-calendar.open, .custom-time-panel.open { animation: none; } .custom-time-panel { max-height: 80vh; } }
-        @media (max-width: 900px) { .sidebar { width: 278px; z-index: 1001; } .mobile-overlay { z-index: 1000; } .main { margin-left: 0; width: 100%; padding: 22px; } }
+        @media (max-width: 900px) { .sidebar, body.sidebar-collapsed .sidebar { width: 278px; padding: 28px 20px 22px; z-index: 1001; overflow-x: hidden; overflow-y: auto; } .mobile-overlay { z-index: 1000; } .main, body.sidebar-collapsed .main { margin-left: 0; width: 100%; padding: 22px; } .sidebar-collapse-btn, body.sidebar-collapsed .menu-group-toggle { display: none; } .menu-group-items, body.sidebar-collapsed .menu-group-items { display: contents; position: static; } body.sidebar-collapsed .brand-text, body.sidebar-collapsed .menu-text { display: block; } body.sidebar-collapsed .menu-label { display: block; } body.sidebar-collapsed .sidebar-header { display: flex; min-height: 0; justify-content: space-between; flex-wrap: nowrap; } body.sidebar-collapsed .brand { padding: 0 8px; margin-bottom: 26px; justify-content: flex-start; } body.sidebar-collapsed .menu a, body.sidebar-collapsed .logout-button { justify-content: flex-start; padding: 11px 13px; gap: 12px; } }
         @media (max-width: 600px) { .main { padding: 18px 14px 30px; } .topbar { align-items: center; } .topbar-info { display: none; } .content-card { padding: 18px; overflow-x: auto; } .content-card > table { margin-left: -18px; margin-right: -18px; width: calc(100% + 36px); } .content-card > table th:first-child, .content-card > table td:first-child { padding-left: 18px; } .content-card > table th:last-child, .content-card > table td:last-child { padding-right: 18px; } .stat-card { padding: 18px; } .dashboard-intro { align-items: stretch; flex-direction: column; } }
     </style>
 </head>
@@ -1533,6 +1585,21 @@
 
 <div id="pwaStatusBar" class="pwa-status-bar" style="display: none;"></div>
 <div id="mobileOverlay" class="mobile-overlay" aria-hidden="true"></div>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+    <symbol id="i-dashboard" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></symbol>
+    <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="4"/><path d="M3 21v-2a6 6 0 0 1 12 0v2M16 4.5a4 4 0 0 1 0 7.5M17 15a6 6 0 0 1 4 5.7"/></symbol>
+    <symbol id="i-user-off" viewBox="0 0 24 24"><circle cx="10" cy="8" r="4"/><path d="M3.5 21v-2a6.5 6.5 0 0 1 11-4.7M17 17l4 4M21 17l-4 4"/></symbol>
+    <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M5 21v-2a7 7 0 0 1 14 0v2"/></symbol>
+    <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+    <symbol id="i-scissors" viewBox="0 0 24 24"><circle cx="6" cy="7" r="3"/><circle cx="6" cy="17" r="3"/><path d="m8.5 8.5 11 7M8.5 15.5l11-7"/></symbol>
+    <symbol id="i-box" viewBox="0 0 24 24"><path d="m12 3 9 5-9 5-9-5 9-5Z"/><path d="M3 8v9l9 5 9-5V8M12 13v9"/></symbol>
+    <symbol id="i-cart" viewBox="0 0 24 24"><path d="M3 3h2l2.4 11.5a2 2 0 0 0 2 1.5h7.8a2 2 0 0 0 2-1.6L21 7H6"/><circle cx="10" cy="20" r="1"/><circle cx="18" cy="20" r="1"/></symbol>
+    <symbol id="i-gift" viewBox="0 0 24 24"><rect x="3" y="8" width="18" height="13" rx="2"/><path d="M12 8v13M3 12h18M7 8C4 8 4 3 7 3s5 5 5 5M17 8c3 0 3-5 0-5s-5 5-5 5"/></symbol>
+    <symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></symbol>
+    <symbol id="i-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1l2-1.5-2-3.4-2.5 1a8 8 0 0 0-1.8-1L14.2 3h-4.4l-.4 3.1a8 8 0 0 0-1.8 1l-2.5-1-2 3.4L5.1 11a7 7 0 0 0 0 2l-2 1.5 2 3.4 2.5-1a8 8 0 0 0 1.8 1l.4 3.1h4.4l.4-3.1a8 8 0 0 0 1.8-1l2.5 1 2-3.4-2-1.5a7 7 0 0 0 .1-1Z"/></symbol>
+    <symbol id="i-logout" viewBox="0 0 24 24"><path d="M10 17l5-5-5-5M15 12H3M15 4h4a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-4"/></symbol>
+</defs></svg>
 
 <div class="app">
     <aside class="sidebar" id="sidebar" aria-label="Menú principal">
@@ -1557,31 +1624,47 @@
                 aria-label="Cerrar menú"
                 aria-controls="sidebar"
             >✕</button>
+            <button type="button" class="sidebar-collapse-btn" id="collapseSidebar" aria-label="Colapsar menú" aria-expanded="true" title="Colapsar menú"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button>
         </div>
 
         <nav class="menu">
-            <span class="menu-label">Principal</span>
-            <a href="{{ route('dashboard') }}" class="{{ request()->routeIs('dashboard') ? 'active' : '' }}">Dashboard</a>
-            <a href="{{ route('clientes.index') }}" class="{{ request()->routeIs('clientes.index') ? 'active' : '' }}">Clientes</a>
-            <a href="{{ route('clientes.inactivos') }}" class="{{ request()->routeIs('clientes.inactivos') ? 'active' : '' }}">Clientes inactivos</a>
-            @if(auth()->check() && auth()->user()->rol === 'admin')
-                <a href="{{ route('usuarios.index') }}" class="{{ request()->routeIs('usuarios.*') ? 'active' : '' }}">Usuarios</a>
-            @endif
-            <span class="menu-label">Operación</span>
-            <a href="{{ route('citas.index') }}" class="{{ request()->routeIs('citas.*') ? 'active' : '' }}">Citas</a>
-            <a href="{{ route('agenda.index') }}" class="{{ request()->routeIs('agenda.*') ? 'active' : '' }}">Agenda</a>
-            <a href="{{ route('servicios.index') }}" class="{{ request()->routeIs('servicios.*') ? 'active' : '' }}">Servicios</a>
-            <a href="{{ route('productos.index') }}" class="{{ request()->routeIs('productos.*') ? 'active' : '' }}">Productos</a>
-            <a href="{{ route('ventas-productos.index') }}" class="{{ request()->routeIs('ventas-productos.*') ? 'active' : '' }}">Ventas</a>
-            <a href="{{ route('recompensas.index') }}" class="{{ request()->routeIs('recompensas.*') ? 'active' : '' }}">Recompensas</a>
-            <span class="menu-label">Análisis</span>
-            <a href="{{ route('estadisticas.index') }}" class="{{ request()->routeIs('estadisticas.*') ? 'active' : '' }}">Reportes</a>
-            <a href="{{ route('configuracion.index') }}" class="{{ request()->routeIs('configuracion.*') ? 'active' : '' }}">Configuración</a>
+            <a href="{{ route('dashboard') }}" class="{{ request()->routeIs('dashboard') ? 'active' : '' }}" title="Dashboard"><span class="menu-icon"><svg><use href="#i-dashboard"/></svg></span><span class="menu-text">Dashboard</span></a>
+            <div class="menu-group">
+                <span class="menu-label">Principal</span>
+                <button type="button" class="menu-group-toggle" aria-expanded="false" aria-label="Mostrar opciones de Principal" title="Principal"><span class="menu-icon"><svg><use href="#i-users"/></svg></span></button>
+                <div class="menu-group-items" data-label="Principal">
+                    <a href="{{ route('clientes.index') }}" class="{{ request()->routeIs('clientes.index') ? 'active' : '' }}" title="Clientes"><span class="menu-icon"><svg><use href="#i-users"/></svg></span><span class="menu-text">Clientes</span></a>
+                    <a href="{{ route('clientes.inactivos') }}" class="{{ request()->routeIs('clientes.inactivos') ? 'active' : '' }}" title="Clientes inactivos"><span class="menu-icon"><svg><use href="#i-user-off"/></svg></span><span class="menu-text">Clientes inactivos</span></a>
+                    @if(auth()->check() && auth()->user()->rol === 'admin')
+                        <a href="{{ route('usuarios.index') }}" class="{{ request()->routeIs('usuarios.*') ? 'active' : '' }}" title="Usuarios"><span class="menu-icon"><svg><use href="#i-user"/></svg></span><span class="menu-text">Usuarios</span></a>
+                    @endif
+                </div>
+            </div>
+            <div class="menu-group">
+                <span class="menu-label">Operación</span>
+                <button type="button" class="menu-group-toggle" aria-expanded="false" aria-label="Mostrar opciones de Operación" title="Operación"><span class="menu-icon"><svg><use href="#i-calendar"/></svg></span></button>
+                <div class="menu-group-items" data-label="Operación">
+                    <a href="{{ route('citas.index') }}" class="{{ request()->routeIs('citas.*') ? 'active' : '' }}" title="Citas"><span class="menu-icon"><svg><use href="#i-calendar"/></svg></span><span class="menu-text">Citas</span></a>
+                    <a href="{{ route('agenda.index') }}" class="{{ request()->routeIs('agenda.*') ? 'active' : '' }}" title="Agenda"><span class="menu-icon"><svg><use href="#i-clock"/></svg></span><span class="menu-text">Agenda</span></a>
+                    <a href="{{ route('servicios.index') }}" class="{{ request()->routeIs('servicios.*') ? 'active' : '' }}" title="Servicios"><span class="menu-icon"><svg><use href="#i-scissors"/></svg></span><span class="menu-text">Servicios</span></a>
+                    <a href="{{ route('productos.index') }}" class="{{ request()->routeIs('productos.*') ? 'active' : '' }}" title="Productos"><span class="menu-icon"><svg><use href="#i-box"/></svg></span><span class="menu-text">Productos</span></a>
+                    <a href="{{ route('ventas-productos.index') }}" class="{{ request()->routeIs('ventas-productos.*') ? 'active' : '' }}" title="Ventas"><span class="menu-icon"><svg><use href="#i-cart"/></svg></span><span class="menu-text">Ventas</span></a>
+                    <a href="{{ route('recompensas.index') }}" class="{{ request()->routeIs('recompensas.*') ? 'active' : '' }}" title="Recompensas"><span class="menu-icon"><svg><use href="#i-gift"/></svg></span><span class="menu-text">Recompensas</span></a>
+                </div>
+            </div>
+            <div class="menu-group">
+                <span class="menu-label">Análisis</span>
+                <button type="button" class="menu-group-toggle" aria-expanded="false" aria-label="Mostrar opciones de Análisis" title="Análisis"><span class="menu-icon"><svg><use href="#i-chart"/></svg></span></button>
+                <div class="menu-group-items" data-label="Análisis">
+                    <a href="{{ route('estadisticas.index') }}" class="{{ request()->routeIs('estadisticas.*') ? 'active' : '' }}" title="Reportes"><span class="menu-icon"><svg><use href="#i-chart"/></svg></span><span class="menu-text">Reportes</span></a>
+                    <a href="{{ route('configuracion.index') }}" class="{{ request()->routeIs('configuracion.*') ? 'active' : '' }}" title="Configuración"><span class="menu-icon"><svg><use href="#i-settings"/></svg></span><span class="menu-text">Configuración</span></a>
+                </div>
+            </div>
 
             <form method="POST" action="{{ route('logout') }}">
                 @csrf
                 <button type="submit" class="logout-button">
-                    Cerrar sesión
+                    <span class="menu-icon"><svg><use href="#i-logout"/></svg></span><span class="menu-text">Cerrar sesión</span>
                 </button>
             </form>
         </nav>
@@ -1633,8 +1716,17 @@
         const overlay = document.getElementById('mobileOverlay');
         const openBtn = document.getElementById('openSidebar');
         const closeBtn = document.getElementById('closeSidebar');
+        const collapseBtn = document.getElementById('collapseSidebar');
         const menuLinks = sidebar ? sidebar.querySelectorAll('.menu a') : [];
+        const menuGroups = sidebar ? sidebar.querySelectorAll('.menu-group') : [];
+        const groupToggles = sidebar ? sidebar.querySelectorAll('.menu-group-toggle') : [];
+        const menuSequenceItems = sidebar ? sidebar.querySelectorAll('.menu > a, .menu-group > .menu-label, .menu-group-items > a, .menu > form') : [];
         let previousFocus = null;
+        let sidebarAnimationBusy = false;
+
+        menuSequenceItems.forEach(function (item, index) {
+            item.style.setProperty('--item-index', index);
+        });
 
         function isMobileView() {
             return window.innerWidth <= MOBILE_BREAKPOINT;
@@ -1698,6 +1790,74 @@
                 closeSidebar();
             });
         }
+
+        function setCollapsed(collapsed) {
+            document.body.classList.toggle('sidebar-collapsed', collapsed);
+            if (!collapsed) {
+                menuGroups.forEach(function (group) { group.classList.remove('open'); });
+                groupToggles.forEach(function (toggle) { toggle.setAttribute('aria-expanded', 'false'); });
+            }
+            if (collapseBtn) {
+                collapseBtn.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+                collapseBtn.setAttribute('aria-label', collapsed ? 'Expandir menú' : 'Colapsar menú');
+                collapseBtn.setAttribute('title', collapsed ? 'Expandir menú' : 'Colapsar menú');
+            }
+        }
+
+        try {
+            setCollapsed(localStorage.getItem('barbercore-sidebar-collapsed') === 'true');
+        } catch (error) {
+            setCollapsed(false);
+        }
+
+        if (collapseBtn) {
+            collapseBtn.addEventListener('click', function () {
+                if (sidebarAnimationBusy || isMobileView()) return;
+                sidebarAnimationBusy = true;
+                const isCollapsed = document.body.classList.contains('sidebar-collapsed');
+
+                if (isCollapsed) {
+                    setCollapsed(false);
+                    document.body.classList.add('sidebar-expanding');
+                    window.setTimeout(function () {
+                        document.body.classList.remove('sidebar-expanding');
+                        sidebarAnimationBusy = false;
+                    }, Math.max(1200, (menuSequenceItems.length * 175) + 900));
+                } else {
+                    document.body.classList.add('sidebar-collapsing');
+                    window.setTimeout(function () {
+                        setCollapsed(true);
+                        document.body.classList.remove('sidebar-collapsing');
+                        window.setTimeout(function () { sidebarAnimationBusy = false; }, 280);
+                    }, 160);
+                }
+
+                try {
+                    localStorage.setItem('barbercore-sidebar-collapsed', String(!isCollapsed));
+                } catch (error) {}
+            });
+        }
+
+        groupToggles.forEach(function (toggle) {
+            toggle.addEventListener('click', function (event) {
+                event.stopPropagation();
+                const group = toggle.closest('.menu-group');
+                const willOpen = group && !group.classList.contains('open');
+                menuGroups.forEach(function (item) { item.classList.remove('open'); });
+                groupToggles.forEach(function (item) { item.setAttribute('aria-expanded', 'false'); });
+                if (group && willOpen) {
+                    group.classList.add('open');
+                    toggle.setAttribute('aria-expanded', 'true');
+                }
+            });
+        });
+
+        document.addEventListener('click', function (event) {
+            if (sidebar && !sidebar.contains(event.target)) {
+                menuGroups.forEach(function (group) { group.classList.remove('open'); });
+                groupToggles.forEach(function (toggle) { toggle.setAttribute('aria-expanded', 'false'); });
+            }
+        });
 
         if (overlay) {
             overlay.addEventListener('click', function () {
