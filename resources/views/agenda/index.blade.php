@@ -42,15 +42,28 @@
             <span class="agenda-eyebrow">Línea de tiempo</span>
             <h3>Ocupación de servicios</h3>
         </div>
-        <div class="timeline-legend" aria-label="Estados de las citas">
-            <span><i class="pending"></i>Pendiente</span>
-            <span><i class="completed"></i>Completada</span>
-            <span><i class="cancelled"></i>Cancelada</span>
+        <div class="timeline-header-tools">
+            <label class="timeline-jump" for="timelineHourSelect">
+                <span>Ir a horario</span>
+                <select id="timelineHourSelect">
+                    <option value="start">Inicio del día</option>
+                    @foreach ($marcadoresHorario as $hora)
+                        @if (($hora - $horaInicioAgenda) % 2 === 0)
+                            <option value="{{ $hora }}">{{ sprintf('%02d:00', $hora) }}</option>
+                        @endif
+                    @endforeach
+                </select>
+            </label>
+            <div class="timeline-legend" aria-label="Estados de las citas">
+                <span><i class="pending"></i>Pendiente</span>
+                <span><i class="completed"></i>Completada</span>
+                <span><i class="cancelled"></i>Cancelada</span>
+            </div>
         </div>
     </header>
 
     @if ($citasAgrupadas->isNotEmpty())
-        <div class="timeline-scroll" tabindex="0" aria-label="Diagrama temporal de citas">
+        <div class="timeline-scroll" id="timelineScroll" tabindex="0" aria-label="Diagrama temporal de citas" data-start-hour="{{ $horaInicioAgenda }}">
             <div class="gantt" style="--hour-count: {{ max(1, $horaFinAgenda - $horaInicioAgenda) }};">
                 <div class="gantt-corner">Día</div>
                 <div class="gantt-hours">
@@ -174,6 +187,27 @@
         <div class="timeline-empty"><span>No hay detalles para mostrar.</span></div>
     @endforelse
 </section>
+
+<script>
+    (function () {
+        const select = document.getElementById('timelineHourSelect');
+        const scroller = document.getElementById('timelineScroll');
+        if (!select || !scroller) return;
+
+        select.addEventListener('change', function () {
+            if (select.value === 'start') {
+                scroller.scrollTo({ left: 0, behavior: 'smooth' });
+                return;
+            }
+
+            const startHour = Number(scroller.dataset.startHour);
+            const selectedHour = Number(select.value);
+            const dayColumnWidth = 112;
+            const hourWidth = 140;
+            scroller.scrollTo({ left: Math.max(0, dayColumnWidth + ((selectedHour - startHour) * hourWidth) - 24), behavior: 'smooth' });
+        });
+    })();
+</script>
 
 <div class="appointment-modal" id="appointmentModal" aria-hidden="true">
     <div class="appointment-modal-backdrop" data-modal-close></div>

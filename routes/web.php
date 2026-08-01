@@ -46,6 +46,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/recompensas-canjear', [RecompensaController::class, 'canjear'])->name('recompensas.canjear');
     Route::resource('recompensas', RecompensaController::class)->except(['show']);
     Route::get('/estadisticas', [EstadisticaController::class, 'index'])->name('estadisticas.index');
+    Route::get('/estadisticas/pdf', [EstadisticaController::class, 'download'])->name('estadisticas.pdf');
+    Route::get('/estadisticas/excel', [EstadisticaController::class, 'downloadExcel'])->name('estadisticas.excel');
     Route::get('/configuracion', [ConfiguracionController::class, 'index'])->name('configuracion.index');
     Route::get('/configuracion/preguntas-frecuentes', [ConfiguracionController::class, 'preguntasFrecuentes'])->name('configuracion.preguntas.index');
     Route::put('/configuracion/barberia', [ConfiguracionController::class, 'actualizarBarberia'])->name('configuracion.barberia');
