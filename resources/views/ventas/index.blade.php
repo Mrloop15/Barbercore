@@ -23,22 +23,18 @@
 </div>
 
 <div class="content-card">
-    <div class="page-actions">
-        <form method="GET" action="{{ route('ventas-productos.index') }}" class="search-form">
-            <input 
-                type="date" 
-                name="fecha" 
-                value="{{ $fecha }}"
-            >
-
-            <button type="submit" class="btn btn-secondary">
-                Consultar
-            </button>
-        </form>
-
-        <a href="{{ route('ventas-productos.create') }}" class="btn btn-primary">
-            Nueva venta
-        </a>
+    <div class="module-tools">
+        <div class="filter-panel">
+            <div class="filter-panel-head">
+                <div class="filter-panel-heading"><span class="filter-panel-icon"><x-icon name="calendar" /></span><div><strong class="filter-panel-title">Consultar ventas</strong><span class="filter-panel-subtitle">Selecciona el día que deseas revisar.</span></div></div>
+                <span class="filter-result-count"><strong>{{ $ventas->total() }}</strong> resultados</span>
+            </div>
+            <form method="GET" action="{{ route('ventas-productos.index') }}" class="filter-form">
+                <label class="filter-field filter-field-date"><span class="filter-label">Fecha de venta</span><input type="date" name="fecha" value="{{ $fecha }}"></label>
+                <div class="filter-actions"><button type="submit" class="btn btn-secondary"><x-icon name="search" /> Consultar</button>@if ($fecha !== \Carbon\Carbon::today()->toDateString())<a href="{{ route('ventas-productos.index') }}" class="btn filter-clear">Ver hoy</a>@endif</div>
+            </form>
+        </div>
+        <div class="module-primary-actions"><a href="{{ route('ventas-productos.create') }}" class="btn btn-primary"><x-icon name="plus" /> Nueva venta</a></div>
     </div>
 
     <table>

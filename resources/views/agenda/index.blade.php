@@ -14,16 +14,22 @@
 </section>
 
 <section class="agenda-toolbar">
-    <div class="agenda-tabs" aria-label="Tipo de vista">
-        <a href="{{ route('agenda.index', ['vista' => 'dia', 'fecha' => $fechaBase->toDateString()]) }}" class="agenda-tab {{ $vista === 'dia' ? 'active' : '' }}">Día</a>
-        <a href="{{ route('agenda.index', ['vista' => 'semana', 'fecha' => $fechaBase->toDateString()]) }}" class="agenda-tab {{ $vista === 'semana' ? 'active' : '' }}">Semana</a>
-        <a href="{{ route('agenda.index', ['vista' => 'mes', 'fecha' => $fechaBase->toDateString()]) }}" class="agenda-tab {{ $vista === 'mes' ? 'active' : '' }}">Mes</a>
+    <div class="agenda-view-selector">
+        <span class="filter-label">Vista de agenda</span>
+        <nav class="agenda-tabs" aria-label="Tipo de vista">
+            <a href="{{ route('agenda.index', ['vista' => 'dia', 'fecha' => $fechaBase->toDateString()]) }}" class="agenda-tab {{ $vista === 'dia' ? 'active' : '' }}" @if($vista === 'dia') aria-current="page" @endif>Día</a>
+            <a href="{{ route('agenda.index', ['vista' => 'semana', 'fecha' => $fechaBase->toDateString()]) }}" class="agenda-tab {{ $vista === 'semana' ? 'active' : '' }}" @if($vista === 'semana') aria-current="page" @endif>Semana</a>
+            <a href="{{ route('agenda.index', ['vista' => 'mes', 'fecha' => $fechaBase->toDateString()]) }}" class="agenda-tab {{ $vista === 'mes' ? 'active' : '' }}" @if($vista === 'mes') aria-current="page" @endif>Mes</a>
+        </nav>
     </div>
 
     <form method="GET" action="{{ route('agenda.index') }}" class="agenda-filter">
         <input type="hidden" name="vista" value="{{ $vista }}">
-        <input type="date" name="fecha" value="{{ $fechaBase->toDateString() }}" aria-label="Fecha de la agenda">
-        <button type="submit" class="btn btn-secondary">Ir a fecha</button>
+        <label class="filter-field filter-field-date"><span class="filter-label">Fecha de referencia</span><input type="date" name="fecha" value="{{ $fechaBase->toDateString() }}"></label>
+        <div class="filter-actions">
+            <button type="submit" class="btn btn-secondary"><x-icon name="calendar" /> Ir a fecha</button>
+            @if (!$fechaBase->isToday())<a href="{{ route('agenda.index', ['vista' => $vista, 'fecha' => now()->toDateString()]) }}" class="btn filter-clear">Hoy</a>@endif
+        </div>
     </form>
 </section>
 

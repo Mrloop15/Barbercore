@@ -23,28 +23,20 @@
 </div>
 
 <div class="content-card">
-    <div class="page-actions">
-        <form method="GET" action="{{ route('recompensas.index') }}" class="search-form">
-            <input 
-                type="text" 
-                name="buscar" 
-                value="{{ $buscar }}" 
-                placeholder="Buscar recompensa por nombre, descripción o tipo"
-            >
-
-            <button type="submit" class="btn btn-secondary">
-                Buscar
-            </button>
-        </form>
-
-        <div class="actions">
-            <a href="{{ route('recompensas.formCanjear') }}" class="btn btn-success">
-                Canjear recompensa
-            </a>
-
-            <a href="{{ route('recompensas.create') }}" class="btn btn-primary">
-                Agregar recompensa
-            </a>
+    <div class="module-tools">
+        <div class="filter-panel">
+            <div class="filter-panel-head">
+                <div class="filter-panel-heading"><span class="filter-panel-icon"><x-icon name="filter" /></span><div><strong class="filter-panel-title">Buscar recompensas</strong><span class="filter-panel-subtitle">Consulta por nombre, descripción o tipo.</span></div></div>
+                <span class="filter-result-count"><strong>{{ $recompensas->total() }}</strong> resultados</span>
+            </div>
+            <form method="GET" action="{{ route('recompensas.index') }}" class="filter-form">
+                <label class="filter-field filter-field-grow"><span class="filter-label">Recompensa</span><span class="filter-search-control"><x-icon name="search" /><input type="search" name="buscar" value="{{ $buscar }}" placeholder="Ej. Corte gratis" autocomplete="off"></span></label>
+                <div class="filter-actions"><button type="submit" class="btn btn-secondary"><x-icon name="search" /> Buscar</button>@if (filled($buscar))<a href="{{ route('recompensas.index') }}" class="btn filter-clear"><x-icon name="close" /> Limpiar</a>@endif</div>
+            </form>
+        </div>
+        <div class="module-primary-actions">
+            <a href="{{ route('recompensas.formCanjear') }}" class="btn btn-success">Canjear</a>
+            <a href="{{ route('recompensas.create') }}" class="btn btn-primary"><x-icon name="plus" /> Agregar</a>
         </div>
     </div>
 

@@ -6,34 +6,25 @@
 @section('content')
 
 <div class="content-card appointment-list-card">
-    <div class="page-actions">
-        <form method="GET" action="{{ route('citas.index') }}" class="search-form appointment-list-filter">
-            <input type="hidden" name="periodo" value="rango">
-            <input
-                type="date"
-                name="desde"
-                value="{{ $desde->toDateString() }}"
-                aria-label="Fecha inicial"
-            >
-            <span class="range-separator">a</span>
-            <input type="date" name="hasta" value="{{ $hasta->toDateString() }}" aria-label="Fecha final">
-
-            <select name="estado">
-                <option value="">Todos los estados</option>
-                <option value="pendiente" {{ $estado === 'pendiente' ? 'selected' : '' }}>Pendientes</option>
-                <option value="completada" {{ $estado === 'completada' ? 'selected' : '' }}>Completadas</option>
-                <option value="cancelada" {{ $estado === 'cancelada' ? 'selected' : '' }}>Canceladas</option>
-            </select>
-
-            <button type="submit" class="btn btn-secondary">
-                Filtrar
-            </button>
-            <a href="{{ route('citas.index', ['periodo' => 'hoy', 'estado' => $estado]) }}" class="btn {{ $periodo === 'hoy' ? 'btn-primary' : 'btn-secondary' }}">Hoy</a>
-        </form>
-
-        <a href="{{ route('citas.create') }}" class="btn btn-primary">
-            Nueva cita
-        </a>
+    <div class="module-tools">
+        <div class="filter-panel">
+            <div class="filter-panel-head">
+                <div class="filter-panel-heading"><span class="filter-panel-icon"><x-icon name="calendar" /></span><div><strong class="filter-panel-title">Filtrar citas</strong><span class="filter-panel-subtitle">Consulta un periodo y limita los resultados por estado.</span></div></div>
+                <span class="filter-result-count"><strong>{{ $citas->total() }}</strong> resultados</span>
+            </div>
+            <form method="GET" action="{{ route('citas.index') }}" class="filter-form appointment-list-filter">
+                <input type="hidden" name="periodo" value="rango">
+                <label class="filter-field filter-field-date"><span class="filter-label">Desde</span><input type="date" name="desde" value="{{ $desde->toDateString() }}"></label>
+                <label class="filter-field filter-field-date"><span class="filter-label">Hasta</span><input type="date" name="hasta" value="{{ $hasta->toDateString() }}"></label>
+                <label class="filter-field"><span class="filter-label">Estado</span><select name="estado"><option value="">Todos los estados</option><option value="pendiente" {{ $estado === 'pendiente' ? 'selected' : '' }}>Pendientes</option><option value="completada" {{ $estado === 'completada' ? 'selected' : '' }}>Completadas</option><option value="cancelada" {{ $estado === 'cancelada' ? 'selected' : '' }}>Canceladas</option></select></label>
+                <div class="filter-actions">
+                    <button type="submit" class="btn btn-secondary"><x-icon name="filter" /> Aplicar</button>
+                    <a href="{{ route('citas.index', ['periodo' => 'hoy', 'estado' => $estado]) }}" class="btn {{ $periodo === 'hoy' ? 'btn-primary' : 'filter-clear' }}">Hoy</a>
+                    @if (filled($estado))<a href="{{ route('citas.index', ['periodo' => $periodo, 'desde' => $desde->toDateString(), 'hasta' => $hasta->toDateString()]) }}" class="btn filter-clear" title="Quitar estado"><x-icon name="close" /><span class="sr-only">Quitar filtro de estado</span></a>@endif
+                </div>
+            </form>
+        </div>
+        <div class="module-primary-actions"><a href="{{ route('citas.create') }}" class="btn btn-primary"><x-icon name="plus" /> Nueva cita</a></div>
     </div>
 
     <div class="range-indicator">

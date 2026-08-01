@@ -13,6 +13,9 @@
         @case('chevron-left') <path d="m15 18-6-6 6-6"/> @break
         @case('chevron-right') <path d="m9 18 6-6-6-6"/> @break
         @case('search') <circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/> @break
+        @case('filter') <path d="M4 5h16M7 12h10M10 19h4"/> @break
+        @case('calendar') <rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/> @break
+        @case('download') <path d="M12 3v12M7 10l5 5 5-5M5 21h14"/> @break
         @case('plus') <path d="M12 5v14M5 12h14"/> @break
         @case('image') <rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m3 16 4.5-4.5 4 4 2.5-2.5 7 7"/> @break
         @default <circle cx="12" cy="12" r="9"/>

@@ -23,33 +23,23 @@
 </div>
 
 <div class="content-card">
-    <div class="page-actions">
-        <form method="GET" action="{{ route('usuarios.index') }}" class="search-form">
-            <input
-                type="text"
-                name="buscar"
-                value="{{ $buscar }}"
-                placeholder="Buscar por nombre o correo"
-            >
-
-            <select name="rol">
-                <option value="todos" {{ $filtroRol === 'todos' ? 'selected' : '' }}>Todos los roles</option>
-                <option value="admin" {{ $filtroRol === 'admin' ? 'selected' : '' }}>Admin</option>
-                <option value="barbero" {{ $filtroRol === 'barbero' ? 'selected' : '' }}>Barbero</option>
-            </select>
-
-            <select name="estado">
-                <option value="todos" {{ $filtroEstado === 'todos' ? 'selected' : '' }}>Todos los estados</option>
-                <option value="activos" {{ $filtroEstado === 'activos' ? 'selected' : '' }}>Activos</option>
-                <option value="inactivos" {{ $filtroEstado === 'inactivos' ? 'selected' : '' }}>Inactivos</option>
-            </select>
-
-            <button type="submit" class="btn btn-secondary">Filtrar</button>
-        </form>
-
-        <a href="{{ route('usuarios.create') }}" class="btn btn-primary">
-            Agregar usuario
-        </a>
+    <div class="module-tools">
+        <div class="filter-panel">
+            <div class="filter-panel-head">
+                <div class="filter-panel-heading"><span class="filter-panel-icon"><x-icon name="filter" /></span><div><strong class="filter-panel-title">Filtrar usuarios</strong><span class="filter-panel-subtitle">Combina la búsqueda con rol y estado.</span></div></div>
+                <span class="filter-result-count"><strong>{{ $usuarios->total() }}</strong> resultados</span>
+            </div>
+            <form method="GET" action="{{ route('usuarios.index') }}" class="filter-form">
+                <label class="filter-field filter-field-grow"><span class="filter-label">Nombre o correo</span><span class="filter-search-control"><x-icon name="search" /><input type="search" name="buscar" value="{{ $buscar }}" placeholder="Buscar usuario" autocomplete="off"></span></label>
+                <label class="filter-field"><span class="filter-label">Rol</span><select name="rol"><option value="todos" {{ $filtroRol === 'todos' ? 'selected' : '' }}>Todos los roles</option><option value="admin" {{ $filtroRol === 'admin' ? 'selected' : '' }}>Admin</option><option value="barbero" {{ $filtroRol === 'barbero' ? 'selected' : '' }}>Barbero</option></select></label>
+                <label class="filter-field"><span class="filter-label">Estado</span><select name="estado"><option value="todos" {{ $filtroEstado === 'todos' ? 'selected' : '' }}>Todos</option><option value="activos" {{ $filtroEstado === 'activos' ? 'selected' : '' }}>Activos</option><option value="inactivos" {{ $filtroEstado === 'inactivos' ? 'selected' : '' }}>Inactivos</option></select></label>
+                <div class="filter-actions">
+                    <button type="submit" class="btn btn-secondary"><x-icon name="filter" /> Aplicar</button>
+                    @if (filled($buscar) || $filtroRol !== 'todos' || $filtroEstado !== 'todos')<a href="{{ route('usuarios.index') }}" class="btn filter-clear" title="Limpiar filtros"><x-icon name="close" /><span class="sr-only">Limpiar filtros</span></a>@endif
+                </div>
+            </form>
+        </div>
+        <div class="module-primary-actions"><a href="{{ route('usuarios.create') }}" class="btn btn-primary"><x-icon name="plus" /> Agregar usuario</a></div>
     </div>
 
     <table>

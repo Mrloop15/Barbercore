@@ -23,28 +23,19 @@
 </div>
 
 <div class="content-card">
-    <div class="page-actions">
-        <form method="GET" action="{{ route('productos.index') }}" class="search-form product-search-form">
-            <input 
-                type="text" 
-                name="buscar" 
-                value="{{ $buscar }}" 
-                placeholder="Buscar producto por nombre o descripción"
-            >
-
-            <select name="filtro">
-                <option value="todos" {{ $filtro === 'todos' ? 'selected' : '' }}>Todos</option>
-                <option value="bajo_stock" {{ $filtro === 'bajo_stock' ? 'selected' : '' }}>Bajo stock</option>
-            </select>
-
-            <button type="submit" class="btn btn-secondary">
-                Filtrar
-            </button>
-        </form>
-
-        <a href="{{ route('productos.create') }}" class="btn btn-primary">
-            Agregar producto
-        </a>
+    <div class="module-tools">
+        <div class="filter-panel">
+            <div class="filter-panel-head">
+                <div class="filter-panel-heading"><span class="filter-panel-icon"><x-icon name="filter" /></span><div><strong class="filter-panel-title">Filtrar inventario</strong><span class="filter-panel-subtitle">Busca productos y detecta existencias bajas.</span></div></div>
+                <span class="filter-result-count"><strong>{{ $productos->total() }}</strong> resultados</span>
+            </div>
+            <form method="GET" action="{{ route('productos.index') }}" class="filter-form">
+                <label class="filter-field filter-field-grow"><span class="filter-label">Producto</span><span class="filter-search-control"><x-icon name="search" /><input type="search" name="buscar" value="{{ $buscar }}" placeholder="Nombre o descripción" autocomplete="off"></span></label>
+                <label class="filter-field"><span class="filter-label">Existencias</span><select name="filtro"><option value="todos" {{ $filtro === 'todos' ? 'selected' : '' }}>Todos los productos</option><option value="bajo_stock" {{ $filtro === 'bajo_stock' ? 'selected' : '' }}>Sólo bajo stock</option></select></label>
+                <div class="filter-actions"><button type="submit" class="btn btn-secondary"><x-icon name="filter" /> Aplicar</button>@if (filled($buscar) || $filtro !== 'todos')<a href="{{ route('productos.index') }}" class="btn filter-clear" title="Limpiar filtros"><x-icon name="close" /><span class="sr-only">Limpiar filtros</span></a>@endif</div>
+            </form>
+        </div>
+        <div class="module-primary-actions"><a href="{{ route('productos.create') }}" class="btn btn-primary"><x-icon name="plus" /> Agregar producto</a></div>
     </div>
 
     <table>
