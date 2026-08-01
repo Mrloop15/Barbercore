@@ -138,11 +138,47 @@
         .detail-icon { width: 46px; height: 46px; display: grid; place-items: center; border-radius: 50%; background: var(--fondo); color: var(--dorado); }
         .detail small { display: block; margin-bottom: 5px; color: var(--gris); font-size: 9px; font-weight: 900; letter-spacing: .16em; text-transform: uppercase; }
         .detail strong { font-family: Georgia, serif; font-size: 15px; line-height: 1.45; }
+        .contact-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+        .btn-map { border-color: var(--borde); background: var(--blanco); color: var(--texto); }
+        .hours-summary { display: grid; gap: 5px; }
+        .hours-line { display: flex; justify-content: space-between; gap: 18px; color: var(--gris); font-size: 11px; line-height: 1.45; }
+        .hours-line b { color: var(--texto); font-weight: 800; }
+
+        .faq-section { padding: 72px 0; background: var(--blanco); }
+        .faq-wrap { display: grid; grid-template-columns: .72fr 1.28fr; gap: 56px; align-items: start; }
+        .faq-intro { position: sticky; top: 125px; }
+        .faq-intro .copy { margin-top: 20px; }
+        .faq-list { border-top: 1px solid var(--borde); }
+        .faq-item { border-bottom: 1px solid var(--borde); }
+        .faq-item summary { position: relative; display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 18px 4px; cursor: pointer; list-style: none; font-family: Georgia, serif; font-size: 17px; font-weight: 700; }
+        .faq-item summary::-webkit-details-marker { display: none; }
+        .faq-item summary::after { content: "+"; width: 30px; height: 30px; display: grid; place-items: center; flex: 0 0 auto; border: 1px solid var(--borde); border-radius: 50%; color: var(--dorado); font-family: Arial, sans-serif; }
+        .faq-item[open] summary::after { content: "−"; background: var(--oscuro); border-color: var(--oscuro); color: var(--blanco); }
+        .faq-answer { padding: 0 52px 18px 4px; color: var(--gris); font-size: 13px; line-height: 1.75; }
 
         .cta { background: var(--dorado); color: var(--blanco); }
         .cta-inner { min-height: 200px; display: grid; grid-template-columns: 1fr auto; gap: 40px; align-items: center; }
         .cta h2 { margin: 0 0 8px; font-family: Georgia, serif; font-size: clamp(34px, 4vw, 49px); letter-spacing: -.04em; }
         .cta p { margin: 0; font-size: 14px; opacity: .9; }
+
+        body.booking-open { overflow: hidden; }
+        .booking-modal { position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; padding: 22px; background: rgba(17,17,17,.72); opacity: 0; visibility: hidden; transition: opacity .2s ease, visibility .2s ease; }
+        .booking-modal.is-open { opacity: 1; visibility: visible; }
+        .booking-dialog { width: min(640px, 100%); max-height: calc(100vh - 44px); overflow-y: auto; border: 1px solid var(--borde); background: var(--blanco); box-shadow: 0 28px 80px rgba(0,0,0,.3); transform: translateY(12px); transition: transform .2s ease; }
+        .booking-modal.is-open .booking-dialog { transform: none; }
+        .booking-head { display: grid; grid-template-columns: 1fr 42px; gap: 20px; align-items: start; padding: 26px 28px; background: var(--oscuro); color: var(--blanco); }
+        .booking-head .kicker { margin-bottom: 8px; }
+        .booking-head h2 { margin: 0; font-family: Georgia, serif; font-size: 29px; }
+        .booking-close { width: 40px; height: 40px; display: grid; place-items: center; border: 1px solid rgba(255,255,255,.18); border-radius: 50%; background: transparent; color: var(--blanco); cursor: pointer; }
+        .booking-body { padding: 28px; }
+        .booking-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 17px; }
+        .booking-field.full { grid-column: 1 / -1; }
+        .booking-field label { display: block; margin-bottom: 7px; color: var(--texto); font-size: 11px; font-weight: 800; letter-spacing: .04em; }
+        .booking-field input, .booking-field select, .booking-field textarea { width: 100%; border: 1px solid var(--borde); border-radius: 0; padding: 12px 13px; background: var(--blanco); color: var(--texto); font: inherit; font-size: 13px; outline: none; }
+        .booking-field textarea { min-height: 85px; resize: vertical; }
+        .booking-field input:focus, .booking-field select:focus, .booking-field textarea:focus { border-color: var(--dorado); box-shadow: 0 0 0 3px rgba(201,162,39,.12); }
+        .booking-note { margin: 18px 0; padding: 13px 14px; border-left: 3px solid var(--dorado); background: var(--fondo); color: var(--gris); font-size: 11px; line-height: 1.6; }
+        .booking-submit { width: 100%; border: 0; background: var(--verde); color: var(--blanco); cursor: pointer; }
 
         .footer { padding: 55px 0 25px; background: var(--oscuro); color: var(--blanco); }
         .footer-grid { display: grid; grid-template-columns: 1.25fr .75fr .75fr; gap: 55px; padding-bottom: 42px; }
@@ -231,6 +267,8 @@
             .standard-dark { min-height: 440px; }
             .contact-details { border-top: 1px solid var(--borde); border-left: 0; }
             .contact-copy { padding: 42px 28px; }
+            .faq-wrap { grid-template-columns: 1fr; gap: 38px; }
+            .faq-intro { position: static; }
             .cta-inner { grid-template-columns: 1fr; gap: 25px; padding: 45px 0; }
             .cta-inner .btn { justify-self: start; }
             .footer-grid { grid-template-columns: 1fr; gap: 32px; }
@@ -253,6 +291,11 @@
             .whatsapp-widget { right: 15px; bottom: 15px; }
             .whatsapp-panel { right: 0; width: min(350px, calc(100vw - 30px)); }
             .whatsapp-prompt { display: none; }
+            .booking-modal { padding: 10px; }
+            .booking-dialog { max-height: calc(100vh - 20px); }
+            .booking-head, .booking-body { padding: 21px; }
+            .booking-grid { grid-template-columns: 1fr; }
+            .booking-field.full { grid-column: auto; }
         }
 
         @media (prefers-reduced-motion: reduce) {
@@ -289,6 +332,7 @@
                 <a class="nav-link" href="#inicio">Inicio</a>
                 <a class="nav-link" href="#servicios">Servicios</a>
                 <a class="nav-link" href="#estandar">Nuestro estándar</a>
+                @if($preguntasFrecuentes->isNotEmpty())<a class="nav-link" href="#preguntas">Preguntas</a>@endif
             </nav>
 
             <a class="brand" href="#inicio" aria-label="Inicio de {{ $nombreBarberia }}">
@@ -311,7 +355,7 @@
                     <h1>Tu imagen,<br><em>en buenas manos.</em></h1>
                     <p class="hero-copy">Una experiencia de cuidado masculino basada en técnica, atención y detalle. Porque un buen servicio se reconoce desde el primer momento.</p>
                     <div class="hero-actions">
-                        <a class="btn btn-gold" href="https://wa.me/{{ $telefonoWhatsapp }}?text=Hola,%20quiero%20agendar%20una%20cita" target="_blank" rel="noopener noreferrer"><svg class="icon" viewBox="0 0 24 24"><path d="M8 2v3M16 2v3M3.5 9h17M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z"/><path d="m9 16 2 2 4-5"/></svg>Reservar una cita</a>
+                        <button class="btn btn-gold" type="button" data-booking-open><svg class="icon" viewBox="0 0 24 24"><path d="M8 2v3M16 2v3M3.5 9h17M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z"/><path d="m9 16 2 2 4-5"/></svg>Reservar una cita</button>
                         <a class="btn btn-light" href="#servicios">Conocer servicios</a>
                     </div>
                     <div class="hero-signature">El estilo correcto habla antes que tú.</div>
@@ -407,17 +451,49 @@
 
         <section class="contact-section" id="contacto">
             <div class="container contact-card">
-                <div class="contact-copy"><span class="kicker">Visítanos</span><h2 class="title">Tu próxima cita comienza aquí.</h2><p class="copy">Ponte en contacto directamente y reserva el horario que mejor se adapte a ti.</p><a class="btn btn-dark" href="https://wa.me/{{ $telefonoWhatsapp }}?text=Hola,%20quiero%20agendar%20una%20cita" target="_blank" rel="noopener noreferrer">Hablar por WhatsApp</a></div>
+                <div class="contact-copy">
+                    <span class="kicker">Visítanos</span>
+                    <h2 class="title">Tu próxima cita comienza aquí.</h2>
+                    <p class="copy">Consulta nuestros horarios, encuentra la barbería y confirma tu visita directamente por WhatsApp.</p>
+                    <div class="contact-actions">
+                        <button class="btn btn-dark" type="button" data-booking-open>Solicitar una cita</button>
+                        @if($googleMapsUrl)
+                            <a class="btn btn-map" href="{{ $googleMapsUrl }}" target="_blank" rel="noopener noreferrer"><svg class="icon" viewBox="0 0 24 24"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></svg>Ver en Google Maps</a>
+                        @endif
+                    </div>
+                </div>
                 <div class="contact-details">
-                    <div class="detail"><span class="detail-icon"><svg class="icon" viewBox="0 0 24 24"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></svg></span><div><small>Dirección</small><strong>{{ $barberia?->direccion ?? 'Solicita la ubicación por WhatsApp' }}</strong></div></div>
+                    <div class="detail"><span class="detail-icon"><svg class="icon" viewBox="0 0 24 24"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></svg></span><div><small>Dirección</small><strong>{{ $barberia?->direccion ?? 'Solicita la ubicación por WhatsApp' }}</strong>@if($googleMapsUrl)<a class="duration" href="{{ $googleMapsUrl }}" target="_blank" rel="noopener noreferrer">Abrir ubicación</a>@endif</div></div>
                     <div class="detail"><span class="detail-icon"><svg class="icon" viewBox="0 0 24 24"><path d="M22 16.9v3a2 2 0 0 1-2.2 2A19.8 19.8 0 0 1 3.1 5.2 2 2 0 0 1 5.1 3h3a2 2 0 0 1 2 1.7c.1.9.3 1.8.7 2.6a2 2 0 0 1-.5 2.1L9 10.7a16 16 0 0 0 4.3 4.3l1.3-1.3a2 2 0 0 1 2.1-.5c.8.4 1.7.6 2.6.7a2 2 0 0 1 1.7 2Z"/></svg></span><div><small>Teléfono</small><strong>{{ $barberia?->telefono ?? 'Disponible por WhatsApp' }}</strong></div></div>
-                    <div class="detail"><span class="detail-icon"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span><div><small>Atención</small><strong>Agenda con anticipación para asegurar tu horario.</strong></div></div>
+                    <div class="detail"><span class="detail-icon"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span><div><small>Horarios de atención</small><div class="hours-summary">
+                        @forelse($horarios as $horario)
+                            <span class="hours-line"><b>{{ $diasSemana[$horario->dia_semana] }}</b><span>{{ $horario->abierto ? substr($horario->hora_apertura, 0, 5) . ' – ' . substr($horario->hora_cierre, 0, 5) : 'Cerrado' }}</span></span>
+                        @empty
+                            <strong>Consulta disponibilidad por WhatsApp.</strong>
+                        @endforelse
+                    </div></div></div>
                 </div>
             </div>
         </section>
 
+        @if($preguntasFrecuentes->isNotEmpty())
+            <section class="faq-section" id="preguntas">
+                <div class="container faq-wrap">
+                    <div class="faq-intro"><span class="kicker">Antes de tu visita</span><h2 class="title">Preguntas frecuentes.</h2><p class="copy">Información clara para que reserves y llegues con toda confianza.</p></div>
+                    <div class="faq-list">
+                        @foreach($preguntasFrecuentes as $faq)
+                            <details class="faq-item" @if($loop->first) open @endif>
+                                <summary>{{ $faq->pregunta }}</summary>
+                                <div class="faq-answer">{{ $faq->respuesta }}</div>
+                            </details>
+                        @endforeach
+                    </div>
+                </div>
+            </section>
+        @endif
+
         <section class="cta">
-            <div class="container cta-inner"><div><h2>Haz espacio para verte mejor.</h2><p>Reserva tu próxima visita de forma rápida y directa.</p></div><a class="btn btn-dark" href="https://wa.me/{{ $telefonoWhatsapp }}?text=Hola,%20quiero%20reservar%20una%20cita" target="_blank" rel="noopener noreferrer"><svg class="icon" viewBox="0 0 24 24"><path d="M8 2v3M16 2v3M3.5 9h17M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z"/></svg>Reservar ahora</a></div>
+            <div class="container cta-inner"><div><h2>Haz espacio para verte mejor.</h2><p>Completa tus datos y envía tu solicitud directamente por WhatsApp.</p></div><button class="btn btn-dark" type="button" data-booking-open><svg class="icon" viewBox="0 0 24 24"><path d="M8 2v3M16 2v3M3.5 9h17M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z"/></svg>Reservar ahora</button></div>
         </section>
     </main>
 
@@ -445,6 +521,26 @@
             <div class="footer-bottom"><span>© {{ date('Y') }} {{ $nombreBarberia }}. Todos los derechos reservados.</span><span>Precisión · Estilo · Confianza</span></div>
         </div>
     </footer>
+
+    <div class="booking-modal" id="booking-modal" role="dialog" aria-modal="true" aria-labelledby="booking-title" aria-hidden="true">
+        <div class="booking-dialog">
+            <div class="booking-head">
+                <div><span class="kicker">Solicitud por WhatsApp</span><h2 id="booking-title">Cuéntanos cuándo quieres venir</h2></div>
+                <button class="booking-close" type="button" data-booking-close aria-label="Cerrar formulario"><svg class="icon" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></svg></button>
+            </div>
+            <form class="booking-body" id="booking-form">
+                <div class="booking-grid">
+                    <div class="booking-field full"><label for="booking-name">Tu nombre *</label><input type="text" id="booking-name" name="nombre" maxlength="100" autocomplete="name" required></div>
+                    <div class="booking-field full"><label for="booking-service">Servicio de interés *</label><select id="booking-service" name="servicio" required><option value="">Selecciona un servicio</option>@foreach($servicios as $servicio)<option value="{{ $servicio->nombre }}">{{ $servicio->nombre }} · ${{ number_format($servicio->precio, 2) }}</option>@endforeach<option value="Por definir">No estoy seguro todavía</option></select></div>
+                    <div class="booking-field"><label for="booking-date">Fecha deseada *</label><input type="date" id="booking-date" name="fecha" min="{{ now()->format('Y-m-d') }}" required></div>
+                    <div class="booking-field"><label for="booking-time">Hora deseada *</label><input type="time" id="booking-time" name="hora" required></div>
+                    <div class="booking-field full"><label for="booking-notes">Comentario opcional</label><textarea id="booking-notes" name="comentarios" maxlength="400" placeholder="Ej. Prefiero un corte con acabado natural."></textarea></div>
+                </div>
+                <p class="booking-note">Esta solicitud no crea ni confirma una cita automáticamente. Se abrirá WhatsApp y nuestro equipo confirmará contigo la disponibilidad.</p>
+                <button class="btn booking-submit" type="submit"><svg class="icon" viewBox="0 0 24 24"><path d="M22 2 11 13"/><path d="m22 2-7 20-4-9-9-4Z"/></svg>Enviar solicitud por WhatsApp</button>
+            </form>
+        </div>
+    </div>
 
     <div class="whatsapp-widget" id="whatsapp-widget">
         <span class="whatsapp-prompt" aria-hidden="true">Hola, ¿podemos ayudarte?</span>
@@ -488,6 +584,58 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            const bookingModal = document.getElementById('booking-modal');
+            const bookingForm = document.getElementById('booking-form');
+            const bookingClose = bookingModal.querySelector('[data-booking-close]');
+            let bookingTrigger = null;
+
+            const setBookingOpen = (open) => {
+                bookingModal.classList.toggle('is-open', open);
+                bookingModal.setAttribute('aria-hidden', String(!open));
+                document.body.classList.toggle('booking-open', open);
+
+                if (open) {
+                    window.setTimeout(() => document.getElementById('booking-name').focus(), 50);
+                } else if (bookingTrigger) {
+                    bookingTrigger.focus();
+                }
+            };
+
+            document.querySelectorAll('[data-booking-open]').forEach((button) => {
+                button.addEventListener('click', () => {
+                    bookingTrigger = button;
+                    setBookingOpen(true);
+                });
+            });
+
+            bookingClose.addEventListener('click', () => setBookingOpen(false));
+            bookingModal.addEventListener('click', (event) => {
+                if (event.target === bookingModal) setBookingOpen(false);
+            });
+
+            bookingForm.addEventListener('submit', (event) => {
+                event.preventDefault();
+                const data = new FormData(bookingForm);
+                const rawDate = String(data.get('fecha'));
+                const formattedDate = new Date(`${rawDate}T12:00:00`).toLocaleDateString('es-MX', { day: '2-digit', month: 'long', year: 'numeric' });
+                const comments = String(data.get('comentarios') || '').trim();
+                const businessName = @json($nombreBarberia);
+                const message = [
+                    `Hola, quiero solicitar una cita en ${businessName}.`,
+                    '',
+                    `Nombre: ${data.get('nombre')}`,
+                    `Servicio: ${data.get('servicio')}`,
+                    `Fecha deseada: ${formattedDate}`,
+                    `Hora deseada: ${data.get('hora')}`,
+                    comments ? `Comentarios: ${comments}` : null,
+                    '',
+                    'Entiendo que la cita queda pendiente de confirmación por este medio.',
+                ].filter((line) => line !== null).join('\n');
+
+                window.open(@json('https://wa.me/' . $telefonoWhatsapp) + `?text=${encodeURIComponent(message)}`, '_blank', 'noopener,noreferrer');
+                setBookingOpen(false);
+            });
+
             document.querySelectorAll('[data-services-carousel]').forEach((carousel) => {
                 const track = carousel.querySelector('[data-carousel-track]');
                 const controls = carousel.previousElementSibling;
@@ -539,6 +687,11 @@
             });
 
             document.addEventListener('keydown', (event) => {
+                if (event.key === 'Escape' && bookingModal.classList.contains('is-open')) {
+                    setBookingOpen(false);
+                    return;
+                }
+
                 if (event.key === 'Escape' && widget.classList.contains('is-open')) {
                     setOpen(false);
                     toggle.focus();

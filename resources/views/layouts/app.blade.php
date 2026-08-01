@@ -1842,7 +1842,7 @@
 
 <script>
     (function () {
-        const imageInputs = document.querySelectorAll('input[type="file"][accept*="image"], input[type="file"][accept*="jpg"], input[type="file"][accept*="png"]');
+        const imageInputs = document.querySelectorAll('input[type="file"][accept*="image"]:not([data-skip-auto-preview]), input[type="file"][accept*="jpg"]:not([data-skip-auto-preview]), input[type="file"][accept*="png"]:not([data-skip-auto-preview])');
 
         imageInputs.forEach(function (input) {
             const preview = document.createElement('div');

@@ -13,6 +13,7 @@ class Barberia extends Model
         'nombre',
         'telefono',
         'direccion',
+        'google_maps_url',
         'logo',
         'activo',
     ];
@@ -40,5 +41,15 @@ class Barberia extends Model
     public function citas()
     {
         return $this->hasMany(Cita::class, 'id_barberia', 'id_barberia');
+    }
+
+    public function horariosAtencion()
+    {
+        return $this->hasMany(HorarioAtencion::class, 'id_barberia', 'id_barberia');
+    }
+
+    public function preguntasFrecuentes()
+    {
+        return $this->hasMany(PreguntaFrecuente::class, 'id_barberia', 'id_barberia');
     }
 }

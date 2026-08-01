@@ -47,7 +47,10 @@ Route::middleware('auth')->group(function () {
     Route::resource('recompensas', RecompensaController::class)->except(['show']);
     Route::get('/estadisticas', [EstadisticaController::class, 'index'])->name('estadisticas.index');
     Route::get('/configuracion', [ConfiguracionController::class, 'index'])->name('configuracion.index');
+    Route::get('/configuracion/preguntas-frecuentes', [ConfiguracionController::class, 'preguntasFrecuentes'])->name('configuracion.preguntas.index');
     Route::put('/configuracion/barberia', [ConfiguracionController::class, 'actualizarBarberia'])->name('configuracion.barberia');
+    Route::put('/configuracion/horarios', [ConfiguracionController::class, 'actualizarHorarios'])->name('configuracion.horarios');
+    Route::put('/configuracion/preguntas-frecuentes', [ConfiguracionController::class, 'actualizarPreguntasFrecuentes'])->name('configuracion.preguntas');
     Route::put('/configuracion/usuario', [ConfiguracionController::class, 'actualizarUsuario'])->name('configuracion.usuario');
     Route::put('/configuracion/password', [ConfiguracionController::class, 'actualizarPassword'])->name('configuracion.password');
     Route::post('/logout', [AuthController::class, 'cerrarSesion'])->name('logout');
