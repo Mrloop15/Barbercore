@@ -21,14 +21,31 @@ class CitaController extends Controller
         $usuario = Auth::user();
         $idBarberia = $usuario->id_barberia ?? 1;
 
-        $fecha = $request->input('fecha', Carbon::today()->toDateString());
+        $request->validate([
+            'periodo' => ['nullable', 'in:rango,hoy'],
+            'desde' => ['nullable', 'date'],
+            'hasta' => ['nullable', 'date'],
+            'estado' => ['nullable', 'in:pendiente,completada,cancelada'],
+        ]);
+
+        $periodo = $request->input('periodo', 'rango');
+        $periodo = in_array($periodo, ['rango', 'hoy'], true) ? $periodo : 'rango';
+        $desde = $periodo === 'hoy'
+            ? Carbon::today()
+            : Carbon::parse($request->input('desde', Carbon::today()->toDateString()));
+        $hasta = $periodo === 'hoy'
+            ? Carbon::today()
+            : Carbon::parse($request->input('hasta', Carbon::today()->addDays(14)->toDateString()));
+
+        if ($hasta->lt($desde)) {
+            return back()->withInput()->with('error', 'La fecha final no puede ser anterior a la fecha inicial.');
+        }
+
         $estado = $request->input('estado');
 
         $citas = Cita::with(['cliente', 'servicio', 'barbero'])
             ->where('id_barberia', $idBarberia)
-            ->when($fecha, function ($query) use ($fecha) {
-                $query->whereDate('fecha', $fecha);
-            })
+            ->whereBetween('fecha', [$desde->toDateString(), $hasta->toDateString()])
             ->when($estado, function ($query) use ($estado) {
                 $query->where('estado', $estado);
             })
@@ -37,7 +54,7 @@ class CitaController extends Controller
             ->paginate(10)
             ->withQueryString();
 
-        return view('citas.index', compact('citas', 'fecha', 'estado'));
+        return view('citas.index', compact('citas', 'desde', 'hasta', 'periodo', 'estado'));
     }
 
     public function create()

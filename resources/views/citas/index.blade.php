@@ -5,18 +5,18 @@
 
 @section('content')
 
-<div class="content-card">
+<div class="content-card appointment-list-card">
     <div class="page-actions">
         <form method="GET" action="{{ route('citas.index') }}" class="search-form appointment-list-filter">
-            <a href="{{ route('citas.index', ['fecha' => \Carbon\Carbon::parse($fecha)->subDay()->toDateString(), 'estado' => $estado]) }}" class="btn btn-secondary btn-icon" title="Día anterior" aria-label="Día anterior"><x-icon name="chevron-left" /><span class="sr-only">Día anterior</span></a>
-            <input 
-                type="date" 
-                name="fecha" 
-                value="{{ $fecha }}"
-                aria-label="Fecha de las citas"
+            <input type="hidden" name="periodo" value="rango">
+            <input
+                type="date"
+                name="desde"
+                value="{{ $desde->toDateString() }}"
+                aria-label="Fecha inicial"
             >
-
-            <a href="{{ route('citas.index', ['fecha' => \Carbon\Carbon::parse($fecha)->addDay()->toDateString(), 'estado' => $estado]) }}" class="btn btn-secondary btn-icon" title="Día siguiente" aria-label="Día siguiente"><x-icon name="chevron-right" /><span class="sr-only">Día siguiente</span></a>
+            <span class="range-separator">a</span>
+            <input type="date" name="hasta" value="{{ $hasta->toDateString() }}" aria-label="Fecha final">
 
             <select name="estado">
                 <option value="">Todos los estados</option>
@@ -28,7 +28,7 @@
             <button type="submit" class="btn btn-secondary">
                 Filtrar
             </button>
-            <a href="{{ route('citas.index', ['fecha' => now()->toDateString(), 'estado' => $estado]) }}" class="btn btn-secondary">Hoy</a>
+            <a href="{{ route('citas.index', ['periodo' => 'hoy', 'estado' => $estado]) }}" class="btn {{ $periodo === 'hoy' ? 'btn-primary' : 'btn-secondary' }}">Hoy</a>
         </form>
 
         <a href="{{ route('citas.create') }}" class="btn btn-primary">
@@ -36,6 +36,12 @@
         </a>
     </div>
 
+    <div class="range-indicator">
+        <span>{{ $periodo === 'hoy' ? 'Citas de hoy' : 'Periodo visible' }}</span>
+        <strong>{{ $desde->format('d/m/Y') }}{{ $periodo === 'rango' ? ' – ' . $hasta->format('d/m/Y') : '' }}</strong>
+    </div>
+
+    <div class="appointment-table-scroll">
     <table>
         <thead>
             <tr>
@@ -119,6 +125,7 @@
             @endforelse
         </tbody>
     </table>
+    </div>
 
     <div class="pagination">
         {{ $citas->links() }}
