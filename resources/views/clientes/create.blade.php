@@ -16,7 +16,7 @@
         @endif
 
         <div class="form-grid">
-            <div class="form-group">
+              <div class="form-group">
                 <label for="nombre">Nombre *</label>
                 <input 
                     type="text" 
@@ -25,7 +25,7 @@
                     value="{{ old('nombre') }}" 
                     required
                 >
-            </div>
+              </div>
 
             <div class="form-group">
                 <label for="apellido">Apellido</label>
@@ -57,6 +57,7 @@
                 >
             </div>
 
+            @if(auth()->user()->rol === 'admin')
             <div class="form-group">
                 <label for="puntos">Puntos iniciales</label>
                 <input 
@@ -67,6 +68,7 @@
                     min="0"
                 >
             </div>
+            @endif
 
             <div class="form-group">
                 <label for="ultima_visita">Última visita</label>

@@ -36,4 +36,11 @@ class Usuario extends Authenticatable
     {
         return $this->hasMany(Cita::class, 'id_barbero', 'id_usuario');
     }
+
+    public function tenantId(): int
+    {
+        abort_unless($this->id_barberia, 403, 'El usuario no tiene una barbería asignada.');
+
+        return (int) $this->id_barberia;
+    }
 }

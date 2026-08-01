@@ -107,7 +107,6 @@ class ClienteController extends Controller
             'cumpleanos' => 'nullable|date',
             'foto' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
             'observaciones' => 'nullable|string',
-            'puntos' => 'nullable|integer|min:0',
             'ultima_visita' => 'nullable|date',
         ], [
             'nombre.required' => 'El nombre del cliente es obligatorio.',
@@ -115,6 +114,10 @@ class ClienteController extends Controller
             'foto.mimes' => 'La imagen debe ser JPG, JPEG, PNG o WEBP.',
             'foto.max' => 'La imagen no debe pesar más de 2 MB.',
         ]);
+
+        if ($usuario->rol === 'admin') {
+            $request->validate(['puntos' => 'nullable|integer|min:0']);
+        }
 
         $rutaFoto = null;
 
@@ -130,7 +133,7 @@ class ClienteController extends Controller
             'cumpleanos' => $request->cumpleanos,
             'foto' => $rutaFoto,
             'observaciones' => $request->observaciones,
-            'puntos' => $request->puntos ?? 0,
+            'puntos' => $usuario->rol === 'admin' ? max(0, (int) $request->input('puntos', 0)) : 0,
             'ultima_visita' => $request->ultima_visita,
             'activo' => 1,
         ]);
@@ -181,7 +184,6 @@ class ClienteController extends Controller
             'cumpleanos' => 'nullable|date',
             'foto' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
             'observaciones' => 'nullable|string',
-            'puntos' => 'nullable|integer|min:0',
             'ultima_visita' => 'nullable|date',
         ], [
             'nombre.required' => 'El nombre del cliente es obligatorio.',
@@ -200,16 +202,22 @@ class ClienteController extends Controller
             $rutaFoto = $request->file('foto')->store('clientes', 'public');
         }
 
-        $cliente->update([
+        $datosCliente = [
             'nombre' => $request->nombre,
             'apellido' => $request->apellido,
             'telefono' => $request->telefono,
             'cumpleanos' => $request->cumpleanos,
             'foto' => $rutaFoto,
             'observaciones' => $request->observaciones,
-            'puntos' => $request->puntos ?? 0,
             'ultima_visita' => $request->ultima_visita,
-        ]);
+        ];
+
+        if ($usuario->rol === 'admin') {
+            $request->validate(['puntos' => 'nullable|integer|min:0']);
+            $datosCliente['puntos'] = (int) $request->input('puntos', $cliente->puntos);
+        }
+
+        $cliente->update($datosCliente);
 
         return redirect()
             ->route('clientes.index')

@@ -198,23 +198,22 @@ class RecompensaController extends Controller
             'id_recompensa.required' => 'Selecciona una recompensa.',
         ]);
 
-        $cliente = Cliente::where('id_barberia', $idBarberia)
-            ->where('activo', 1)
-            ->where('id_cliente', $request->id_cliente)
-            ->firstOrFail();
+        $canjeRealizado = DB::transaction(function () use ($request, $idBarberia) {
+            $cliente = Cliente::where('id_barberia', $idBarberia)
+                ->where('activo', 1)
+                ->where('id_cliente', $request->id_cliente)
+                ->lockForUpdate()
+                ->firstOrFail();
 
-        $recompensa = Recompensa::where('id_barberia', $idBarberia)
-            ->where('activo', 1)
-            ->where('id_recompensa', $request->id_recompensa)
-            ->firstOrFail();
+            $recompensa = Recompensa::where('id_barberia', $idBarberia)
+                ->where('activo', 1)
+                ->where('id_recompensa', $request->id_recompensa)
+                ->firstOrFail();
 
-        if ($cliente->puntos < $recompensa->puntos_requeridos) {
-            return back()
-                ->withInput()
-                ->with('error', 'El cliente no tiene puntos suficientes para canjear esta recompensa.');
-        }
+            if ($cliente->puntos < $recompensa->puntos_requeridos) {
+                return false;
+            }
 
-        DB::transaction(function () use ($cliente, $recompensa, $idBarberia) {
             CanjeRecompensa::create([
                 'id_barberia' => $idBarberia,
                 'id_cliente' => $cliente->id_cliente,
@@ -223,9 +222,7 @@ class RecompensaController extends Controller
                 'fecha_canje' => now(),
             ]);
 
-            $cliente->update([
-                'puntos' => DB::raw('puntos - ' . $recompensa->puntos_requeridos),
-            ]);
+            $cliente->decrement('puntos', $recompensa->puntos_requeridos);
 
             MovimientoPunto::create([
                 'id_barberia' => $idBarberia,
@@ -236,7 +233,13 @@ class RecompensaController extends Controller
                 'referencia' => 'recompensa:' . $recompensa->id_recompensa,
                 'created_at' => now(),
             ]);
+
+            return true;
         });
+
+        if (! $canjeRealizado) {
+            return back()->withInput()->with('error', 'El cliente no tiene puntos suficientes para canjear esta recompensa.');
+        }
 
         return redirect()
             ->route('recompensas.formCanjear')

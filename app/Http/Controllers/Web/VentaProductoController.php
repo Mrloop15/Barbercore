@@ -127,9 +127,7 @@ class VentaProductoController extends Controller
                         'subtotal' => $detalle['subtotal'],
                     ]);
 
-                    $detalle['producto']->update([
-                        'stock' => DB::raw('stock - ' . $detalle['cantidad']),
-                    ]);
+                    $detalle['producto']->decrement('stock', $detalle['cantidad']);
                 }
 
                 if ($request->id_cliente) {
@@ -142,9 +140,7 @@ class VentaProductoController extends Controller
                         $puntosGanados = floor($total / 50);
 
                         if ($puntosGanados > 0) {
-                            $cliente->update([
-                                'puntos' => DB::raw('puntos + ' . $puntosGanados),
-                            ]);
+                            $cliente->increment('puntos', $puntosGanados);
 
                             MovimientoPunto::create([
                                 'id_barberia' => $idBarberia,

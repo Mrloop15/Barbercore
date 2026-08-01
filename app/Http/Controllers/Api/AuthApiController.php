@@ -27,7 +27,8 @@ class AuthApiController extends Controller
             ], 401);
         }
 
-        $token = $usuario->createToken('barbercore_mobile')->plainTextToken;
+        $usuario->tokens()->where('name', 'barbercore_mobile')->delete();
+        $token = $usuario->createToken('barbercore_mobile', ['api:access'], now()->addHour())->plainTextToken;
 
         return response()->json([
             'ok' => true,
