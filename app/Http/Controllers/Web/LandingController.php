@@ -4,9 +4,12 @@ namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
 use App\Models\Barberia;
+use App\Models\Cliente;
 use App\Models\HorarioAtencion;
 use App\Models\PreguntaFrecuente;
+use App\Models\Recompensa;
 use App\Models\Servicio;
+use Illuminate\Http\Request;
 
 class LandingController extends Controller
 {
@@ -53,6 +56,52 @@ class LandingController extends Controller
                 5 => 'Sábado',
                 6 => 'Domingo',
             ],
+        ]);
+    }
+
+    public function consultarRecompensas(Request $request)
+    {
+        $request->validate([
+            'telefono' => 'required|string|max:20',
+        ]);
+
+        $barberia = Barberia::first();
+        $telefonoBuscado = preg_replace('/\D/', '', $request->input('telefono'));
+
+        $cliente = null;
+
+        if ($telefonoBuscado !== '') {
+            $cliente = Cliente::where('id_barberia', $barberia?->id_barberia)
+                ->where('activo', 1)
+                ->get(['id_cliente', 'nombre', 'apellido', 'telefono', 'puntos'])
+                ->first(fn ($candidato) => preg_replace('/\D/', '', (string) $candidato->telefono) === $telefonoBuscado);
+        }
+
+        if (! $cliente) {
+            return response()->json([
+                'encontrado' => false,
+                'mensaje' => 'No encontramos un cliente registrado con ese número de teléfono.',
+            ]);
+        }
+
+        $recompensas = Recompensa::where('id_barberia', $barberia?->id_barberia)
+            ->where('activo', 1)
+            ->orderBy('puntos_requeridos')
+            ->get()
+            ->map(fn ($recompensa) => [
+                'nombre' => $recompensa->nombre,
+                'descripcion' => $recompensa->descripcion,
+                'puntos_requeridos' => $recompensa->puntos_requeridos,
+                'disponible' => $cliente->puntos >= $recompensa->puntos_requeridos,
+            ]);
+
+        return response()->json([
+            'encontrado' => true,
+            'cliente' => [
+                'nombre' => trim($cliente->nombre . ' ' . $cliente->apellido),
+                'puntos' => $cliente->puntos,
+            ],
+            'recompensas' => $recompensas,
         ]);
     }
 }

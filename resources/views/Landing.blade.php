@@ -37,6 +37,11 @@
         .topbar-item { display: inline-flex; align-items: center; gap: 7px; color: var(--borde); }
         .topbar-item .icon { width: 14px; height: 14px; color: var(--dorado); }
         .topbar-tag { color: var(--dorado); text-transform: uppercase; letter-spacing: .14em; }
+        .topbar-group-status { display: flex; align-items: center; gap: 20px; }
+        .topbar-status { display: inline-flex; align-items: center; gap: 7px; font-size: 11px; font-weight: 800; letter-spacing: .05em; text-transform: uppercase; }
+        .topbar-status.is-open { color: var(--verde); }
+        .topbar-status.is-closed { color: #E2795A; }
+        .topbar-status-dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
 
         .header { position: sticky; top: 0; z-index: 50; border-bottom: 1px solid var(--borde); background: rgba(255, 255, 255, .96); backdrop-filter: blur(12px); }
         .header-inner { min-height: 88px; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 30px; }
@@ -227,6 +232,20 @@
         .booking-note { margin: 18px 0; padding: 13px 14px; border-left: 3px solid var(--dorado); background: var(--fondo); color: var(--gris); font-size: 11px; line-height: 1.6; }
         .booking-submit { width: 100%; border: 0; background: var(--verde); color: var(--blanco); cursor: pointer; }
 
+        .rewards-submit { width: 100%; margin-top: 6px; }
+        .rewards-result { margin-top: 22px; }
+        .rewards-client { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 16px 18px; border: 1px solid var(--borde); background: var(--fondo); margin-bottom: 16px; }
+        .rewards-client strong { font-family: Georgia, serif; font-size: 16px; }
+        .rewards-points { color: var(--dorado); font-size: 21px; font-weight: 900; white-space: nowrap; }
+        .reward-item { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 13px 16px; border: 1px solid var(--borde); margin-bottom: 8px; }
+        .reward-item.is-available { border-color: var(--dorado); background: rgba(201, 162, 39, .06); }
+        .reward-item-name { font-weight: 800; font-size: 13px; }
+        .reward-item-desc { margin-top: 3px; color: var(--gris); font-size: 11px; line-height: 1.5; }
+        .reward-item-points { color: var(--gris); font-size: 11px; font-weight: 800; text-align: right; white-space: nowrap; }
+        .reward-item.is-available .reward-item-points { color: var(--dorado); }
+        .rewards-empty, .rewards-error { padding: 18px; border: 1px dashed var(--borde); color: var(--gris); font-size: 13px; text-align: center; }
+        .rewards-error { border-color: #c0392b; color: #c0392b; }
+
         .footer { padding: 55px 0 25px; background: var(--oscuro); color: var(--blanco); }
         .footer-grid { display: grid; grid-template-columns: 1.25fr .75fr .75fr; gap: 55px; padding-bottom: 42px; }
         .footer-brand { display: flex; align-items: center; gap: 13px; margin-bottom: 17px; }
@@ -240,6 +259,8 @@
         .footer-title { margin: 5px 0 17px; color: var(--dorado); font-size: 9px; font-weight: 900; letter-spacing: .2em; text-transform: uppercase; }
         .footer-links { display: grid; gap: 12px; color: var(--borde); font-size: 12px; }
         .footer-links a:hover { color: var(--dorado); }
+        .footer-links button { border: 0; background: none; padding: 0; color: inherit; font: inherit; text-align: left; cursor: pointer; }
+        .footer-links button:hover { color: var(--dorado); }
         .footer-bottom { display: flex; justify-content: space-between; gap: 20px; padding-top: 22px; border-top: 1px solid rgba(229,224,214,.16); color: var(--gris); font-size: 10px; }
 
         .whatsapp-widget { position: fixed; right: 22px; bottom: 22px; z-index: 70; font-family: Arial, Helvetica, sans-serif; }
@@ -374,6 +395,15 @@
                 'cierre' => $horario->hora_cierre ? substr($horario->hora_cierre, 0, 5) : null,
             ],
         ])->all();
+
+        $ahoraNegocio = now('America/Mexico_City');
+        $horarioHoy = $horarios->firstWhere('dia_semana', ($ahoraNegocio->dayOfWeekIso - 1));
+        $negocioAbierto = $horarioHoy
+            && $horarioHoy->abierto
+            && $horarioHoy->hora_apertura
+            && $horarioHoy->hora_cierre
+            && $ahoraNegocio->format('H:i:s') >= $horarioHoy->hora_apertura
+            && $ahoraNegocio->format('H:i:s') <= $horarioHoy->hora_cierre;
     @endphp
 
     <div class="topbar">
@@ -382,7 +412,10 @@
                 <span class="topbar-item"><svg class="icon" viewBox="0 0 24 24"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></svg>{{ $barberia?->direccion ?? 'Ubicación disponible por WhatsApp' }}</span>
                 <span class="topbar-item"><svg class="icon" viewBox="0 0 24 24"><path d="M22 16.9v3a2 2 0 0 1-2.2 2A19.8 19.8 0 0 1 3.1 5.2 2 2 0 0 1 5.1 3h3a2 2 0 0 1 2 1.7c.1.9.3 1.8.7 2.6a2 2 0 0 1-.5 2.1L9 10.7a16 16 0 0 0 4.3 4.3l1.3-1.3a2 2 0 0 1 2.1-.5c.8.4 1.7.6 2.6.7a2 2 0 0 1 1.7 2Z"/></svg>{{ $barberia?->telefono ?? 'Atención directa' }}</span>
             </div>
-            <span class="topbar-tag">Precisión · Estilo · Confianza</span>
+            <div class="topbar-group topbar-group-status">
+                <span class="topbar-status {{ $negocioAbierto ? 'is-open' : 'is-closed' }}"><span class="topbar-status-dot" aria-hidden="true"></span>{{ $negocioAbierto ? 'Abierto ahora' : 'Cerrado ahora' }}</span>
+                <span class="topbar-tag">Precisión · Estilo · Confianza</span>
+            </div>
         </div>
     </div>
 
@@ -402,6 +435,7 @@
 
             <nav class="nav-list nav-right" aria-label="Acciones">
                 <a class="nav-link" href="#contacto">Contacto</a>
+                <button class="btn btn-map" type="button" data-rewards-open><svg class="icon" viewBox="0 0 24 24"><path d="M12 2 3 7v6c0 5 4 9 9 9s9-4 9-9V7l-9-5Z"/><path d="m9 12 2 2 4-5"/></svg><span>Mis recompensas</span></button>
                 <a class="btn btn-dark" href="{{ route('login') }}"><svg class="icon" viewBox="0 0 24 24"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M15 12H3"/></svg><span>Acceso</span></a>
             </nav>
         </div>
@@ -514,9 +548,8 @@
                 <div class="contact-copy">
                     <span class="kicker">Visítanos</span>
                     <h2 class="title">Tu próxima cita comienza aquí.</h2>
-                    <p class="copy">Consulta nuestros horarios, encuentra la barbería y confirma tu visita directamente por WhatsApp.</p>
+                    <p class="copy">Consulta nuestros horarios y encuentra la barbería fácilmente.</p>
                     <div class="contact-actions">
-                        <button class="btn btn-dark" type="button" data-booking-open>Solicitar una cita</button>
                         @if($googleMapsUrl)
                             <a class="btn btn-map" href="{{ $googleMapsUrl }}" target="_blank" rel="noopener noreferrer"><svg class="icon" viewBox="0 0 24 24"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></svg>Ver en Google Maps</a>
                         @endif
@@ -599,6 +632,28 @@
                 <p class="booking-note">Esta solicitud no crea ni confirma una cita automáticamente. Se abrirá WhatsApp y nuestro equipo confirmará contigo la disponibilidad.</p>
                 <button class="btn booking-submit" type="submit"><svg class="icon" viewBox="0 0 24 24"><path d="M22 2 11 13"/><path d="m22 2-7 20-4-9-9-4Z"/></svg>Enviar solicitud por WhatsApp</button>
             </form>
+        </div>
+    </div>
+
+    <div class="booking-modal" id="rewards-modal" role="dialog" aria-modal="true" aria-labelledby="rewards-title" aria-hidden="true">
+        <div class="booking-dialog">
+            <div class="booking-head">
+                <div><span class="kicker">Programa de lealtad</span><h2 id="rewards-title">Consulta tus recompensas</h2></div>
+                <button class="booking-close" type="button" data-rewards-close aria-label="Cerrar formulario"><svg class="icon" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></svg></button>
+            </div>
+            <div class="booking-body">
+                <form id="rewards-form">
+                    <div class="booking-grid">
+                        <div class="booking-field full">
+                            <label for="rewards-phone">Número de teléfono *</label>
+                            <input type="tel" id="rewards-phone" name="telefono" placeholder="Ej. 3312345678" maxlength="20" autocomplete="tel" required>
+                        </div>
+                    </div>
+                    <p class="booking-note">Busca tus puntos acumulados y las recompensas disponibles con el número registrado en {{ $nombreBarberia }}.</p>
+                    <button class="btn btn-gold rewards-submit" type="submit"><svg class="icon" viewBox="0 0 24 24"><path d="M12 2 3 7v6c0 5 4 9 9 9s9-4 9-9V7l-9-5Z"/><path d="m9 12 2 2 4-5"/></svg>Consultar recompensas</button>
+                </form>
+                <div class="rewards-result" id="rewards-result" hidden></div>
+            </div>
         </div>
     </div>
 
@@ -943,6 +998,96 @@
                 setBookingOpen(false);
             });
 
+            const escapeHtml = (value) => String(value ?? '').replace(/[&<>"']/g, (char) => ({
+                '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
+            }[char]));
+
+            const rewardsModal = document.getElementById('rewards-modal');
+            const rewardsForm = document.getElementById('rewards-form');
+            const rewardsResult = document.getElementById('rewards-result');
+            const rewardsClose = rewardsModal.querySelector('[data-rewards-close]');
+            const rewardsSubmit = rewardsForm.querySelector('button[type="submit"]');
+            let rewardsTrigger = null;
+
+            const setRewardsOpen = (open) => {
+                rewardsModal.classList.toggle('is-open', open);
+                rewardsModal.setAttribute('aria-hidden', String(!open));
+                document.body.classList.toggle('booking-open', open);
+
+                if (open) {
+                    window.setTimeout(() => document.getElementById('rewards-phone').focus(), 50);
+                } else if (rewardsTrigger) {
+                    rewardsTrigger.focus();
+                }
+            };
+
+            const renderRewardsResult = (data) => {
+                rewardsResult.hidden = false;
+
+                if (!data.encontrado) {
+                    rewardsResult.innerHTML = `<div class="rewards-empty">${escapeHtml(data.mensaje || 'No encontramos un cliente con ese número.')}</div>`;
+                    return;
+                }
+
+                const rewardsHtml = data.recompensas.length
+                    ? data.recompensas.map((recompensa) => `
+                        <div class="reward-item ${recompensa.disponible ? 'is-available' : ''}">
+                            <div>
+                                <div class="reward-item-name">${escapeHtml(recompensa.nombre)}</div>
+                                ${recompensa.descripcion ? `<div class="reward-item-desc">${escapeHtml(recompensa.descripcion)}</div>` : ''}
+                            </div>
+                            <div class="reward-item-points">${escapeHtml(recompensa.puntos_requeridos)} pts${recompensa.disponible ? ' · Disponible' : ''}</div>
+                        </div>
+                    `).join('')
+                    : '<div class="rewards-empty">Aún no hay recompensas configuradas.</div>';
+
+                rewardsResult.innerHTML = `
+                    <div class="rewards-client"><strong>${escapeHtml(data.cliente.nombre)}</strong><span class="rewards-points">${escapeHtml(data.cliente.puntos)} pts</span></div>
+                    ${rewardsHtml}
+                `;
+            };
+
+            document.querySelectorAll('[data-rewards-open]').forEach((button) => {
+                button.addEventListener('click', () => {
+                    rewardsTrigger = button;
+                    rewardsForm.reset();
+                    rewardsResult.hidden = true;
+                    rewardsResult.innerHTML = '';
+                    setRewardsOpen(true);
+                });
+            });
+
+            rewardsClose.addEventListener('click', () => setRewardsOpen(false));
+            rewardsModal.addEventListener('click', (event) => {
+                if (event.target === rewardsModal) setRewardsOpen(false);
+            });
+
+            rewardsForm.addEventListener('submit', async (event) => {
+                event.preventDefault();
+                const telefono = document.getElementById('rewards-phone').value.trim();
+                if (!telefono) return;
+
+                rewardsSubmit.disabled = true;
+                const originalLabel = rewardsSubmit.innerHTML;
+                rewardsSubmit.textContent = 'Buscando...';
+
+                try {
+                    const response = await fetch(`{{ route('landing.recompensas.consultar') }}?telefono=${encodeURIComponent(telefono)}`, {
+                        headers: { 'Accept': 'application/json' },
+                    });
+
+                    if (!response.ok) throw new Error('request-failed');
+
+                    renderRewardsResult(await response.json());
+                } catch (error) {
+                    rewardsResult.hidden = false;
+                    rewardsResult.innerHTML = '<div class="rewards-error">Ocurrió un error al consultar. Intenta de nuevo.</div>';
+                } finally {
+                    rewardsSubmit.disabled = false;
+                    rewardsSubmit.innerHTML = originalLabel;
+                }
+            });
+
             document.querySelectorAll('[data-services-carousel]').forEach((carousel) => {
                 const track = carousel.querySelector('[data-carousel-track]');
                 const controls = carousel.previousElementSibling;
@@ -996,6 +1141,11 @@
             document.addEventListener('keydown', (event) => {
                 if (event.key === 'Escape' && bookingModal.classList.contains('is-open')) {
                     setBookingOpen(false);
+                    return;
+                }
+
+                if (event.key === 'Escape' && rewardsModal.classList.contains('is-open')) {
+                    setRewardsOpen(false);
                     return;
                 }
 

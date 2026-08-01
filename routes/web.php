@@ -16,6 +16,7 @@ use App\Http\Controllers\Web\ClienteController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [LandingController::class, 'index'])->name('landing');
+Route::get('/recompensas/consultar', [LandingController::class, 'consultarRecompensas'])->name('landing.recompensas.consultar');
 
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'mostrarLogin'])->name('login');
