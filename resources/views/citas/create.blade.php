@@ -5,6 +5,17 @@
 
 @section('content')
 
+@php
+    $horariosCita = $horarios->mapWithKeys(fn ($horario) => [
+        (string) $horario->dia_semana => [
+            'abierto' => (bool) $horario->abierto,
+            'apertura' => $horario->hora_apertura ? substr($horario->hora_apertura, 0, 5) : null,
+            'cierre' => $horario->hora_cierre ? substr($horario->hora_cierre, 0, 5) : null,
+        ],
+    ])->all();
+    $diasAbiertos = $horarios->where('abierto', true)->pluck('dia_semana')->implode(',');
+@endphp
+
 <div class="content-card appointment-form-card">
     <form method="POST" action="{{ route('citas.store') }}">
         @csrf
@@ -68,8 +79,9 @@
                     type="date" 
                     name="fecha" 
                     id="fecha" 
-                    value="{{ old('fecha', date('Y-m-d')) }}" 
+                    value="{{ old('fecha', $fechaInicial->toDateString()) }}" 
                     min="{{ now()->toDateString() }}"
+                    data-open-weekdays="{{ $diasAbiertos }}"
                     required
                 >
                 <small class="field-help" id="fechaLegible"></small>
@@ -85,11 +97,8 @@
                     step="900"
                     required
                 >
-                <div class="time-shortcuts">
-                    @foreach (['09:00', '11:00', '13:00', '16:00', '18:00'] as $horaRapida)
-                        <button type="button" class="time-shortcut" data-time="{{ $horaRapida }}">{{ $horaRapida }}</button>
-                    @endforeach
-                </div>
+                <div class="time-shortcuts" id="timeShortcuts"></div>
+                <small class="field-help" id="horarioDiaHelp"></small>
             </div>
 
             <div class="form-group">
@@ -134,6 +143,86 @@
     const fechaInput = document.getElementById('fecha');
     const horaInput = document.getElementById('hora_inicio');
     const fechaLegible = document.getElementById('fechaLegible');
+    const horarioDiaHelp = document.getElementById('horarioDiaHelp');
+    const timeShortcuts = document.getElementById('timeShortcuts');
+    const horariosAtencion = @json($horariosCita);
+
+    const minutos = hora => {
+        const [h, m] = (hora || '00:00').split(':').map(Number);
+        return (h * 60) + m;
+    };
+
+    const horaDesdeMinutos = total => `${String(Math.floor(total / 60)).padStart(2, '0')}:${String(total % 60).padStart(2, '0')}`;
+
+    function horarioParaFecha(fecha) {
+        if (!fecha) return null;
+        const dia = new Date(fecha + 'T12:00:00');
+        const indice = (dia.getDay() + 6) % 7;
+        const horario = horariosAtencion[String(indice)];
+        return horario?.abierto && horario.apertura && horario.cierre ? horario : null;
+    }
+
+    function actualizarDisponibilidad() {
+        const horario = horarioParaFecha(fechaInput.value);
+        const duracion = Math.max(15, parseInt(servicioSelect.options[servicioSelect.selectedIndex]?.getAttribute('data-duracion') || 0, 10));
+        timeShortcuts.innerHTML = '';
+
+        if (!horario) {
+            horaInput.value = '';
+            horaInput.dataset.unavailable = 'true';
+            horaInput.dataset.unavailableMessage = 'La barbería permanece cerrada este día.';
+            horaInput.removeAttribute('min');
+            horaInput.removeAttribute('max');
+            horarioDiaHelp.textContent = 'La barbería permanece cerrada este día.';
+            fechaInput.setCustomValidity('Selecciona un día con horario de atención.');
+            horaInput.dispatchEvent(new Event('change', { bubbles: true }));
+            return;
+        }
+
+        fechaInput.setCustomValidity('');
+        horaInput.dataset.unavailable = 'false';
+        delete horaInput.dataset.unavailableMessage;
+        const apertura = minutos(horario.apertura);
+        const ultimoInicio = minutos(horario.cierre) - duracion;
+
+        if (ultimoInicio < apertura) {
+            horaInput.value = '';
+            horaInput.dataset.unavailable = 'true';
+            horaInput.dataset.unavailableMessage = 'Este servicio no cabe dentro del horario de atención de este día.';
+            horaInput.removeAttribute('min');
+            horaInput.removeAttribute('max');
+            horarioDiaHelp.textContent = horaInput.dataset.unavailableMessage;
+            horaInput.dispatchEvent(new Event('change', { bubbles: true }));
+            return;
+        }
+
+        horaInput.min = horario.apertura;
+        horaInput.max = horaDesdeMinutos(ultimoInicio);
+        horarioDiaHelp.textContent = `Atención de ${horario.apertura} a ${horario.cierre}. Último inicio para este servicio: ${horaInput.max}.`;
+
+        if (horaInput.value && (minutos(horaInput.value) < apertura || minutos(horaInput.value) > ultimoInicio)) {
+            horaInput.value = '';
+        }
+
+        const candidatos = [];
+        for (let valor = apertura; valor <= ultimoInicio && candidatos.length < 5; valor += 120) candidatos.push(valor);
+        if (ultimoInicio >= apertura && !candidatos.includes(ultimoInicio)) candidatos.push(ultimoInicio);
+        candidatos.slice(0, 5).forEach(valor => {
+            const hora = horaDesdeMinutos(valor);
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.className = 'time-shortcut';
+            button.dataset.time = hora;
+            button.textContent = hora;
+            button.addEventListener('click', () => {
+                horaInput.value = hora;
+                horaInput.dispatchEvent(new Event('change', { bubbles: true }));
+            });
+            timeShortcuts.appendChild(button);
+        });
+
+        horaInput.dispatchEvent(new Event('change', { bubbles: true }));
+    }
 
     function actualizarResumenServicio() {
         const selected = servicioSelect.options[servicioSelect.selectedIndex];
@@ -143,6 +232,7 @@
 
         resumenPrecio.textContent = '$' + parseFloat(precio).toFixed(2);
         resumenDuracion.textContent = duracion + ' min';
+        actualizarDisponibilidad();
         actualizarHorario();
     }
 
@@ -158,9 +248,11 @@
         resumenHorario.textContent = inicio.toLocaleTimeString('es-MX', {hour:'2-digit', minute:'2-digit'}) + ' – ' + fin.toLocaleTimeString('es-MX', {hour:'2-digit', minute:'2-digit'});
     }
 
-    document.querySelectorAll('.date-shortcut').forEach(btn => btn.addEventListener('click', () => { fechaInput.value = btn.dataset.date; fechaInput.dispatchEvent(new Event('change', { bubbles: true })); }));
-    document.querySelectorAll('.time-shortcut').forEach(btn => btn.addEventListener('click', () => { horaInput.value = btn.dataset.time; horaInput.dispatchEvent(new Event('change', { bubbles: true })); }));
-    fechaInput.addEventListener('change', actualizarHorario);
+    document.querySelectorAll('.date-shortcut').forEach(btn => {
+        btn.disabled = !horarioParaFecha(btn.dataset.date);
+        btn.addEventListener('click', () => { fechaInput.value = btn.dataset.date; fechaInput.dispatchEvent(new Event('change', { bubbles: true })); });
+    });
+    fechaInput.addEventListener('change', () => { actualizarDisponibilidad(); actualizarHorario(); });
     horaInput.addEventListener('change', actualizarHorario);
 
     servicioSelect.addEventListener('change', actualizarResumenServicio);

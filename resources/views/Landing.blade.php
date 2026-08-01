@@ -6,6 +6,7 @@
     <meta name="description" content="Cortes, barba y cuidado personal en {{ $barberia?->nombre ?? 'BarberCore Studio' }}.">
     <title>{{ $barberia?->nombre ?? 'BarberCore Studio' }} | Barbería profesional</title>
     <link rel="icon" type="image/png" href="{{ asset('images/branding/icon_192_Barbercore.png') }}">
+    <script>document.documentElement.classList.add('js');</script>
 
     <style>
         :root {
@@ -67,6 +68,15 @@
         .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; }
         .hero-signature { display: flex; align-items: center; gap: 13px; margin-top: 38px; color: var(--borde); font-family: Georgia, serif; font-size: 14px; font-style: italic; }
         .hero-signature::before { content: ""; width: 52px; height: 1px; background: rgba(229, 224, 214, .45); }
+        .hero-content > * { opacity: 0; animation: hero-reveal .7s cubic-bezier(.22,.8,.3,1) forwards; }
+        .hero-content > :nth-child(2) { animation-delay: .08s; }
+        .hero-content > :nth-child(3) { animation-delay: .16s; }
+        .hero-content > :nth-child(4) { animation-delay: .24s; }
+        .hero-content > :nth-child(5) { animation-delay: .32s; }
+        @keyframes hero-reveal { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
+
+        .js [data-reveal] { opacity: 0; transform: translateY(18px); transition: opacity .58s ease, transform .58s cubic-bezier(.22,.8,.3,1); transition-delay: var(--reveal-delay, 0ms); }
+        .js [data-reveal].is-visible { opacity: 1; transform: none; }
 
         .trust-wrap { position: relative; z-index: 5; margin-top: -56px; }
         .trust-bar { display: grid; grid-template-columns: repeat(3, 1fr); border: 1px solid var(--borde); background: var(--blanco); box-shadow: 0 22px 55px rgba(17,17,17,.11); }
@@ -152,9 +162,12 @@
         .faq-item { border-bottom: 1px solid var(--borde); }
         .faq-item summary { position: relative; display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 18px 4px; cursor: pointer; list-style: none; font-family: Georgia, serif; font-size: 17px; font-weight: 700; }
         .faq-item summary::-webkit-details-marker { display: none; }
-        .faq-item summary::after { content: "+"; width: 30px; height: 30px; display: grid; place-items: center; flex: 0 0 auto; border: 1px solid var(--borde); border-radius: 50%; color: var(--dorado); font-family: Arial, sans-serif; }
-        .faq-item[open] summary::after { content: "−"; background: var(--oscuro); border-color: var(--oscuro); color: var(--blanco); }
-        .faq-answer { padding: 0 52px 18px 4px; color: var(--gris); font-size: 13px; line-height: 1.75; }
+        .faq-item summary::after { content: "+"; width: 30px; height: 30px; display: grid; place-items: center; flex: 0 0 auto; border: 1px solid var(--borde); border-radius: 50%; color: var(--dorado); font-family: Arial, sans-serif; transition: transform .3s ease, background .3s ease, color .3s ease, border-color .3s ease; }
+        .faq-item.is-expanded summary::after { background: var(--oscuro); border-color: var(--oscuro); color: var(--blanco); transform: rotate(45deg); }
+        .faq-answer { display: grid; grid-template-rows: 0fr; opacity: 0; color: var(--gris); font-size: 13px; line-height: 1.75; transition: grid-template-rows .32s cubic-bezier(.22,.8,.3,1), opacity .25s ease; }
+        .faq-answer-inner { min-height: 0; overflow: hidden; padding: 0 52px 0 4px; transition: padding-bottom .32s ease; }
+        .faq-item.is-expanded .faq-answer { grid-template-rows: 1fr; opacity: 1; }
+        .faq-item.is-expanded .faq-answer-inner { padding-bottom: 18px; }
 
         .cta { background: var(--dorado); color: var(--blanco); }
         .cta-inner { min-height: 200px; display: grid; grid-template-columns: 1fr auto; gap: 40px; align-items: center; }
@@ -177,6 +190,40 @@
         .booking-field input, .booking-field select, .booking-field textarea { width: 100%; border: 1px solid var(--borde); border-radius: 0; padding: 12px 13px; background: var(--blanco); color: var(--texto); font: inherit; font-size: 13px; outline: none; }
         .booking-field textarea { min-height: 85px; resize: vertical; }
         .booking-field input:focus, .booking-field select:focus, .booking-field textarea:focus { border-color: var(--dorado); box-shadow: 0 0 0 3px rgba(201,162,39,.12); }
+        .booking-native-picker { position: absolute !important; width: 1px !important; height: 1px !important; padding: 0 !important; border: 0 !important; opacity: 0; pointer-events: none; }
+        .booking-picker { position: relative; width: 100%; }
+        .booking-picker-trigger { width: 100%; min-height: 44px; display: flex; align-items: center; justify-content: space-between; gap: 12px; border: 1px solid var(--borde); padding: 11px 13px; background: var(--blanco); color: var(--texto); cursor: pointer; font: inherit; font-size: 13px; font-weight: 700; text-align: left; }
+        .booking-picker-trigger:hover, .booking-picker-trigger[aria-expanded="true"] { border-color: var(--dorado); box-shadow: 0 0 0 3px rgba(201,162,39,.12); }
+        .booking-picker-trigger:disabled { opacity: .55; cursor: not-allowed; border-color: var(--borde); box-shadow: none; }
+        .booking-picker-trigger .icon { width: 18px; height: 18px; color: var(--dorado); }
+        .booking-calendar, .booking-time-panel { position: fixed; z-index: 120; display: none; width: 310px; border: 1px solid var(--borde); border-radius: 18px; padding: 16px; background: var(--blanco); box-shadow: 0 22px 55px rgba(17,17,17,.2); }
+        .booking-calendar.open, .booking-time-panel.open { display: block; animation: picker-in .16s ease-out; }
+        @keyframes picker-in { from { opacity: 0; transform: translateY(-5px) scale(.98); } to { opacity: 1; transform: none; } }
+        .booking-calendar-head, .booking-time-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 14px; }
+        .booking-calendar-head strong, .booking-time-head strong { font-family: Arial, sans-serif; font-size: 14px; text-transform: capitalize; }
+        .booking-calendar-nav { width: 34px; height: 34px; display: grid; place-items: center; border: 1px solid var(--borde); border-radius: 9px; background: var(--blanco); color: var(--texto); cursor: pointer; }
+        .booking-calendar-nav:hover { border-color: var(--dorado); color: var(--dorado); }
+        .booking-calendar-week, .booking-calendar-days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+        .booking-calendar-week span { padding-bottom: 7px; color: var(--gris); font-size: 9px; font-weight: 800; text-align: center; text-transform: uppercase; }
+        .booking-calendar-day { aspect-ratio: 1; border: 0; border-radius: 9px; background: transparent; color: var(--texto); cursor: pointer; font-size: 11px; font-weight: 700; }
+        .booking-calendar-day:hover { background: rgba(201,162,39,.12); color: var(--dorado); }
+        .booking-calendar-day.outside { color: #bbb5aa; font-weight: 500; }
+        .booking-calendar-day.today { box-shadow: inset 0 0 0 1px var(--dorado); color: var(--dorado); }
+        .booking-calendar-day.selected { background: var(--dorado); color: var(--blanco); box-shadow: 0 5px 12px rgba(201,162,39,.25); }
+        .booking-calendar-day:disabled { opacity: .28; cursor: not-allowed; background: transparent; color: var(--gris); }
+        .booking-calendar-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--borde); }
+        .booking-calendar-footer button { border: 0; background: transparent; color: var(--dorado); padding: 4px; cursor: pointer; font-size: 11px; font-weight: 800; }
+        .booking-calendar-footer span, .booking-time-head span { color: var(--gris); font-size: 10px; }
+        .booking-time-panel { width: 330px; max-height: min(390px, calc(100vh - 24px)); overflow-y: auto; scrollbar-width: none; }
+        .booking-time-panel::-webkit-scrollbar { display: none; }
+        .booking-time-period + .booking-time-period { margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--borde); }
+        .booking-time-label { display: flex; align-items: center; gap: 7px; margin-bottom: 9px; color: var(--gris); font-size: 9px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; }
+        .booking-time-label::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--dorado); }
+        .booking-time-slots { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+        .booking-time-slot { border: 1px solid var(--borde); border-radius: 9px; padding: 8px 5px; background: var(--blanco); color: var(--texto); cursor: pointer; font-size: 10px; font-weight: 700; }
+        .booking-time-slot:hover { border-color: var(--dorado); background: rgba(201,162,39,.08); color: var(--dorado); }
+        .booking-time-slot.selected { border-color: var(--dorado); background: var(--dorado); color: var(--blanco); box-shadow: 0 5px 12px rgba(201,162,39,.22); }
+        .booking-time-empty { grid-column: 1 / -1; padding: 16px 8px; color: var(--gris); font-size: 11px; line-height: 1.5; text-align: center; }
         .booking-note { margin: 18px 0; padding: 13px 14px; border-left: 3px solid var(--dorado); background: var(--fondo); color: var(--gris); font-size: 11px; line-height: 1.6; }
         .booking-submit { width: 100%; border: 0; background: var(--verde); color: var(--blanco); cursor: pointer; }
 
@@ -296,11 +343,14 @@
             .booking-head, .booking-body { padding: 21px; }
             .booking-grid { grid-template-columns: 1fr; }
             .booking-field.full { grid-column: auto; }
+            .booking-calendar, .booking-time-panel { width: min(330px, calc(100vw - 24px)); }
         }
 
         @media (prefers-reduced-motion: reduce) {
             html { scroll-behavior: auto; }
             *, *::before, *::after { transition-duration: .01ms !important; }
+            .hero-content > * { opacity: 1; animation: none; }
+            .js [data-reveal] { opacity: 1; transform: none; }
         }
     </style>
 </head>
@@ -314,6 +364,16 @@
             : asset('images/branding/icon_512_Barbaercore.png');
         $logoFondoOscuro = asset('images/branding/barbercore-logo-dark-transparent.png');
         $usarCarrusel = $servicios->count() > 4;
+        $horariosAbiertos = $horarios->where('abierto', true);
+        $horaMinima = substr($horariosAbiertos->min('hora_apertura') ?: '08:00', 0, 5);
+        $horaMaxima = substr($horariosAbiertos->max('hora_cierre') ?: '20:00', 0, 5);
+        $horariosReserva = $horarios->mapWithKeys(fn ($horario) => [
+            (string) $horario->dia_semana => [
+                'abierto' => (bool) $horario->abierto,
+                'apertura' => $horario->hora_apertura ? substr($horario->hora_apertura, 0, 5) : null,
+                'cierre' => $horario->hora_cierre ? substr($horario->hora_cierre, 0, 5) : null,
+            ],
+        ])->all();
     @endphp
 
     <div class="topbar">
@@ -365,15 +425,15 @@
 
         <div class="trust-wrap">
             <div class="container trust-bar">
-                <div class="trust-item"><span class="trust-icon"><svg class="icon" viewBox="0 0 24 24"><path d="m20 6-11 11-5-5"/></svg></span><div><strong>Atención personalizada</strong><span>Escuchamos lo que buscas antes de empezar.</span></div></div>
-                <div class="trust-item"><span class="trust-icon"><svg class="icon" viewBox="0 0 24 24"><path d="M3 12h18M5 7h14M7 17h10"/><path d="M8 3h8M9 21h6"/></svg></span><div><strong>Precisión profesional</strong><span>Técnica y cuidado en cada acabado.</span></div></div>
-                <div class="trust-item"><span class="trust-icon"><svg class="icon" viewBox="0 0 24 24"><path d="M8 2v3M16 2v3M3.5 9h17M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z"/></svg></span><div><strong>Reserva directa</strong><span>Agenda fácilmente desde WhatsApp.</span></div></div>
+                <div class="trust-item" data-reveal><span class="trust-icon"><svg class="icon" viewBox="0 0 24 24"><path d="m20 6-11 11-5-5"/></svg></span><div><strong>Atención personalizada</strong><span>Escuchamos lo que buscas antes de empezar.</span></div></div>
+                <div class="trust-item" data-reveal style="--reveal-delay: 70ms"><span class="trust-icon"><svg class="icon" viewBox="0 0 24 24"><path d="M3 12h18M5 7h14M7 17h10"/><path d="M8 3h8M9 21h6"/></svg></span><div><strong>Precisión profesional</strong><span>Técnica y cuidado en cada acabado.</span></div></div>
+                <div class="trust-item" data-reveal style="--reveal-delay: 140ms"><span class="trust-icon"><svg class="icon" viewBox="0 0 24 24"><path d="M8 2v3M16 2v3M3.5 9h17M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z"/></svg></span><div><strong>Reserva directa</strong><span>Agenda fácilmente desde WhatsApp.</span></div></div>
             </div>
         </div>
 
         <section class="section" id="servicios">
             <div class="container">
-                <div class="section-head">
+                <div class="section-head" data-reveal>
                     <div><span class="kicker">Servicios seleccionados</span><h2 class="title">Un servicio a la altura de tu estilo.</h2></div>
                     <p class="copy">Opciones claras, atención sin prisas y resultados pensados para tu imagen y rutina.</p>
                 </div>
@@ -392,7 +452,7 @@
                 <div class="services-carousel {{ $usarCarrusel ? 'is-active' : '' }}" @if($usarCarrusel) data-services-carousel @endif>
                 <div class="services" @if($usarCarrusel) data-carousel-track tabindex="0" aria-label="Servicios disponibles" @endif>
                     @forelse($servicios as $servicio)
-                        <article class="service">
+                        <article class="service" data-reveal style="--reveal-delay: {{ min($loop->index * 55, 220) }}ms">
                             <div class="service-media">
                                 @if($servicio->imagen)
                                     <img src="{{ asset('storage/' . $servicio->imagen) }}" alt="{{ $servicio->nombre }} en {{ $nombreBarberia }}" loading="lazy">
@@ -437,20 +497,20 @@
 
         <section class="standard" id="estandar">
             <div class="container standard-grid">
-                <div class="standard-dark">
+                <div class="standard-dark" data-reveal>
                     <img class="standard-logo" src="{{ $logoFondoOscuro }}" alt="Emblema de {{ $nombreBarberia }}">
                     <div class="standard-quote"><span>Nuestro compromiso</span><h2>Confianza que se construye en cada visita.</h2></div>
                 </div>
                 <div class="standards-list">
-                    <article class="standard-item"><span class="standard-number">01</span><div><h3>Primero te escuchamos</h3><p>Entendemos el resultado que buscas y te orientamos para elegir lo que mejor te favorece.</p></div></article>
-                    <article class="standard-item"><span class="standard-number">02</span><div><h3>Cuidamos el proceso</h3><p>Trabajamos con orden, higiene y atención para que disfrutes el servicio de principio a fin.</p></div></article>
-                    <article class="standard-item"><span class="standard-number">03</span><div><h3>Revisamos el resultado</h3><p>El servicio termina cuando cada línea, transición y detalle está en su lugar.</p></div></article>
+                    <article class="standard-item" data-reveal><span class="standard-number">01</span><div><h3>Primero te escuchamos</h3><p>Entendemos el resultado que buscas y te orientamos para elegir lo que mejor te favorece.</p></div></article>
+                    <article class="standard-item" data-reveal style="--reveal-delay: 70ms"><span class="standard-number">02</span><div><h3>Cuidamos el proceso</h3><p>Trabajamos con orden, higiene y atención para que disfrutes el servicio de principio a fin.</p></div></article>
+                    <article class="standard-item" data-reveal style="--reveal-delay: 140ms"><span class="standard-number">03</span><div><h3>Revisamos el resultado</h3><p>El servicio termina cuando cada línea, transición y detalle está en su lugar.</p></div></article>
                 </div>
             </div>
         </section>
 
         <section class="contact-section" id="contacto">
-            <div class="container contact-card">
+            <div class="container contact-card" data-reveal>
                 <div class="contact-copy">
                     <span class="kicker">Visítanos</span>
                     <h2 class="title">Tu próxima cita comienza aquí.</h2>
@@ -479,12 +539,12 @@
         @if($preguntasFrecuentes->isNotEmpty())
             <section class="faq-section" id="preguntas">
                 <div class="container faq-wrap">
-                    <div class="faq-intro"><span class="kicker">Antes de tu visita</span><h2 class="title">Preguntas frecuentes.</h2><p class="copy">Información clara para que reserves y llegues con toda confianza.</p></div>
+                    <div class="faq-intro" data-reveal><span class="kicker">Antes de tu visita</span><h2 class="title">Preguntas frecuentes.</h2><p class="copy">Información clara para que reserves y llegues con toda confianza.</p></div>
                     <div class="faq-list">
                         @foreach($preguntasFrecuentes as $faq)
-                            <details class="faq-item" @if($loop->first) open @endif>
+                            <details class="faq-item" data-reveal style="--reveal-delay: {{ min($loop->index * 55, 220) }}ms" @if($loop->first) open @endif>
                                 <summary>{{ $faq->pregunta }}</summary>
-                                <div class="faq-answer">{{ $faq->respuesta }}</div>
+                                <div class="faq-answer"><div class="faq-answer-inner">{{ $faq->respuesta }}</div></div>
                             </details>
                         @endforeach
                     </div>
@@ -493,7 +553,7 @@
         @endif
 
         <section class="cta">
-            <div class="container cta-inner"><div><h2>Haz espacio para verte mejor.</h2><p>Completa tus datos y envía tu solicitud directamente por WhatsApp.</p></div><button class="btn btn-dark" type="button" data-booking-open><svg class="icon" viewBox="0 0 24 24"><path d="M8 2v3M16 2v3M3.5 9h17M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z"/></svg>Reservar ahora</button></div>
+            <div class="container cta-inner" data-reveal><div><h2>Haz espacio para verte mejor.</h2><p>Completa tus datos y envía tu solicitud directamente por WhatsApp.</p></div><button class="btn btn-dark" type="button" data-booking-open><svg class="icon" viewBox="0 0 24 24"><path d="M8 2v3M16 2v3M3.5 9h17M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z"/></svg>Reservar ahora</button></div>
         </section>
     </main>
 
@@ -531,9 +591,9 @@
             <form class="booking-body" id="booking-form">
                 <div class="booking-grid">
                     <div class="booking-field full"><label for="booking-name">Tu nombre *</label><input type="text" id="booking-name" name="nombre" maxlength="100" autocomplete="name" required></div>
-                    <div class="booking-field full"><label for="booking-service">Servicio de interés *</label><select id="booking-service" name="servicio" required><option value="">Selecciona un servicio</option>@foreach($servicios as $servicio)<option value="{{ $servicio->nombre }}">{{ $servicio->nombre }} · ${{ number_format($servicio->precio, 2) }}</option>@endforeach<option value="Por definir">No estoy seguro todavía</option></select></div>
+                    <div class="booking-field full"><label for="booking-service">Servicio de interés *</label><select id="booking-service" name="servicio" required><option value="">Selecciona un servicio</option>@foreach($servicios as $servicio)<option value="{{ $servicio->nombre }}" data-duration="{{ $servicio->duracion_minutos }}">{{ $servicio->nombre }} · ${{ number_format($servicio->precio, 2) }}</option>@endforeach<option value="Por definir" data-duration="0">No estoy seguro todavía</option></select></div>
                     <div class="booking-field"><label for="booking-date">Fecha deseada *</label><input type="date" id="booking-date" name="fecha" min="{{ now()->format('Y-m-d') }}" required></div>
-                    <div class="booking-field"><label for="booking-time">Hora deseada *</label><input type="time" id="booking-time" name="hora" required></div>
+                    <div class="booking-field"><label for="booking-time">Hora deseada *</label><input type="time" id="booking-time" name="hora" min="{{ $horaMinima }}" max="{{ $horaMaxima }}" step="900" required></div>
                     <div class="booking-field full"><label for="booking-notes">Comentario opcional</label><textarea id="booking-notes" name="comentarios" maxlength="400" placeholder="Ej. Prefiero un corte con acabado natural."></textarea></div>
                 </div>
                 <p class="booking-note">Esta solicitud no crea ni confirma una cita automáticamente. Se abrirá WhatsApp y nuestro equipo confirmará contigo la disponibilidad.</p>
@@ -584,12 +644,259 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            const revealElements = document.querySelectorAll('[data-reveal]');
+
+            if (reducedMotion || !('IntersectionObserver' in window)) {
+                revealElements.forEach((element) => element.classList.add('is-visible'));
+            } else {
+                const revealObserver = new IntersectionObserver((entries, observer) => {
+                    entries.forEach((entry) => {
+                        if (!entry.isIntersecting) return;
+                        entry.target.classList.add('is-visible');
+                        observer.unobserve(entry.target);
+                    });
+                }, { threshold: .12, rootMargin: '0px 0px -35px' });
+                revealElements.forEach((element) => revealObserver.observe(element));
+            }
+
+            document.querySelectorAll('.faq-item').forEach((item) => {
+                const summary = item.querySelector('summary');
+                let closeTimer;
+
+                if (item.open) item.classList.add('is-expanded');
+
+                summary.addEventListener('click', (event) => {
+                    event.preventDefault();
+                    window.clearTimeout(closeTimer);
+
+                    if (item.classList.contains('is-expanded')) {
+                        item.classList.remove('is-expanded');
+                        closeTimer = window.setTimeout(() => item.open = false, reducedMotion ? 0 : 320);
+                        return;
+                    }
+
+                    item.open = true;
+                    window.requestAnimationFrame(() => item.classList.add('is-expanded'));
+                });
+            });
+
+            const pad = (number) => String(number).padStart(2, '0');
+            const toDateValue = (date) => `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
+            const fromDateValue = (value) => value ? new Date(`${value}T12:00:00`) : new Date();
+            const dateLabel = (value) => value ? fromDateValue(value).toLocaleDateString('es-MX', { day: 'numeric', month: 'long', year: 'numeric' }) : 'Seleccionar fecha';
+            const months = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+            const weekdays = ['L','M','M','J','V','S','D'];
+            const businessHours = @json($horariosReserva);
+            const scheduleForDate = (value) => {
+                if (!value) return null;
+                const date = fromDateValue(value);
+                const businessDay = (date.getDay() + 6) % 7;
+                const schedule = businessHours[String(businessDay)];
+                return schedule?.abierto && schedule.apertura && schedule.cierre ? schedule : null;
+            };
+
+            const closeBookingPickers = (except = null) => {
+                document.querySelectorAll('.booking-calendar.open, .booking-time-panel.open').forEach((panel) => {
+                    if (panel === except) return;
+                    panel.classList.remove('open');
+                    panel.closest('.booking-picker')?.querySelector('.booking-picker-trigger')?.setAttribute('aria-expanded', 'false');
+                });
+            };
+
+            const positionBookingPicker = (trigger, panel) => {
+                const triggerRect = trigger.getBoundingClientRect();
+                const panelWidth = panel.offsetWidth;
+                const panelHeight = panel.offsetHeight;
+                const left = Math.max(12, Math.min(triggerRect.left, window.innerWidth - panelWidth - 12));
+                const fitsBelow = window.innerHeight - triggerRect.bottom >= panelHeight + 10;
+                const top = fitsBelow ? triggerRect.bottom + 8 : Math.max(12, triggerRect.top - panelHeight - 8);
+                panel.style.left = `${left}px`;
+                panel.style.top = `${top}px`;
+            };
+
+            const dateInput = document.getElementById('booking-date');
+            dateInput.classList.add('booking-native-picker');
+            const datePicker = document.createElement('div');
+            datePicker.className = 'booking-picker';
+            datePicker.innerHTML = `
+                <button type="button" class="booking-picker-trigger" aria-expanded="false"><span></span><svg class="icon" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/></svg></button>
+                <div class="booking-calendar" role="dialog" aria-label="Seleccionar fecha">
+                    <div class="booking-calendar-head"><button type="button" class="booking-calendar-nav prev" aria-label="Mes anterior">‹</button><strong></strong><button type="button" class="booking-calendar-nav next" aria-label="Mes siguiente">›</button></div>
+                    <div class="booking-calendar-week">${weekdays.map((day) => `<span>${day}</span>`).join('')}</div>
+                    <div class="booking-calendar-days"></div>
+                    <div class="booking-calendar-footer"><button type="button">Ir a hoy</button><span>Selecciona un día</span></div>
+                </div>`;
+            dateInput.insertAdjacentElement('afterend', datePicker);
+
+            const dateTrigger = datePicker.querySelector('.booking-picker-trigger');
+            const dateTriggerLabel = dateTrigger.querySelector('span');
+            const calendar = datePicker.querySelector('.booking-calendar');
+            const calendarTitle = calendar.querySelector('.booking-calendar-head strong');
+            const calendarDays = calendar.querySelector('.booking-calendar-days');
+            let dateCursor = fromDateValue(dateInput.value);
+
+            const renderCalendar = () => {
+                dateTriggerLabel.textContent = dateLabel(dateInput.value);
+                calendarTitle.textContent = `${months[dateCursor.getMonth()]} ${dateCursor.getFullYear()}`;
+                calendarDays.innerHTML = '';
+                const first = new Date(dateCursor.getFullYear(), dateCursor.getMonth(), 1);
+                const mondayOffset = (first.getDay() + 6) % 7;
+                const gridStart = new Date(dateCursor.getFullYear(), dateCursor.getMonth(), 1 - mondayOffset);
+                const today = toDateValue(new Date());
+
+                for (let index = 0; index < 42; index += 1) {
+                    const date = new Date(gridStart);
+                    date.setDate(gridStart.getDate() + index);
+                    const value = toDateValue(date);
+                    const button = document.createElement('button');
+                    button.type = 'button';
+                    button.className = 'booking-calendar-day';
+                    button.textContent = date.getDate();
+                    if (date.getMonth() !== dateCursor.getMonth()) button.classList.add('outside');
+                    if (value === today) button.classList.add('today');
+                    if (value === dateInput.value) button.classList.add('selected');
+                    if ((dateInput.min && value < dateInput.min) || (dateInput.max && value > dateInput.max) || !scheduleForDate(value)) button.disabled = true;
+                    button.addEventListener('click', () => {
+                        dateInput.value = value;
+                        dateInput.dispatchEvent(new Event('change', { bubbles: true }));
+                        dateCursor = date;
+                        closeBookingPickers();
+                        renderCalendar();
+                    });
+                    calendarDays.appendChild(button);
+                }
+            };
+
+            dateTrigger.addEventListener('click', () => {
+                const opening = !calendar.classList.contains('open');
+                closeBookingPickers(calendar);
+                calendar.classList.toggle('open', opening);
+                dateTrigger.setAttribute('aria-expanded', String(opening));
+                if (opening) positionBookingPicker(dateTrigger, calendar);
+            });
+            calendar.querySelector('.prev').addEventListener('click', () => { dateCursor = new Date(dateCursor.getFullYear(), dateCursor.getMonth() - 1, 1); renderCalendar(); });
+            calendar.querySelector('.next').addEventListener('click', () => { dateCursor = new Date(dateCursor.getFullYear(), dateCursor.getMonth() + 1, 1); renderCalendar(); });
+            calendar.querySelector('.booking-calendar-footer button').addEventListener('click', () => {
+                const today = new Date();
+                const value = toDateValue(today);
+                if ((!dateInput.min || value >= dateInput.min) && scheduleForDate(value)) {
+                    dateInput.value = value;
+                    dateInput.dispatchEvent(new Event('change', { bubbles: true }));
+                }
+                dateCursor = today;
+                renderCalendar();
+            });
+            renderCalendar();
+
+            const timeInput = document.getElementById('booking-time');
+            const toMinutes = (value) => { const [hours, minutes] = (value || '00:00').split(':').map(Number); return (hours * 60) + minutes; };
+            const toTimeValue = (minutes) => `${pad(Math.floor(minutes / 60))}:${pad(minutes % 60)}`;
+            const timeLabel = (value) => value ? new Date(`2000-01-01T${value}`).toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' }) : 'Seleccionar hora';
+            timeInput.classList.add('booking-native-picker');
+            const timePicker = document.createElement('div');
+            timePicker.className = 'booking-picker';
+            timePicker.innerHTML = `
+                <button type="button" class="booking-picker-trigger" aria-expanded="false"><span></span><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></button>
+                <div class="booking-time-panel" role="dialog" aria-label="Seleccionar hora">
+                    <div class="booking-time-head"><strong>Selecciona un horario</strong><span>Intervalos de 15 min</span></div>
+                    <div class="booking-time-period morning"><div class="booking-time-label">Mañana</div><div class="booking-time-slots"></div></div>
+                    <div class="booking-time-period afternoon"><div class="booking-time-label">Tarde</div><div class="booking-time-slots"></div></div>
+                </div>`;
+            timeInput.insertAdjacentElement('afterend', timePicker);
+            const timeTrigger = timePicker.querySelector('.booking-picker-trigger');
+            const timeTriggerLabel = timeTrigger.querySelector('span');
+            const timePanel = timePicker.querySelector('.booking-time-panel');
+            const bookingService = document.getElementById('booking-service');
+
+            const renderTimes = () => {
+                const morning = timePanel.querySelector('.morning .booking-time-slots');
+                const afternoon = timePanel.querySelector('.afternoon .booking-time-slots');
+                const morningPeriod = morning.closest('.booking-time-period');
+                const afternoonPeriod = afternoon.closest('.booking-time-period');
+                const panelMeta = timePanel.querySelector('.booking-time-head span');
+                morning.innerHTML = '';
+                afternoon.innerHTML = '';
+                const step = Math.max(5, Number(timeInput.step || 900) / 60);
+                const schedule = scheduleForDate(dateInput.value);
+
+                if (!schedule) {
+                    timeInput.value = '';
+                    timeTrigger.disabled = true;
+                    timeTriggerLabel.textContent = dateInput.value ? 'Día cerrado' : 'Selecciona primero una fecha';
+                    panelMeta.textContent = 'Sin horario disponible';
+                    morningPeriod.hidden = false;
+                    afternoonPeriod.hidden = true;
+                    morning.innerHTML = '<span class="booking-time-empty">Elige en el calendario un día marcado como disponible.</span>';
+                    closeBookingPickers();
+                    return;
+                }
+
+                timeTrigger.disabled = false;
+                timeInput.min = schedule.apertura;
+                timeInput.max = schedule.cierre;
+                panelMeta.textContent = `${schedule.apertura} – ${schedule.cierre} · cada 15 min`;
+                morningPeriod.hidden = false;
+                afternoonPeriod.hidden = false;
+                const serviceDuration = Math.max(15, Number(bookingService.selectedOptions[0]?.dataset.duration || 0));
+                const firstMinute = toMinutes(schedule.apertura);
+                const lastMinute = toMinutes(schedule.cierre) - serviceDuration;
+                const selectedMinutes = timeInput.value ? toMinutes(timeInput.value) : null;
+
+                if (selectedMinutes !== null && (selectedMinutes < firstMinute || selectedMinutes > lastMinute)) {
+                    timeInput.value = '';
+                }
+
+                timeTriggerLabel.textContent = timeLabel(timeInput.value);
+
+                for (let minutes = firstMinute; minutes <= lastMinute; minutes += step) {
+                    const value = toTimeValue(minutes);
+                    const button = document.createElement('button');
+                    button.type = 'button';
+                    button.className = 'booking-time-slot';
+                    button.textContent = timeLabel(value);
+                    if (value === timeInput.value.slice(0, 5)) button.classList.add('selected');
+                    button.addEventListener('click', () => {
+                        timeInput.value = value;
+                        timeInput.dispatchEvent(new Event('change', { bubbles: true }));
+                        closeBookingPickers();
+                        renderTimes();
+                    });
+                    (minutes < 12 * 60 ? morning : afternoon).appendChild(button);
+                }
+
+                if (!morning.children.length) morningPeriod.hidden = true;
+                if (!afternoon.children.length) afternoonPeriod.hidden = true;
+            };
+
+            timeTrigger.addEventListener('click', () => {
+                const opening = !timePanel.classList.contains('open');
+                closeBookingPickers(timePanel);
+                timePanel.classList.toggle('open', opening);
+                timeTrigger.setAttribute('aria-expanded', String(opening));
+                if (opening) positionBookingPicker(timeTrigger, timePanel);
+            });
+            timeInput.addEventListener('change', renderTimes);
+            dateInput.addEventListener('change', () => {
+                dateCursor = fromDateValue(dateInput.value);
+                renderCalendar();
+                renderTimes();
+            });
+            bookingService.addEventListener('change', renderTimes);
+            renderTimes();
+
+            document.addEventListener('click', (event) => {
+                if (!event.target.closest('.booking-picker')) closeBookingPickers();
+            });
+            window.addEventListener('resize', () => closeBookingPickers());
+
             const bookingModal = document.getElementById('booking-modal');
             const bookingForm = document.getElementById('booking-form');
             const bookingClose = bookingModal.querySelector('[data-booking-close]');
             let bookingTrigger = null;
 
             const setBookingOpen = (open) => {
+                if (!open) closeBookingPickers();
                 bookingModal.classList.toggle('is-open', open);
                 bookingModal.setAttribute('aria-hidden', String(!open));
                 document.body.classList.toggle('booking-open', open);

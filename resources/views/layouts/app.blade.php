@@ -1440,6 +1440,7 @@
         .custom-time-picker { position: relative; width: 100%; }
         .custom-time-trigger { width: 100%; min-height: 44px; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 11px 13px; border: 1px solid var(--borde); border-radius: 10px; background: var(--blanco); color: var(--texto); cursor: pointer; font-weight: 700; text-align: left; }
         .custom-time-trigger:hover, .custom-time-trigger[aria-expanded="true"] { border-color: var(--dorado); box-shadow: 0 0 0 3px rgba(201,162,39,.12); }
+        .custom-time-trigger:disabled { cursor: not-allowed; opacity: .58; background: var(--crema); box-shadow: none; }
         .custom-time-trigger svg { color: var(--dorado); flex: 0 0 auto; }
         .custom-time-panel { display: none; position: absolute; z-index: 3000; top: calc(100% + 8px); left: 0; width: 330px; max-height: 390px; overflow-y: auto; scrollbar-width: none; padding: 16px; border: 1px solid var(--borde); border-radius: 18px; background: var(--blanco); box-shadow: 0 22px 55px rgba(28,28,28,.18); }
         .custom-time-panel::-webkit-scrollbar { display: none; }
@@ -1455,6 +1456,7 @@
         .time-slot:hover { border-color: var(--dorado); color: var(--dorado); background: rgba(201,162,39,.08); }
         .time-slot.selected { border-color: var(--dorado); background: var(--dorado); color: var(--blanco); box-shadow: 0 5px 12px rgba(201,162,39,.22); }
         .time-slot.now { box-shadow: inset 0 0 0 1px var(--dorado); }
+        .custom-time-empty { grid-column: 1 / -1; padding: 12px; border-radius: 9px; background: var(--crema); color: var(--gris); font-size: 10px; font-weight: 700; text-align: center; }
         @media (max-width: 1100px) { .agenda-summary-wide { grid-template-columns: repeat(3,1fr); } }
         @media (max-width: 700px) { .agenda-hero, .agenda-toolbar, .timeline-card-header, .agenda-details-heading { align-items: stretch; flex-direction: column; } .agenda-toolbar .agenda-filter { width: 100%; } .agenda-toolbar .agenda-filter input { flex: 1; min-width: 0; } .agenda-summary-wide { grid-template-columns: repeat(2,1fr); } .timeline-legend { flex-wrap: wrap; } .appointment-form-card { padding: 18px; } .date-shortcut, .time-shortcut { flex: 1; } }
         @media (max-width: 520px) { .appointment-modal { padding: 10px; } .appointment-modal-dialog { max-height: calc(100vh - 20px); border-radius: 19px; } .appointment-modal-header, .appointment-modal-body { padding: 18px; } .modal-appointment-heading { grid-template-columns: 52px 1fr; } .modal-appointment-heading > .badge { grid-column: 2; justify-self: start; } .modal-date-icon { width: 52px; height: 52px; } .modal-detail-grid { grid-template-columns: 1fr; } .modal-notes { grid-column: auto; } .appointment-modal-footer { padding: 14px 18px 18px; } }
@@ -1701,6 +1703,8 @@
             const calendar = picker.querySelector('.custom-calendar');
             const title = picker.querySelector('.calendar-head strong');
             const days = picker.querySelector('.calendar-days');
+            const restrictWeekdays = input.hasAttribute('data-open-weekdays');
+            const openWeekdays = (input.dataset.openWeekdays || '').split(',').filter(Boolean).map(Number);
             let cursor = fromValue(input.value);
 
             function render() {
@@ -1724,6 +1728,8 @@
                     if (value === today) button.classList.add('today');
                     if (value === input.value) button.classList.add('selected');
                     if ((input.min && value < input.min) || (input.max && value > input.max)) button.disabled = true;
+                    const weekday = (date.getDay() + 6) % 7;
+                    if (restrictWeekdays && !openWeekdays.includes(weekday)) button.disabled = true;
                     button.addEventListener('click', function () {
                         input.value = value;
                         input.dispatchEvent(new Event('change', { bubbles: true }));
@@ -1743,7 +1749,18 @@
             });
             picker.querySelector('.prev').addEventListener('click', () => { cursor = new Date(cursor.getFullYear(), cursor.getMonth() - 1, 1); render(); });
             picker.querySelector('.next').addEventListener('click', () => { cursor = new Date(cursor.getFullYear(), cursor.getMonth() + 1, 1); render(); });
-            picker.querySelector('.calendar-today').addEventListener('click', () => { const today = new Date(); const value = toValue(today); if (!input.min || value >= input.min) { input.value = value; input.dispatchEvent(new Event('change', { bubbles: true })); } cursor = today; render(); });
+            picker.querySelector('.calendar-today').addEventListener('click', () => {
+                const today = new Date();
+                const value = toValue(today);
+                const weekday = (today.getDay() + 6) % 7;
+                const isOpen = !restrictWeekdays || openWeekdays.includes(weekday);
+                if ((!input.min || value >= input.min) && (!input.max || value <= input.max) && isOpen) {
+                    input.value = value;
+                    input.dispatchEvent(new Event('change', { bubbles: true }));
+                }
+                cursor = today;
+                render();
+            });
             input.addEventListener('change', function () { cursor = fromValue(input.value); render(); });
             render();
         });
@@ -1792,14 +1809,32 @@
             const panel = picker.querySelector('.custom-time-panel');
             const morning = picker.querySelector('.morning .time-slots');
             const afternoon = picker.querySelector('.afternoon .time-slots');
-            const step = Math.max(5, parseInt(input.step || '900', 10) / 60);
-            const start = input.min ? toMinutes(input.min) : 8 * 60;
-            const end = input.max ? toMinutes(input.max) : 20 * 60;
+            const afternoonPeriod = picker.querySelector('.afternoon');
 
             function render() {
                 label.textContent = formatTime(input.value);
                 morning.innerHTML = '';
                 afternoon.innerHTML = '';
+                const unavailable = input.dataset.unavailable === 'true';
+                trigger.disabled = unavailable;
+
+                if (unavailable) {
+                    label.textContent = 'Día sin horarios disponibles';
+                    const message = input.dataset.unavailableMessage || 'El negocio no atiende este día.';
+                    const empty = document.createElement('span');
+                    empty.className = 'custom-time-empty';
+                    empty.textContent = message;
+                    morning.appendChild(empty);
+                    afternoonPeriod.style.display = 'none';
+                    panel.classList.remove('open');
+                    trigger.setAttribute('aria-expanded', 'false');
+                    return;
+                }
+
+                afternoonPeriod.style.display = '';
+                const step = Math.max(5, parseInt(input.step || '900', 10) / 60);
+                const start = input.min ? toMinutes(input.min) : 8 * 60;
+                const end = input.max ? toMinutes(input.max) : 20 * 60;
                 const now = new Date();
                 const nearestNow = Math.round((now.getHours() * 60 + now.getMinutes()) / step) * step;
 

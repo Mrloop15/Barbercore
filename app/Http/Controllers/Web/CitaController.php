@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Cita;
 use App\Models\Cliente;
 use App\Models\HistorialServicio;
+use App\Models\HorarioAtencion;
 use App\Models\MovimientoPunto;
 use App\Models\Servicio;
 use App\Models\Usuario;
@@ -61,7 +62,22 @@ class CitaController extends Controller
             ->orderBy('nombre')
             ->get();
 
-        return view('citas.create', compact('clientes', 'servicios', 'barberos'));
+        $horarios = HorarioAtencion::where('id_barberia', $idBarberia)
+            ->get()
+            ->keyBy('dia_semana');
+
+        $fechaInicial = Carbon::today();
+        foreach (range(0, 13) as $diasAdelante) {
+            $candidata = Carbon::today()->addDays($diasAdelante);
+            $diaSemana = $candidata->dayOfWeekIso - 1;
+
+            if ($horarios->get($diaSemana)?->abierto) {
+                $fechaInicial = $candidata;
+                break;
+            }
+        }
+
+        return view('citas.create', compact('clientes', 'servicios', 'barberos', 'horarios', 'fechaInicial'));
     }
 
     public function store(Request $request)
@@ -73,15 +89,17 @@ class CitaController extends Controller
             'id_cliente' => 'required|exists:clientes,id_cliente',
             'id_servicio' => 'required|exists:servicios,id_servicio',
             'id_barbero' => 'required|exists:usuarios,id_usuario',
-            'fecha' => 'required|date',
-            'hora_inicio' => 'required',
+            'fecha' => 'required|date|after_or_equal:today',
+            'hora_inicio' => 'required|date_format:H:i',
             'observaciones' => 'nullable|string',
         ], [
             'id_cliente.required' => 'Selecciona un cliente.',
             'id_servicio.required' => 'Selecciona un servicio.',
             'id_barbero.required' => 'Selecciona un barbero.',
             'fecha.required' => 'Selecciona la fecha de la cita.',
+            'fecha.after_or_equal' => 'La fecha de la cita no puede estar en el pasado.',
             'hora_inicio.required' => 'Selecciona la hora de inicio.',
+            'hora_inicio.date_format' => 'Selecciona una hora válida.',
         ]);
 
         $servicio = Servicio::where('id_barberia', $idBarberia)
@@ -94,6 +112,26 @@ class CitaController extends Controller
 
         $horaInicioSql = $horaInicio->format('H:i:s');
         $horaFinSql = $horaFin->format('H:i:s');
+
+        $diaSemana = Carbon::parse($request->fecha)->dayOfWeekIso - 1;
+        $horario = HorarioAtencion::where('id_barberia', $idBarberia)
+            ->where('dia_semana', $diaSemana)
+            ->first();
+
+        if (! $horario?->abierto || ! $horario->hora_apertura || ! $horario->hora_cierre) {
+            return back()
+                ->withInput()
+                ->with('error', 'La barbería no brinda atención en el día seleccionado.');
+        }
+
+        $horaApertura = Carbon::createFromFormat('H:i:s', $horario->hora_apertura);
+        $horaCierre = Carbon::createFromFormat('H:i:s', $horario->hora_cierre);
+
+        if ($horaInicio->lt($horaApertura) || $horaFin->gt($horaCierre)) {
+            return back()
+                ->withInput()
+                ->with('error', 'El horario seleccionado está fuera del horario de atención o el servicio terminaría después del cierre.');
+        }
 
         $existeEmpalme = Cita::where('id_barberia', $idBarberia)
             ->where('id_barbero', $request->id_barbero)
