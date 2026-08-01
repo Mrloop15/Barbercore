@@ -612,16 +612,36 @@
             background: var(--fondo);
         }
 
-        .empty-photo {
+        .table-image-placeholder {
+            position: relative;
             width: 48px;
             height: 48px;
+            display: grid;
+            place-items: center;
+            overflow: hidden;
+            border: 1px dashed var(--borde);
             border-radius: 14px;
-            background: rgba(201,162,39,0.16);
+            background: linear-gradient(145deg, var(--blanco), var(--fondo));
             color: var(--dorado);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 800;
+        }
+
+        .table-image-placeholder::after {
+            content: '';
+            position: absolute;
+            right: -8px;
+            bottom: -8px;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: rgba(201,162,39,.1);
+        }
+
+        .table-image-placeholder .ui-icon {
+            position: relative;
+            z-index: 1;
+            width: 21px;
+            height: 21px;
+            stroke-width: 1.7;
         }
 
         .detail-grid {

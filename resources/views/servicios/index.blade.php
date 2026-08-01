@@ -37,7 +37,9 @@
                         @if ($servicio->imagen)
                             <img class="client-photo" src="{{ asset('storage/' . $servicio->imagen) }}" alt="{{ $servicio->nombre }}">
                         @else
-                            <span class="service-image-empty" style="width: 54px; height: 54px;">Sin imagen</span>
+                            <span class="table-image-placeholder" role="img" aria-label="Imagen no disponible" title="Imagen no disponible">
+                                <x-icon name="image" />
+                            </span>
                         @endif
                     </td>
                     <td><strong>{{ $servicio->nombre }}</strong></td>

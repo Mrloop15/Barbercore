@@ -9,7 +9,6 @@
 
     .service-image-preview { object-fit: cover; }
     .service-image-empty { display: grid; place-items: center; color: #6b7280; background: #f8fafc; font-size: 12px; }
-
     .service-form-layout {
         display: grid;
         grid-template-columns: minmax(0, 1fr) minmax(260px, 320px);

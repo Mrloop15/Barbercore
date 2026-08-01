@@ -44,9 +44,9 @@
                         @if ($cliente->foto)
                             <img src="{{ asset('storage/' . $cliente->foto) }}" alt="Foto cliente" class="client-photo">
                         @else
-                            <div class="empty-photo">
-                                {{ strtoupper(substr($cliente->nombre, 0, 1)) }}
-                            </div>
+                            <span class="table-image-placeholder" role="img" aria-label="Foto de cliente no disponible" title="Foto no disponible">
+                                <x-icon name="image" />
+                            </span>
                         @endif
                     </td>
 

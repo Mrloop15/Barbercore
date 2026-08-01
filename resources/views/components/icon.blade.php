@@ -14,6 +14,7 @@
         @case('chevron-right') <path d="m9 18 6-6-6-6"/> @break
         @case('search') <circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/> @break
         @case('plus') <path d="M12 5v14M5 12h14"/> @break
+        @case('image') <rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m3 16 4.5-4.5 4 4 2.5-2.5 7 7"/> @break
         @default <circle cx="12" cy="12" r="9"/>
     @endswitch
 </svg>

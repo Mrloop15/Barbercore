@@ -78,7 +78,9 @@
                                 class="client-photo"
                             >
                         @else
-                            <div class="empty-photo">📦</div>
+                            <span class="table-image-placeholder" role="img" aria-label="Imagen de producto no disponible" title="Imagen no disponible">
+                                <x-icon name="image" />
+                            </span>
                         @endif
                     </td>
 
