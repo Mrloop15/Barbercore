@@ -25,33 +25,35 @@
     </div>
 
     <div class="stat-card">
-        <span>Citas pendientes</span>
-        <h3>{{ $citasPendientes }}</h3>
-    </div>
-
-    <div class="stat-card">
-        <span>Citas completadas</span>
-        <h3>{{ $citasCompletadas }}</h3>
-    </div>
-
-    <div class="stat-card">
-        <span>Ingresos del día</span>
-        <h3>${{ number_format($ingresosDia, 2) }}</h3>
-    </div>
-
-    <div class="stat-card">
         <span>Ingresos del mes</span>
         <h3>${{ number_format($ingresosMes, 2) }}</h3>
     </div>
 
     <div class="stat-card">
-        <span>Clientes inactivos</span>
-        <h3>{{ $clientesInactivos }}</h3>
-    </div>
-
-    <div class="stat-card">
         <span>Productos bajo stock</span>
         <h3>{{ $productosBajoStock }}</h3>
+    </div>
+
+</div>
+
+@php
+    $totalEstados = max(1, $citasCompletadas + $citasPendientes + $citasCanceladas);
+    $porcentajeCompletadas = ($citasCompletadas / $totalEstados) * 100;
+    $porcentajePendientes = ($citasPendientes / $totalEstados) * 100;
+    $tasaFinalizacion = round(($citasCompletadas / $totalEstados) * 100);
+@endphp
+
+<div class="dashboard-charts stats-section">
+    <div class="content-card status-chart-card">
+        <div><span class="agenda-eyebrow">Rendimiento mensual</span><h3>Estado de las citas</h3></div>
+        <div class="donut-layout">
+            <div class="status-donut" style="--completed: {{ $porcentajeCompletadas }}%; --pending: {{ $porcentajeCompletadas + $porcentajePendientes }}%;"><div><strong>{{ $tasaFinalizacion }}%</strong><span>finalizadas</span></div></div>
+            <div class="chart-legend-list"><span><i class="completed"></i>Completadas <strong>{{ $citasCompletadas }}</strong></span><span><i class="pending"></i>Pendientes <strong>{{ $citasPendientes }}</strong></span><span><i class="cancelled"></i>Canceladas <strong>{{ $citasCanceladas }}</strong></span></div>
+        </div>
+    </div>
+    <div class="content-card income-chart-card">
+        <div><span class="agenda-eyebrow">Flujo reciente</span><h3>Ingresos de los últimos 7 días</h3></div>
+        <div class="vertical-chart">@foreach ($ingresosPorDia as $dia)<div class="vertical-bar-item"><div class="vertical-bar-track"><div class="vertical-bar" style="height: {{ max(3, ($dia['total'] / $maxIngresosDia) * 100) }}%;" title="${{ number_format($dia['total'],2) }}"></div></div><span>{{ $dia['label'] }}</span></div>@endforeach</div>
     </div>
 </div>
 
@@ -91,6 +93,28 @@
             @endforelse
         </tbody>
     </table>
+</div>
+
+<div class="stats-two-columns stats-section">
+    <div class="content-card"><h3 style="margin-top:0;">Servicios más vendidos</h3><div class="chart-list">
+        @forelse ($serviciosMasVendidos as $servicio)
+            <div class="chart-item"><div class="chart-label">{{ $servicio->nombre }}</div><div class="chart-bar-bg"><div class="chart-bar" style="width: {{ ($servicio->total / $maxServicios) * 100 }}%;"></div></div><div class="chart-value">{{ $servicio->total }}</div></div>
+        @empty <p class="no-action">Sin servicios completados en este periodo.</p> @endforelse
+    </div></div>
+    <div class="content-card"><h3 style="margin-top:0;">Clientes más frecuentes</h3><div class="chart-list">
+        @forelse ($clientesFrecuentes as $cliente)
+            <div class="chart-item"><div class="chart-label">{{ $cliente->nombre }} {{ $cliente->apellido }}</div><div class="chart-bar-bg"><div class="chart-bar" style="width: {{ ($cliente->total / $maxClientes) * 100 }}%;"></div></div><div class="chart-value">{{ $cliente->total }}</div></div>
+        @empty <p class="no-action">Sin clientes frecuentes en este periodo.</p> @endforelse
+    </div></div>
+</div>
+
+<div class="content-card stats-section">
+    <h3 style="margin-top:0;">Productos más vendidos</h3>
+    <div class="chart-list">
+        @forelse ($productosVendidos as $producto)
+            <div class="chart-item"><div class="chart-label">{{ $producto->nombre }}</div><div class="chart-bar-bg"><div class="chart-bar" style="width: {{ ($producto->total_vendido / $maxProductos) * 100 }}%;"></div></div><div class="chart-value">{{ $producto->total_vendido }}</div></div>
+        @empty <p class="no-action">Sin ventas de productos en este periodo.</p> @endforelse
+    </div>
 </div>
 
 @endsection
