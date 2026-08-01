@@ -220,7 +220,7 @@
             overflow-wrap: break-word;
         }
 
-        .brand-text span {
+        .brand-text > span {
             color: var(--gris);
             font-size: 12px;
         }
@@ -1261,7 +1261,7 @@
         .brand { margin-bottom: 26px; padding: 0 8px; }
         .brand-logo, .brand-icon { width: 48px; height: 48px; border-radius: 16px; }
         .brand-text strong { font-size: 19px; letter-spacing: -.5px; }
-        .brand-text span { font-size: 11px; text-transform: uppercase; letter-spacing: 1.1px; }
+        .brand-text > span { font-size: 11px; text-transform: uppercase; letter-spacing: 1.1px; }
         .menu-label { display: block; margin: 22px 12px 8px; color: var(--gris); font-size: 10px; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; }
         .menu a, .logout-button { display: flex; align-items: center; gap: 12px; margin-bottom: 4px; padding: 11px 13px; border-radius: 11px; font-weight: 600; transition: .2s ease; }
         .menu-icon { width: 20px; height: 20px; flex: 0 0 20px; display: inline-flex; align-items: center; justify-content: center; color: var(--gris); transition: color .2s ease; }
@@ -1272,7 +1272,7 @@
         .menu a:hover .menu-icon, .menu a.active .menu-icon { color: var(--dorado); }
         .logout-button { border-top: 1px solid var(--borde); border-radius: 0; padding-top: 18px; }
         .main { margin-left: 278px; width: calc(100% - 278px); padding: 30px 34px 42px; }
-        .sidebar, .main { transition: width .48s cubic-bezier(.22,.8,.24,1), margin-left .48s cubic-bezier(.22,.8,.24,1), padding .48s cubic-bezier(.22,.8,.24,1), transform .28s ease; }
+        .sidebar, .main { transition: width .9s cubic-bezier(.22,.8,.24,1), margin-left .9s cubic-bezier(.22,.8,.24,1), padding .9s cubic-bezier(.22,.8,.24,1), transform .28s ease; }
         .sidebar-header { position: relative; }
         .sidebar-header .brand { padding-left: 0; padding-right: 44px; }
         .sidebar-collapse-btn { position: absolute; right: 0; top: 7px; margin: 0; width: 34px; height: 34px; border: 1px solid var(--borde); border-radius: 10px; background: var(--blanco); color: var(--texto); cursor: pointer; display: inline-flex; align-items: center; justify-content: center; flex: 0 0 auto; transition: opacity .16s ease, color .2s ease, border-color .2s ease, background .2s ease; }
@@ -1302,24 +1302,36 @@
         body.sidebar-collapsed .menu-group:hover .menu-group-items, body.sidebar-collapsed .menu-group.open .menu-group-items, body.sidebar-collapsed .menu-group:focus-within .menu-group-items { display: flex; flex-direction: column; }
         body.sidebar-collapsed .menu-group-items a { justify-content: flex-start; gap: 11px; padding: 10px 12px; }
         body.sidebar-collapsed .menu-group-items .menu-text { display: block; }
-        @keyframes sidebarItemReveal { from { opacity: 0; transform: translateY(7px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes sidebarItemReveal { from { opacity: 0; transform: translateX(-6px); } to { opacity: 1; transform: translateX(0); } }
+        @keyframes sidebarCharacterReveal { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes sidebarLogoReveal { from { opacity: .35; transform: scale(.82) rotate(-3deg); } to { opacity: 1; transform: scale(1) rotate(0); } }
+        @keyframes sidebarCompactIconReveal { from { opacity: 0; transform: translateX(-5px) scale(.72); } to { opacity: 1; transform: translateX(0) scale(1); } }
         @keyframes sidebarLabelHide { from { opacity: 1; transform: translateX(0); } to { opacity: 0; transform: translateX(-10px); } }
         @keyframes groupMenuReveal { from { opacity: 0; transform: translateX(-9px) scale(.97); } to { opacity: 1; transform: translateX(0) scale(1); } }
-        body.sidebar-expanding .menu > a,
-        body.sidebar-expanding .menu-group > .menu-label,
-        body.sidebar-expanding .menu-group-items > a,
-        body.sidebar-expanding .menu > form { opacity: 0; animation: sidebarItemReveal .68s cubic-bezier(.22,.8,.24,1) forwards; animation-delay: calc(var(--item-index, 0) * 175ms + 180ms); }
+        body.sidebar-expanding .brand-logo,
+        body.sidebar-expanding .brand-icon { animation: sidebarLogoReveal .9s cubic-bezier(.22,.8,.24,1) both; animation-delay: 80ms; }
+        .brand-type-line { white-space: nowrap; }
+        .brand-character { display: inline-block; }
+        body.sidebar-expanding .brand-type-primary .brand-character { opacity: 0; animation: sidebarCharacterReveal .18s ease forwards; animation-delay: calc(220ms + var(--char-index, 0) * 90ms); }
+        body.sidebar-expanding .brand-type-secondary .brand-character { opacity: 0; animation: sidebarCharacterReveal .16s ease forwards; animation-delay: calc(1200ms + var(--char-index, 0) * 55ms); }
+        body.sidebar-expanding .menu-text,
+        body.sidebar-expanding .menu-label { opacity: 0; animation: sidebarItemReveal .55s cubic-bezier(.22,.8,.24,1) forwards; animation-delay: calc(var(--item-index, 0) * 105ms + 280ms); }
         body.sidebar-collapsing .brand-text,
         body.sidebar-collapsing .menu-text,
         body.sidebar-collapsing .menu-label { animation: sidebarLabelHide .16s ease forwards; }
+        body.sidebar-icons-revealing .brand-logo,
+        body.sidebar-icons-revealing .brand-icon { animation: sidebarLogoReveal .55s cubic-bezier(.22,.8,.24,1) both; animation-delay: 60ms; }
+        body.sidebar-icons-revealing .menu > a .menu-icon,
+        body.sidebar-icons-revealing .menu-group-toggle .menu-icon,
+        body.sidebar-icons-revealing .menu > form .menu-icon { opacity: 0; animation: sidebarCompactIconReveal .42s cubic-bezier(.22,.8,.24,1) forwards; animation-delay: calc(180ms + var(--collapsed-icon-index, 0) * 130ms); }
         body.sidebar-collapsing .sidebar-collapse-btn,
         body.sidebar-expanding .sidebar-collapse-btn { opacity: 0; pointer-events: none; }
         body.sidebar-collapsed .menu-group:hover .menu-group-items,
         body.sidebar-collapsed .menu-group.open .menu-group-items,
         body.sidebar-collapsed .menu-group:focus-within .menu-group-items { animation: groupMenuReveal .32s cubic-bezier(.22,.8,.24,1) both; }
         @media (prefers-reduced-motion: reduce) {
-            body.sidebar-expanding .menu > a, body.sidebar-expanding .menu-group > .menu-label, body.sidebar-expanding .menu-group-items > a, body.sidebar-expanding .menu > form,
-            body.sidebar-collapsing .brand-text, body.sidebar-collapsing .menu-text, body.sidebar-collapsing .menu-label,
+            body.sidebar-expanding .brand-logo, body.sidebar-expanding .brand-icon, body.sidebar-expanding .brand-character, body.sidebar-expanding .menu-text, body.sidebar-expanding .menu-label,
+            body.sidebar-collapsing .brand-text, body.sidebar-collapsing .menu-text, body.sidebar-collapsing .menu-label, body.sidebar-icons-revealing .brand-logo, body.sidebar-icons-revealing .brand-icon, body.sidebar-icons-revealing .menu-icon,
             body.sidebar-collapsed .menu-group-items { animation: none !important; opacity: 1; }
         }
         .topbar { background: transparent; border: 0; border-radius: 0; padding: 0 0 24px; margin-bottom: 8px; box-shadow: none; }
@@ -1840,11 +1852,34 @@
         const menuGroups = sidebar ? sidebar.querySelectorAll('.menu-group') : [];
         const groupToggles = sidebar ? sidebar.querySelectorAll('.menu-group-toggle') : [];
         const menuSequenceItems = sidebar ? sidebar.querySelectorAll('.menu > a, .menu-group > .menu-label, .menu-group-items > a, .menu > form') : [];
+        const collapsedIconItems = sidebar ? sidebar.querySelectorAll('.menu > a, .menu-group-toggle, .menu > form') : [];
+        const brandLines = sidebar ? sidebar.querySelectorAll('.brand-text strong, .brand-text > span') : [];
         let previousFocus = null;
         let sidebarAnimationBusy = false;
 
         menuSequenceItems.forEach(function (item, index) {
             item.style.setProperty('--item-index', index);
+        });
+
+        collapsedIconItems.forEach(function (item, index) {
+            item.style.setProperty('--collapsed-icon-index', index);
+        });
+
+        brandLines.forEach(function (line, lineIndex) {
+            const text = line.textContent;
+            line.textContent = '';
+            line.classList.add('brand-type-line', lineIndex === 0 ? 'brand-type-primary' : 'brand-type-secondary');
+
+            Array.from(text).forEach(function (character, characterIndex) {
+                const span = document.createElement('span');
+                span.className = 'brand-character';
+                span.style.setProperty('--char-index', characterIndex);
+                span.textContent = character === ' ' ? '\u00a0' : character;
+                span.setAttribute('aria-hidden', 'true');
+                line.appendChild(span);
+            });
+
+            line.setAttribute('aria-label', text);
         });
 
         function isMobileView() {
@@ -1936,18 +1971,22 @@
                 const isCollapsed = document.body.classList.contains('sidebar-collapsed');
 
                 if (isCollapsed) {
-                    setCollapsed(false);
                     document.body.classList.add('sidebar-expanding');
+                    setCollapsed(false);
                     window.setTimeout(function () {
                         document.body.classList.remove('sidebar-expanding');
                         sidebarAnimationBusy = false;
-                    }, Math.max(1200, (menuSequenceItems.length * 175) + 900));
+                    }, 2700);
                 } else {
                     document.body.classList.add('sidebar-collapsing');
                     window.setTimeout(function () {
                         setCollapsed(true);
                         document.body.classList.remove('sidebar-collapsing');
-                        window.setTimeout(function () { sidebarAnimationBusy = false; }, 280);
+                        document.body.classList.add('sidebar-icons-revealing');
+                        window.setTimeout(function () {
+                            document.body.classList.remove('sidebar-icons-revealing');
+                            sidebarAnimationBusy = false;
+                        }, 1250);
                     }, 160);
                 }
 
