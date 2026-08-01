@@ -98,13 +98,27 @@
         .copy { margin: 0; color: var(--gris); font-size: 15px; line-height: 1.8; }
 
         .services { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
-        .carousel-controls { display: flex; justify-content: flex-end; gap: 9px; margin: -24px 0 18px; }
-        .carousel-button { width: 44px; height: 44px; display: grid; place-items: center; border: 1px solid var(--borde); background: var(--blanco); color: var(--texto); cursor: pointer; transition: border-color .2s ease, background .2s ease, color .2s ease; }
-        .carousel-button:hover:not(:disabled) { border-color: var(--dorado); background: var(--dorado); color: var(--blanco); }
-        .carousel-button:disabled { opacity: .35; cursor: default; }
-        .services-carousel.is-active .services { grid-template-columns: none; grid-auto-flow: column; grid-auto-columns: calc((100% - 54px) / 4); overflow-x: auto; padding: 7px 2px 22px; scroll-behavior: smooth; scroll-snap-type: x mandatory; scroll-padding-inline: 2px; overscroll-behavior-inline: contain; scrollbar-width: none; }
+        .carousel-controls { display: flex; align-items: center; justify-content: space-between; gap: 20px; margin: -22px 0 20px; }
+        .carousel-navigation { min-width: 0; display: flex; align-items: center; gap: 15px; }
+        .carousel-status { min-width: 42px; color: var(--gris); font-size: 10px; font-weight: 900; letter-spacing: .13em; white-space: nowrap; }
+        .carousel-status strong { color: var(--texto); font-size: 13px; }
+        .carousel-progress { width: clamp(74px, 10vw, 132px); height: 2px; overflow: hidden; border-radius: 99px; background: var(--borde); }
+        .carousel-progress-bar { width: 100%; height: 100%; display: block; border-radius: inherit; background: linear-gradient(90deg, #b78a12, var(--dorado)); transform: scaleX(0); transform-origin: left; transition: transform .45s cubic-bezier(.22, 1, .36, 1); }
+        .carousel-dots { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
+        .carousel-dot { width: 7px; height: 7px; border-radius: 5px; border: 0; padding: 0; background: var(--borde); cursor: pointer; transition: background .3s ease, width .4s cubic-bezier(.22, 1, .36, 1), transform .25s ease; }
+        .carousel-dot:hover { background: rgba(201, 162, 39, .62); transform: scale(1.12); }
+        .carousel-dot.is-active { width: 24px; background: var(--dorado); }
+        .carousel-buttons { display: flex; gap: 5px; padding: 5px; border: 1px solid var(--borde); border-radius: 999px; background: var(--blanco); box-shadow: 0 10px 28px rgba(17, 17, 17, .07); }
+        .carousel-button { width: 39px; height: 39px; border-radius: 50%; display: grid; place-items: center; border: 0; background: transparent; color: var(--texto); cursor: pointer; transition: background .3s ease, color .3s ease, box-shadow .3s ease, transform .25s ease, opacity .25s ease; }
+        .carousel-button:hover:not(:disabled) { background: var(--oscuro); color: var(--blanco); box-shadow: 0 8px 18px rgba(17, 17, 17, .18); transform: scale(1.04); }
+        .carousel-button:active:not(:disabled) { transform: translateY(0); }
+        .carousel-button:disabled { opacity: .3; cursor: default; box-shadow: none; transform: none; }
+        .services-carousel { position: relative; }
+        .services-carousel.is-active .services { grid-template-columns: none; grid-auto-flow: column; grid-auto-columns: calc((100% - 54px) / 4); overflow-x: auto; padding: 8px 2px 29px; scroll-snap-type: x mandatory; scroll-padding-inline: 2px; overscroll-behavior-inline: contain; scrollbar-width: none; cursor: grab; }
         .services-carousel.is-active .services::-webkit-scrollbar { display: none; }
-        .services-carousel.is-active .service { scroll-snap-align: start; }
+        .services-carousel.is-active .services.is-dragging, .services-carousel.is-active .services.is-animating { scroll-snap-type: none; }
+        .services-carousel.is-active .services.is-dragging { cursor: grabbing; user-select: none; }
+        .services-carousel.is-active .service { scroll-snap-align: start; scroll-snap-stop: always; }
         .service { min-height: 470px; display: flex; flex-direction: column; overflow: hidden; border: 1px solid var(--borde); background: var(--blanco); box-shadow: 0 10px 28px rgba(17,17,17,.045); transition: background .25s ease, transform .25s ease, box-shadow .25s ease; }
         .service:hover { position: relative; z-index: 2; background: var(--oscuro); color: var(--blanco); transform: translateY(-7px); box-shadow: 0 24px 46px rgba(17,17,17,.15); }
         .service-media { position: relative; height: 205px; overflow: hidden; background: var(--oscuro); }
@@ -350,6 +364,8 @@
             .services { grid-template-columns: 1fr; }
             .services-carousel.is-active .services { grid-auto-columns: 88%; }
             .carousel-controls { margin-top: -28px; }
+            .carousel-progress { display: none; }
+            .carousel-navigation { gap: 10px; }
             .service { min-height: 455px; }
             .standard-dark { min-height: 390px; padding: 32px; }
             .standard-logo { width: 86px; height: 86px; }
@@ -370,6 +386,7 @@
         @media (prefers-reduced-motion: reduce) {
             html { scroll-behavior: auto; }
             *, *::before, *::after { transition-duration: .01ms !important; }
+            .services-carousel.is-active .services { scroll-behavior: auto; }
             .hero-content > * { opacity: 1; animation: none; }
             .js [data-reveal] { opacity: 1; transform: none; }
         }
@@ -474,12 +491,19 @@
 
                 @if($usarCarrusel)
                     <div class="carousel-controls" aria-label="Controles del carrusel de servicios">
-                        <button class="carousel-button" type="button" data-carousel-prev aria-label="Ver servicios anteriores">
-                            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>
-                        </button>
-                        <button class="carousel-button" type="button" data-carousel-next aria-label="Ver más servicios">
-                            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
-                        </button>
+                        <div class="carousel-navigation">
+                            <span class="carousel-status" data-carousel-status aria-live="polite"><strong>01</strong> / 01</span>
+                            <span class="carousel-progress" aria-hidden="true"><span class="carousel-progress-bar" data-carousel-progress></span></span>
+                            <div class="carousel-dots" data-carousel-dots></div>
+                        </div>
+                        <div class="carousel-buttons">
+                            <button class="carousel-button" type="button" data-carousel-prev aria-label="Ver servicios anteriores">
+                                <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>
+                            </button>
+                            <button class="carousel-button" type="button" data-carousel-next aria-label="Ver más servicios">
+                                <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+                            </button>
+                        </div>
                     </div>
                 @endif
 
@@ -1093,25 +1117,211 @@
                 const controls = carousel.previousElementSibling;
                 const previous = controls?.querySelector('[data-carousel-prev]');
                 const next = controls?.querySelector('[data-carousel-next]');
+                const dotsContainer = controls?.querySelector('[data-carousel-dots]');
+                const status = controls?.querySelector('[data-carousel-status]');
+                const progressBar = controls?.querySelector('[data-carousel-progress]');
 
                 if (!track || !previous || !next) return;
+
+                const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+                const easeInOutCubic = (t) => (t < .5 ? 4 * t * t * t : 1 - ((-2 * t + 2) ** 3) / 2);
+                let scrollAnimation = null;
+
+                const stopScrollAnimation = () => {
+                    if (scrollAnimation) cancelAnimationFrame(scrollAnimation);
+                    scrollAnimation = null;
+                    track.classList.remove('is-animating');
+                };
+
+                const smoothScrollTo = (target) => {
+                    const maximum = track.scrollWidth - track.clientWidth;
+                    const clamped = Math.min(Math.max(target, 0), maximum);
+                    const start = track.scrollLeft;
+                    const distance = clamped - start;
+                    stopScrollAnimation();
+                    if (Math.abs(distance) < 1) {
+                        track.scrollLeft = clamped;
+                        return;
+                    }
+
+                    if (reduceMotion) {
+                        track.scrollLeft = clamped;
+                        return;
+                    }
+
+                    const duration = Math.min(900, Math.max(650, Math.abs(distance) * .58));
+                    let startTime = null;
+                    track.classList.add('is-animating');
+
+                    const step = (timestamp) => {
+                        if (startTime === null) startTime = timestamp;
+                        const progress = Math.min((timestamp - startTime) / duration, 1);
+                        track.scrollLeft = start + distance * easeInOutCubic(progress);
+
+                        if (progress < 1) {
+                            scrollAnimation = requestAnimationFrame(step);
+                            return;
+                        }
+
+                        track.scrollLeft = clamped;
+                        scrollAnimation = null;
+                        requestAnimationFrame(() => track.classList.remove('is-animating'));
+                    };
+
+                    scrollAnimation = requestAnimationFrame(step);
+                };
+
+                const getCardStep = () => {
+                    const card = track.querySelector('.service');
+                    if (!card) return track.clientWidth;
+                    const gap = Number.parseFloat(getComputedStyle(track).columnGap) || 0;
+                    return card.getBoundingClientRect().width + gap;
+                };
+
+                const getCardsPerView = () => Math.max(1, Math.round(track.clientWidth / getCardStep()));
+
+                const getPageTargets = () => {
+                    const cardCount = track.querySelectorAll('.service').length;
+                    const perView = getCardsPerView();
+                    const pageCount = Math.max(1, Math.ceil(cardCount / perView));
+                    const maximum = Math.max(0, track.scrollWidth - track.clientWidth);
+                    return Array.from({ length: pageCount }, (_, page) => Math.min(page * perView * getCardStep(), maximum));
+                };
+
+                const getCurrentPage = () => {
+                    const targets = getPageTargets();
+                    return targets.reduce((closest, target, index) => (
+                        Math.abs(target - track.scrollLeft) < Math.abs(targets[closest] - track.scrollLeft) ? index : closest
+                    ), 0);
+                };
+
+                const scrollToPage = (page) => {
+                    const targets = getPageTargets();
+                    const index = Math.min(Math.max(page, 0), targets.length - 1);
+                    smoothScrollTo(targets[index]);
+                };
+
+                const move = (direction) => scrollToPage(getCurrentPage() + direction);
+
+                const buildDots = () => {
+                    if (!dotsContainer) return;
+                    const cards = track.querySelectorAll('.service');
+                    const perView = getCardsPerView();
+                    const pageCount = Math.max(1, Math.ceil(cards.length / perView));
+                    dotsContainer.innerHTML = '';
+
+                    for (let page = 0; page < pageCount; page += 1) {
+                        const dot = document.createElement('button');
+                        dot.type = 'button';
+                        dot.className = 'carousel-dot';
+                        dot.setAttribute('aria-label', `Ir a la página ${page + 1} de servicios`);
+                        dot.addEventListener('click', () => scrollToPage(page));
+                        dotsContainer.appendChild(dot);
+                    }
+                };
 
                 const updateControls = () => {
                     const maximum = track.scrollWidth - track.clientWidth;
                     previous.disabled = track.scrollLeft <= 2;
                     next.disabled = track.scrollLeft >= maximum - 2;
-                };
 
-                const move = (direction) => {
-                    const card = track.querySelector('.service');
-                    const gap = Number.parseFloat(getComputedStyle(track).columnGap) || 0;
-                    track.scrollBy({ left: direction * ((card?.getBoundingClientRect().width || track.clientWidth) + gap), behavior: 'smooth' });
+                    const targets = getPageTargets();
+                    const activePage = getCurrentPage();
+                    [...(dotsContainer?.children || [])].forEach((dot, index) => {
+                        const active = index === activePage;
+                        dot.classList.toggle('is-active', active);
+                        dot.setAttribute('aria-current', active ? 'true' : 'false');
+                    });
+
+                    if (status) status.innerHTML = `<strong>${String(activePage + 1).padStart(2, '0')}</strong> / ${String(targets.length).padStart(2, '0')}`;
+                    if (progressBar) progressBar.style.transform = `scaleX(${(activePage + 1) / targets.length})`;
                 };
 
                 previous.addEventListener('click', () => move(-1));
                 next.addEventListener('click', () => move(1));
-                track.addEventListener('scroll', updateControls, { passive: true });
-                window.addEventListener('resize', updateControls);
+                let controlsFrame = null;
+                track.addEventListener('scroll', () => {
+                    if (controlsFrame) return;
+                    controlsFrame = requestAnimationFrame(() => {
+                        updateControls();
+                        controlsFrame = null;
+                    });
+                }, { passive: true });
+                track.addEventListener('wheel', () => {
+                    stopScrollAnimation();
+                }, { passive: true });
+                track.addEventListener('keydown', (event) => {
+                    if (event.key === 'ArrowRight') { event.preventDefault(); move(1); }
+                    if (event.key === 'ArrowLeft') { event.preventDefault(); move(-1); }
+                });
+
+                let resizeTimer = null;
+                window.addEventListener('resize', () => {
+                    clearTimeout(resizeTimer);
+                    resizeTimer = setTimeout(() => {
+                        buildDots();
+                        updateControls();
+                    }, 120);
+                });
+
+                track.querySelectorAll('img').forEach((image) => image.addEventListener('load', () => {
+                    buildDots();
+                    updateControls();
+                }, { once: true }));
+
+                let isDragging = false;
+                let dragMoved = false;
+                let dragStartX = 0;
+                let dragStartScroll = 0;
+                let dragLastScroll = 0;
+                let dragLastTime = 0;
+                let dragVelocity = 0;
+
+                track.addEventListener('pointerdown', (event) => {
+                    if (event.pointerType === 'touch' || event.button !== 0) return;
+                    isDragging = true;
+                    dragMoved = false;
+                    dragStartX = event.clientX;
+                    dragStartScroll = track.scrollLeft;
+                    dragLastScroll = track.scrollLeft;
+                    dragLastTime = performance.now();
+                    dragVelocity = 0;
+                    track.classList.add('is-dragging');
+                    track.setPointerCapture(event.pointerId);
+                    stopScrollAnimation();
+                });
+
+                track.addEventListener('pointermove', (event) => {
+                    if (!isDragging) return;
+                    const delta = event.clientX - dragStartX;
+                    if (Math.abs(delta) > 3) dragMoved = true;
+                    track.scrollLeft = dragStartScroll - delta;
+                    const now = performance.now();
+                    const elapsed = Math.max(1, now - dragLastTime);
+                    dragVelocity = (track.scrollLeft - dragLastScroll) / elapsed;
+                    dragLastScroll = track.scrollLeft;
+                    dragLastTime = now;
+                });
+
+                const endDrag = (event) => {
+                    if (!isDragging) return;
+                    isDragging = false;
+                    track.classList.remove('is-dragging');
+                    try { track.releasePointerCapture(event.pointerId); } catch (error) { /* pointer already released */ }
+                    const step = getCardStep();
+                    if (step > 0) {
+                        const projected = track.scrollLeft + (dragVelocity * 170);
+                        smoothScrollTo(Math.round(projected / step) * step);
+                    }
+                };
+
+                track.addEventListener('pointerup', endDrag);
+                track.addEventListener('pointercancel', endDrag);
+                track.addEventListener('click', (event) => {
+                    if (dragMoved) { event.preventDefault(); event.stopPropagation(); }
+                }, true);
+
+                buildDots();
                 updateControls();
             });
 
