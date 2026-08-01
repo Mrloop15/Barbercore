@@ -68,14 +68,11 @@ class LandingController extends Controller
         $barberia = Barberia::first();
         $telefonoBuscado = preg_replace('/\D/', '', $request->input('telefono'));
 
-        $cliente = null;
-
-        if ($telefonoBuscado !== '') {
-            $cliente = Cliente::where('id_barberia', $barberia?->id_barberia)
-                ->where('activo', 1)
-                ->get(['id_cliente', 'nombre', 'apellido', 'telefono', 'puntos'])
-                ->first(fn ($candidato) => preg_replace('/\D/', '', (string) $candidato->telefono) === $telefonoBuscado);
-        }
+        $cliente = $telefonoBuscado === '' ? null : Cliente::query()
+            ->where('id_barberia', $barberia?->id_barberia)
+            ->where('activo', 1)
+            ->whereRaw("REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(telefono, ' ', ''), '-', ''), '(', ''), ')', ''), '+', '') = ?", [$telefonoBuscado])
+            ->first(['id_cliente', 'puntos']);
 
         if (! $cliente) {
             return response()->json([
@@ -97,10 +94,7 @@ class LandingController extends Controller
 
         return response()->json([
             'encontrado' => true,
-            'cliente' => [
-                'nombre' => trim($cliente->nombre . ' ' . $cliente->apellido),
-                'puntos' => $cliente->puntos,
-            ],
+            'cliente_verificado' => true,
             'recompensas' => $recompensas,
         ]);
     }

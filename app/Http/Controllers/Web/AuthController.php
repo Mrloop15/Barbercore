@@ -32,6 +32,7 @@ class AuthController extends Controller
 
         if (Auth::attempt($credenciales)) {
             $request->session()->regenerate();
+            $request->session()->put('auth_last_activity', now()->timestamp);
 
             return redirect()->route('dashboard');
         }

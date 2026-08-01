@@ -16,46 +16,51 @@ use App\Http\Controllers\Web\ClienteController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [LandingController::class, 'index'])->name('landing');
-Route::get('/recompensas/consultar', [LandingController::class, 'consultarRecompensas'])->name('landing.recompensas.consultar');
+Route::get('/recompensas/consultar', [LandingController::class, 'consultarRecompensas'])->middleware('throttle:5,1')->name('landing.recompensas.consultar');
 
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'mostrarLogin'])->name('login');
-    Route::post('/login', [AuthController::class, 'iniciarSesion'])->name('login.post');
+    Route::post('/login', [AuthController::class, 'iniciarSesion'])->middleware('throttle:5,1')->name('login.post');
 });
 
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'idle', 'tenant'])->group(function () {
+    Route::post('/session/activity', fn () => response()->noContent())->name('session.activity');
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-    Route::get('/usuarios', [UsuarioController::class, 'index'])->name('usuarios.index');
-    Route::get('/usuarios/create', [UsuarioController::class, 'create'])->name('usuarios.create');
-    Route::post('/usuarios', [UsuarioController::class, 'store'])->name('usuarios.store');
-    Route::get('/usuarios/{usuario}/edit', [UsuarioController::class, 'edit'])->name('usuarios.edit');
-    Route::put('/usuarios/{usuario}', [UsuarioController::class, 'update'])->name('usuarios.update');
-    Route::put('/usuarios/{usuario}/estado', [UsuarioController::class, 'cambiarEstado'])->name('usuarios.estado');
+    Route::middleware('role:admin')->group(function () {
+        Route::get('/usuarios', [UsuarioController::class, 'index'])->name('usuarios.index');
+        Route::get('/usuarios/create', [UsuarioController::class, 'create'])->name('usuarios.create');
+        Route::post('/usuarios', [UsuarioController::class, 'store'])->name('usuarios.store');
+        Route::get('/usuarios/{usuario}/edit', [UsuarioController::class, 'edit'])->name('usuarios.edit');
+        Route::put('/usuarios/{usuario}', [UsuarioController::class, 'update'])->name('usuarios.update');
+        Route::put('/usuarios/{usuario}/estado', [UsuarioController::class, 'cambiarEstado'])->name('usuarios.estado');
+    });
 
     Route::get('/clientes-inactivos', [ClienteController::class, 'inactivos'])->name('clientes.inactivos');
     Route::resource('clientes', ClienteController::class);
-    Route::patch('/servicios/{servicio}/landing', [ServicioController::class, 'cambiarVisibilidadLanding'])->name('servicios.landing');
-    Route::resource('servicios', ServicioController::class)->except(['show']);
+    Route::patch('/servicios/{servicio}/landing', [ServicioController::class, 'cambiarVisibilidadLanding'])->middleware('role:admin')->name('servicios.landing');
+    Route::resource('servicios', ServicioController::class)->except(['show'])->middleware('role:admin');
     Route::put('/citas/{cita}/cancelar', [CitaController::class, 'cancelar'])->name('citas.cancelar');
     Route::put('/citas/{cita}/completar', [CitaController::class, 'completar'])->name('citas.completar');
     Route::resource('citas', CitaController::class)->except(['show', 'destroy']);
     Route::get('/agenda', [AgendaController::class, 'index'])->name('agenda.index');
-    Route::resource('productos', ProductoController::class)->except(['show']);
-    Route::resource('ventas-productos', VentaProductoController::class)->only(['index', 'create', 'store', 'show']);
-    Route::get('/recompensas-canjear', [RecompensaController::class, 'formCanjear'])->name('recompensas.formCanjear');
-    Route::post('/recompensas-canjear', [RecompensaController::class, 'canjear'])->name('recompensas.canjear');
-    Route::resource('recompensas', RecompensaController::class)->except(['show']);
-    Route::get('/estadisticas', [EstadisticaController::class, 'index'])->name('estadisticas.index');
-    Route::get('/estadisticas/pdf', [EstadisticaController::class, 'download'])->name('estadisticas.pdf');
-    Route::get('/estadisticas/excel', [EstadisticaController::class, 'downloadExcel'])->name('estadisticas.excel');
-    Route::get('/configuracion', [ConfiguracionController::class, 'index'])->name('configuracion.index');
-    Route::get('/configuracion/preguntas-frecuentes', [ConfiguracionController::class, 'preguntasFrecuentes'])->name('configuracion.preguntas.index');
-    Route::put('/configuracion/barberia', [ConfiguracionController::class, 'actualizarBarberia'])->name('configuracion.barberia');
-    Route::put('/configuracion/horarios', [ConfiguracionController::class, 'actualizarHorarios'])->name('configuracion.horarios');
-    Route::put('/configuracion/preguntas-frecuentes', [ConfiguracionController::class, 'actualizarPreguntasFrecuentes'])->name('configuracion.preguntas');
-    Route::put('/configuracion/usuario', [ConfiguracionController::class, 'actualizarUsuario'])->name('configuracion.usuario');
-    Route::put('/configuracion/password', [ConfiguracionController::class, 'actualizarPassword'])->name('configuracion.password');
+    Route::middleware('role:admin')->group(function () {
+        Route::resource('productos', ProductoController::class)->except(['show']);
+        Route::resource('ventas-productos', VentaProductoController::class)->only(['index', 'create', 'store', 'show']);
+        Route::get('/recompensas-canjear', [RecompensaController::class, 'formCanjear'])->name('recompensas.formCanjear');
+        Route::post('/recompensas-canjear', [RecompensaController::class, 'canjear'])->name('recompensas.canjear');
+        Route::resource('recompensas', RecompensaController::class)->except(['show']);
+        Route::get('/estadisticas', [EstadisticaController::class, 'index'])->name('estadisticas.index');
+        Route::get('/estadisticas/pdf', [EstadisticaController::class, 'download'])->name('estadisticas.pdf');
+        Route::get('/estadisticas/excel', [EstadisticaController::class, 'downloadExcel'])->name('estadisticas.excel');
+        Route::get('/configuracion', [ConfiguracionController::class, 'index'])->name('configuracion.index');
+        Route::get('/configuracion/preguntas-frecuentes', [ConfiguracionController::class, 'preguntasFrecuentes'])->name('configuracion.preguntas.index');
+        Route::put('/configuracion/barberia', [ConfiguracionController::class, 'actualizarBarberia'])->name('configuracion.barberia');
+        Route::put('/configuracion/horarios', [ConfiguracionController::class, 'actualizarHorarios'])->name('configuracion.horarios');
+        Route::put('/configuracion/preguntas-frecuentes', [ConfiguracionController::class, 'actualizarPreguntasFrecuentes'])->name('configuracion.preguntas');
+        Route::put('/configuracion/usuario', [ConfiguracionController::class, 'actualizarUsuario'])->name('configuracion.usuario');
+        Route::put('/configuracion/password', [ConfiguracionController::class, 'actualizarPassword'])->name('configuracion.password');
+    });
     Route::post('/logout', [AuthController::class, 'cerrarSesion'])->name('logout');
 
     Route::view('/pwa/login', 'pwa.login')->name('pwa.login');

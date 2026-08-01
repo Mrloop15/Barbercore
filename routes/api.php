@@ -14,7 +14,7 @@ use App\Http\Controllers\Api\RecompensaApiController;
 use App\Http\Controllers\Api\EstadisticaApiController;
 use App\Http\Controllers\Api\UsuarioApiController;
 
-Route::post('/login', [AuthApiController::class, 'login']);
+Route::post('/login', [AuthApiController::class, 'login'])->middleware('throttle:5,1');
 
 Route::get('/status', function () {
     return response()->json([
@@ -25,27 +25,29 @@ Route::get('/status', function () {
     ]);
 });
 
-Route::middleware('auth:sanctum')->group(function () {
+Route::middleware(['auth:sanctum', 'tenant', 'abilities:api:access'])->group(function () {
     Route::get('/me', [AuthApiController::class, 'me']);
     Route::post('/logout', [AuthApiController::class, 'logout']);
 
     Route::get('/dashboard/resumen', [DashboardApiController::class, 'resumen']);
 
     Route::name('api.')->group(function () {
-    Route::get('/clientes/inactivos', [ClienteApiController::class, 'inactivos'])->name('clientes.inactivos');
-    Route::apiResource('/clientes', ClienteApiController::class);
-    Route::get('/usuarios', [UsuarioApiController::class, 'index']);
-    Route::post('/usuarios', [UsuarioApiController::class, 'store']);
-    Route::get('/usuarios/{id}', [UsuarioApiController::class, 'show']);
-    Route::put('/usuarios/{id}', [UsuarioApiController::class, 'update']);
-    Route::patch('/usuarios/{id}/estado', [UsuarioApiController::class, 'cambiarEstado']);
-});
+        Route::get('/clientes/inactivos', [ClienteApiController::class, 'inactivos'])->name('clientes.inactivos');
+        Route::apiResource('/clientes', ClienteApiController::class);
+    });
 
-    Route::get('/servicios', [ServicioApiController::class, 'index']);
-    Route::post('/servicios', [ServicioApiController::class, 'store']);
-    Route::get('/servicios/{id}', [ServicioApiController::class, 'show']);
-    Route::put('/servicios/{id}', [ServicioApiController::class, 'update']);
-    Route::delete('/servicios/{id}', [ServicioApiController::class, 'destroy']);
+    Route::middleware('role:admin')->group(function () {
+        Route::get('/usuarios', [UsuarioApiController::class, 'index']);
+        Route::post('/usuarios', [UsuarioApiController::class, 'store']);
+        Route::get('/usuarios/{id}', [UsuarioApiController::class, 'show']);
+        Route::put('/usuarios/{id}', [UsuarioApiController::class, 'update']);
+        Route::patch('/usuarios/{id}/estado', [UsuarioApiController::class, 'cambiarEstado']);
+
+        Route::get('/servicios', [ServicioApiController::class, 'index']);
+        Route::post('/servicios', [ServicioApiController::class, 'store']);
+        Route::get('/servicios/{id}', [ServicioApiController::class, 'show']);
+        Route::put('/servicios/{id}', [ServicioApiController::class, 'update']);
+        Route::delete('/servicios/{id}', [ServicioApiController::class, 'destroy']);
 
     Route::get('/productos/bajo-stock', [ProductoApiController::class, 'bajoStock']);
     Route::get('/productos', [ProductoApiController::class, 'index']);
@@ -69,7 +71,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/estadisticas/ingresos', [EstadisticaApiController::class, 'ingresos']);
     Route::get('/estadisticas/servicios', [EstadisticaApiController::class, 'servicios']);
     Route::get('/estadisticas/clientes', [EstadisticaApiController::class, 'clientes']);
-    Route::get('/estadisticas/productos', [EstadisticaApiController::class, 'productos']);
+        Route::get('/estadisticas/productos', [EstadisticaApiController::class, 'productos']);
+    });
 
     Route::get('/citas', [CitaApiController::class, 'index']);
     Route::post('/citas', [CitaApiController::class, 'store']);

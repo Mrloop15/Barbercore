@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#C9A227">
@@ -1579,12 +1580,18 @@
         @media (max-width: 420px) { .custom-calendar, .custom-time-panel { position: fixed; left: 12px; right: 12px; top: 50%; width: auto; transform: translateY(-50%); } .custom-calendar.open, .custom-time-panel.open { animation: none; } .custom-time-panel { max-height: 80vh; } }
         @media (max-width: 900px) { .sidebar, body.sidebar-collapsed .sidebar { width: 278px; padding: 28px 20px 22px; z-index: 1001; overflow-x: hidden; overflow-y: auto; } .mobile-overlay { z-index: 1000; } .main, body.sidebar-collapsed .main { margin-left: 0; width: 100%; padding: 22px; } .sidebar-collapse-btn, body.sidebar-collapsed .menu-group-toggle { display: none; } .menu-group-items, body.sidebar-collapsed .menu-group-items { display: contents; position: static; } body.sidebar-collapsed .brand-text, body.sidebar-collapsed .menu-text { display: block; } body.sidebar-collapsed .menu-label { display: block; } body.sidebar-collapsed .sidebar-header { display: flex; min-height: 0; justify-content: space-between; flex-wrap: nowrap; } body.sidebar-collapsed .brand { padding: 0 8px; margin-bottom: 26px; justify-content: flex-start; } body.sidebar-collapsed .menu a, body.sidebar-collapsed .logout-button { justify-content: flex-start; padding: 11px 13px; gap: 12px; } }
         @media (max-width: 600px) { .main { padding: 18px 14px 30px; } .topbar { align-items: center; } .topbar-info { display: none; } .content-card { padding: 18px; overflow-x: auto; } .content-card > table { margin-left: -18px; margin-right: -18px; width: calc(100% + 36px); } .content-card > table th:first-child, .content-card > table td:first-child { padding-left: 18px; } .content-card > table th:last-child, .content-card > table td:last-child { padding-right: 18px; } .stat-card { padding: 18px; } .dashboard-intro { align-items: stretch; flex-direction: column; } }
+        .idle-timer { position: fixed; right: 22px; bottom: 20px; z-index: 1300; display: flex; align-items: center; gap: 9px; padding: 10px 14px; border: 1px solid rgba(201,162,39,.4); border-radius: 999px; background: rgba(28,28,28,.94); color: var(--blanco); box-shadow: 0 10px 25px rgba(28,28,28,.18); font-size: 12px; font-weight: 700; opacity: 0; visibility: hidden; transform: translateY(8px); transition: .25s ease; pointer-events: none; }
+        .idle-timer.visible { opacity: 1; visibility: visible; transform: translateY(0); }
+        .idle-timer::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: var(--dorado); box-shadow: 0 0 0 4px rgba(201,162,39,.15); }
+        .idle-timer strong { color: var(--dorado); font-variant-numeric: tabular-nums; }
+        @media (max-width: 600px) { .idle-timer { right: 14px; bottom: 14px; } }
     </style>
 </head>
 <body>
 
 <div id="pwaStatusBar" class="pwa-status-bar" style="display: none;"></div>
 <div id="mobileOverlay" class="mobile-overlay" aria-hidden="true"></div>
+<div class="idle-timer" id="idleTimer" role="status" aria-live="polite"><span>Sesión por inactividad</span><strong id="idleTimerValue">10:00</strong></div>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
     <symbol id="i-dashboard" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></symbol>
     <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="4"/><path d="M3 21v-2a6 6 0 0 1 12 0v2M16 4.5a4 4 0 0 1 0 7.5M17 15a6 6 0 0 1 4 5.7"/></symbol>
@@ -1646,12 +1653,15 @@
                 <div class="menu-group-items" data-label="Operación">
                     <a href="{{ route('citas.index') }}" class="{{ request()->routeIs('citas.*') ? 'active' : '' }}" title="Citas"><span class="menu-icon"><svg><use href="#i-calendar"/></svg></span><span class="menu-text">Citas</span></a>
                     <a href="{{ route('agenda.index') }}" class="{{ request()->routeIs('agenda.*') ? 'active' : '' }}" title="Agenda"><span class="menu-icon"><svg><use href="#i-clock"/></svg></span><span class="menu-text">Agenda</span></a>
+                    @if(auth()->user()->rol === 'admin')
                     <a href="{{ route('servicios.index') }}" class="{{ request()->routeIs('servicios.*') ? 'active' : '' }}" title="Servicios"><span class="menu-icon"><svg><use href="#i-scissors"/></svg></span><span class="menu-text">Servicios</span></a>
                     <a href="{{ route('productos.index') }}" class="{{ request()->routeIs('productos.*') ? 'active' : '' }}" title="Productos"><span class="menu-icon"><svg><use href="#i-box"/></svg></span><span class="menu-text">Productos</span></a>
                     <a href="{{ route('ventas-productos.index') }}" class="{{ request()->routeIs('ventas-productos.*') ? 'active' : '' }}" title="Ventas"><span class="menu-icon"><svg><use href="#i-cart"/></svg></span><span class="menu-text">Ventas</span></a>
                     <a href="{{ route('recompensas.index') }}" class="{{ request()->routeIs('recompensas.*') ? 'active' : '' }}" title="Recompensas"><span class="menu-icon"><svg><use href="#i-gift"/></svg></span><span class="menu-text">Recompensas</span></a>
+                    @endif
                 </div>
             </div>
+            @if(auth()->user()->rol === 'admin')
             <div class="menu-group">
                 <span class="menu-label">Análisis</span>
                 <button type="button" class="menu-group-toggle" aria-expanded="false" aria-label="Mostrar opciones de Análisis" title="Análisis"><span class="menu-icon"><svg><use href="#i-chart"/></svg></span></button>
@@ -1660,8 +1670,9 @@
                     <a href="{{ route('configuracion.index') }}" class="{{ request()->routeIs('configuracion.*') ? 'active' : '' }}" title="Configuración"><span class="menu-icon"><svg><use href="#i-settings"/></svg></span><span class="menu-text">Configuración</span></a>
                 </div>
             </div>
+            @endif
 
-            <form method="POST" action="{{ route('logout') }}">
+            <form method="POST" action="{{ route('logout') }}" id="logoutForm">
                 @csrf
                 <button type="submit" class="logout-button">
                     <span class="menu-icon"><svg><use href="#i-logout"/></svg></span><span class="menu-text">Cerrar sesión</span>
@@ -1708,6 +1719,114 @@
         @yield('content')
     </main>
 </div>
+
+<script>
+    (function () {
+        const TIMEOUT_MS = 10 * 60 * 1000;
+        const SHOW_AFTER_MS = 5000;
+        const HEARTBEAT_INTERVAL_MS = 30000;
+        const ACTIVITY_THROTTLE_MS = 1000;
+        const STORAGE_KEY = 'barbercore-last-activity';
+        const timer = document.getElementById('idleTimer');
+        const timerValue = document.getElementById('idleTimerValue');
+        const logoutForm = document.getElementById('logoutForm');
+        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+        let lastActivity = Date.now();
+        let lastHandledActivity = 0;
+        let lastHeartbeat = 0;
+        let loggingOut = false;
+
+        function storeActivity(timestamp) {
+            lastActivity = timestamp;
+            try { localStorage.setItem(STORAGE_KEY, String(timestamp)); } catch (error) {}
+        }
+
+        function heartbeat() {
+            const now = Date.now();
+            if ((now - lastHeartbeat) < HEARTBEAT_INTERVAL_MS) return;
+            lastHeartbeat = now;
+
+            fetch(@json(route('session.activity')), {
+                method: 'POST',
+                credentials: 'same-origin',
+                headers: {
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken,
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            }).then(function (response) {
+                if (response.status === 401 || response.status === 419) {
+                    window.location.assign(@json(route('login')));
+                }
+            }).catch(function () {
+                // El siguiente request protegido también validará la expiración.
+            });
+        }
+
+        function registerActivity() {
+            const now = Date.now();
+            if ((now - lastHandledActivity) < ACTIVITY_THROTTLE_MS) return;
+            lastHandledActivity = now;
+            storeActivity(now);
+            timer?.classList.remove('visible');
+            heartbeat();
+        }
+
+        function finishSession() {
+            if (loggingOut) return;
+            loggingOut = true;
+            timer?.classList.add('visible');
+            if (timerValue) timerValue.textContent = '00:00';
+            try { localStorage.removeItem(STORAGE_KEY); } catch (error) {}
+
+            if (logoutForm) {
+                logoutForm.requestSubmit();
+            } else {
+                window.location.assign(@json(route('login')));
+            }
+        }
+
+        function updateTimer() {
+            const idleTime = Date.now() - lastActivity;
+            const remaining = Math.max(0, TIMEOUT_MS - idleTime);
+
+            if (remaining <= 0) {
+                finishSession();
+                return;
+            }
+
+            if (idleTime >= SHOW_AFTER_MS) timer?.classList.add('visible');
+            else timer?.classList.remove('visible');
+
+            const totalSeconds = Math.ceil(remaining / 1000);
+            const minutes = Math.floor(totalSeconds / 60);
+            const seconds = totalSeconds % 60;
+            if (timerValue) timerValue.textContent = String(minutes).padStart(2, '0') + ':' + String(seconds).padStart(2, '0');
+        }
+
+        ['pointerdown', 'pointermove', 'keydown', 'scroll', 'touchstart'].forEach(function (eventName) {
+            window.addEventListener(eventName, registerActivity, { passive: true });
+        });
+
+        window.addEventListener('storage', function (event) {
+            if (event.key !== STORAGE_KEY || !event.newValue) return;
+            const sharedActivity = Number(event.newValue);
+            if (Number.isFinite(sharedActivity) && sharedActivity > lastActivity) {
+                lastActivity = sharedActivity;
+                timer?.classList.remove('visible');
+            }
+        });
+
+        document.addEventListener('visibilitychange', function () {
+            if (!document.hidden) registerActivity();
+        });
+
+        storeActivity(Date.now());
+        heartbeat();
+        updateTimer();
+        window.setInterval(updateTimer, 1000);
+    })();
+</script>
 
 <script>
     (function () {

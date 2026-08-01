@@ -1066,7 +1066,7 @@
                     : '<div class="rewards-empty">Aún no hay recompensas configuradas.</div>';
 
                 rewardsResult.innerHTML = `
-                    <div class="rewards-client"><strong>${escapeHtml(data.cliente.nombre)}</strong><span class="rewards-points">${escapeHtml(data.cliente.puntos)} pts</span></div>
+                    <div class="rewards-client"><strong>Cliente verificado</strong><span class="rewards-points">Disponibilidad protegida</span></div>
                     ${rewardsHtml}
                 `;
             };

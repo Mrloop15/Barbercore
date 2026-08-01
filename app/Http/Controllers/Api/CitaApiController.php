@@ -150,10 +150,8 @@ class CitaApiController extends Controller
             'estado' => 'completada',
         ]);
 
-        $cita->cliente->update([
-            'ultima_visita' => $cita->fecha,
-            'puntos' => DB::raw('puntos + ' . $puntosGanados),
-        ]);
+        $cita->cliente->update(['ultima_visita' => $cita->fecha]);
+        $cita->cliente->increment('puntos', $puntosGanados);
 
         HistorialServicio::create([
             'id_barberia' => $idBarberia,
