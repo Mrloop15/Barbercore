@@ -9,6 +9,10 @@ use Dompdf\Dompdf;
 use Dompdf\Options;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use OpenSpout\Common\Entity\Row;
+use OpenSpout\Common\Entity\Style\Color;
+use OpenSpout\Common\Entity\Style\Style;
+use OpenSpout\Writer\XLSX\Writer;
 
 class EstadisticaController extends Controller
 {
@@ -36,11 +40,67 @@ class EstadisticaController extends Controller
     public function downloadExcel(Request $request)
     {
         $data = $this->reportData($request);
-        $filename = 'reporte-barbercore-' . $data['desde']->format('Ymd') . '-' . $data['hasta']->format('Ymd') . '.xml';
+        $filename = 'reporte-barbercore-' . $data['desde']->format('Ymd') . '-' . $data['hasta']->format('Ymd') . '.xlsx';
 
-        return response(view('estadisticas.excel', $data)->render(), 200, [
-            'Content-Type' => 'application/vnd.ms-excel; charset=UTF-8',
-            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+        return response()->streamDownload(function () use ($data) {
+            $writer = new Writer();
+            $writer->openToFile('php://output');
+
+            $titleStyle = (new Style())->setFontBold()->setFontSize(18)->setFontColor('C9A227');
+            $sectionStyle = (new Style())->setFontBold()->setFontSize(12)
+                ->setFontColor(Color::WHITE)->setBackgroundColor('1C1C1C');
+            $labelStyle = (new Style())->setFontBold()->setBackgroundColor('FAF8F2');
+            $moneyStyle = (new Style())->setFormat('$#,##0.00');
+
+            $summarySheet = $writer->getCurrentSheet();
+            $summarySheet->setName('Resumen');
+            $summarySheet->setColumnWidth(25, 1);
+            $summarySheet->setColumnWidthForRange(20, 2, 5);
+
+            $writer->addRow(Row::fromValues(['Reporte BarberCore'], $titleStyle));
+            $writer->addRow(Row::fromValues([$data['barberia']]));
+            $writer->addRow(Row::fromValues([]));
+            $writer->addRow(Row::fromValues(['Periodo', $data['desde']->format('d/m/Y') . ' al ' . $data['hasta']->format('d/m/Y')], $labelStyle));
+            $writer->addRow(Row::fromValues(['Estado', ucfirst($data['estado'])], $labelStyle));
+            $writer->addRow(Row::fromValues([]));
+            $writer->addRow(Row::fromValues(['Total de citas', 'Completadas', 'Pendientes', 'Canceladas', 'Ingresos confirmados'], $sectionStyle));
+            $writer->addRow(Row::fromValuesWithStyles([
+                $data['totalCitas'], $data['completadas'], $data['pendientes'],
+                $data['canceladas'], (float) $data['ingresos'],
+            ], columnStyles: [4 => $moneyStyle]));
+
+            $detailSheet = $writer->addNewSheetAndMakeItCurrent();
+            $detailSheet->setName('Detalle de citas');
+            $detailSheet->setColumnWidth(13, 1);
+            $detailSheet->setColumnWidthForRange(12, 2, 3);
+            $detailSheet->setColumnWidth(28, 4);
+            $detailSheet->setColumnWidth(26, 5);
+            $detailSheet->setColumnWidth(22, 6);
+            $detailSheet->setColumnWidthForRange(15, 7, 8);
+            $detailSheet->setColumnWidth(40, 9);
+
+            $writer->addRow(Row::fromValues([
+                'Fecha', 'Hora inicio', 'Hora fin', 'Cliente', 'Servicio',
+                'Barbero', 'Estado', 'Importe', 'Observaciones',
+            ], $sectionStyle));
+
+            foreach ($data['citas'] as $cita) {
+                $writer->addRow(Row::fromValuesWithStyles([
+                    Carbon::parse($cita->fecha)->format('d/m/Y'),
+                    Carbon::parse($cita->hora_inicio)->format('H:i'),
+                    Carbon::parse($cita->hora_fin)->format('H:i'),
+                    trim(($cita->cliente->nombre ?? 'Sin cliente') . ' ' . ($cita->cliente->apellido ?? '')),
+                    $cita->servicio->nombre ?? 'Sin servicio',
+                    $cita->barbero->nombre ?? 'Sin asignar',
+                    ucfirst($cita->estado),
+                    (float) $cita->precio,
+                    $cita->observaciones ?? '',
+                ], columnStyles: [7 => $moneyStyle]));
+            }
+
+            $writer->close();
+        }, $filename, [
+            'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
             'Cache-Control' => 'max-age=0, no-cache, no-store, must-revalidate',
         ]);
     }
