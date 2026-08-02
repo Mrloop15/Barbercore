@@ -11,32 +11,6 @@
     <link rel="icon" type="image/png" sizes="192x192" href="{{ asset('images/branding/icon_192_Barbercore.png') }}">
     <link rel="apple-touch-icon" href="{{ asset('images/branding/icon_192_Barbercore.png') }}">
 
-    <style>
-        .pwa-install-btn {
-            position: fixed;
-            right: 20px;
-            bottom: 20px;
-            z-index: 9999;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            border: none;
-            border-radius: 999px;
-            background: #C9A227;
-            color: #FFFFFF;
-            padding: 12px 18px;
-            font-weight: 700;
-            font-size: 14px;
-            cursor: pointer;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.18);
-        }
-
-        .pwa-install-btn:hover {
-            background: #b8921f;
-        }
-
-    </style>
-
     <meta charset="UTF-8">
     <title>@yield('title', 'BarberCore')</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -343,6 +317,35 @@
             line-height: 1.45;
             overflow-wrap: break-word;
         }
+
+        .topbar-actions {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 10px;
+            min-width: 0;
+        }
+
+        .pwa-install-btn {
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            min-height: 40px;
+            padding: 9px 13px;
+            border: 1px solid rgba(201,162,39,.32);
+            border-radius: 12px;
+            background: var(--texto);
+            color: var(--blanco);
+            font-size: 12px;
+            font-weight: 800;
+            white-space: nowrap;
+            cursor: pointer;
+            box-shadow: 0 7px 17px rgba(28,28,28,.12);
+            transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease;
+        }
+
+        .pwa-install-btn .ui-icon { color: var(--dorado); }
+        .pwa-install-btn:hover { transform: translateY(-1px); border-color: var(--dorado); box-shadow: 0 10px 20px rgba(28,28,28,.17); }
 
         .content-card {
             min-width: 0;
@@ -1458,11 +1461,6 @@
                 word-break: normal;
             }
 
-            .pwa-install-btn {
-                right: max(12px, env(safe-area-inset-right));
-                bottom: calc(12px + env(safe-area-inset-bottom));
-                max-width: calc(100vw - 24px);
-            }
         }
 
         @media (prefers-reduced-motion: reduce) {
@@ -1952,9 +1950,15 @@
                 </div>
             </div>
 
-            <div class="topbar-info">
-                <div>{{ auth()->user()->barberia->nombre ?? 'BarberCore Studio' }}</div>
-                <div>{{ auth()->user()->nombre ?? auth()->user()->name ?? 'Usuario' }} · {{ now()->format('d/m/Y') }}</div>
+            <div class="topbar-actions">
+                <button id="installPwaBtn" class="pwa-install-btn" type="button" style="display: none;">
+                    <x-icon name="download" size="16" />
+                    <span>Instalar BarberCore</span>
+                </button>
+                <div class="topbar-info">
+                    <div>{{ auth()->user()->barberia->nombre ?? 'BarberCore Studio' }}</div>
+                    <div>{{ auth()->user()->nombre ?? auth()->user()->name ?? 'Usuario' }} · {{ now()->format('d/m/Y') }}</div>
+                </div>
             </div>
         </div>
 
@@ -2542,10 +2546,6 @@
         });
     }
 </script>
-
-<button id="installPwaBtn" class="pwa-install-btn" style="display: none;">
-    Instalar BarberCore
-</button>
 
 <script src="/js/pwa-install.js"></script>
 <script src="/js/pwa-status.js"></script>
