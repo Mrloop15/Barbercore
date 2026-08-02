@@ -10,7 +10,10 @@
         <div class="filter-panel">
             <div class="filter-panel-head">
                 <div class="filter-panel-heading"><span class="filter-panel-icon"><x-icon name="calendar" /></span><div><strong class="filter-panel-title">Filtrar citas</strong><span class="filter-panel-subtitle">Consulta un periodo y limita los resultados por estado.</span></div></div>
-                <span class="filter-result-count"><strong>{{ $citas->total() }}</strong> resultados</span>
+                <div class="filter-panel-meta">
+                    <span class="filter-result-count"><strong>{{ $citas->total() }}</strong> resultados</span>
+                    <div class="module-primary-actions"><a href="{{ route('citas.create') }}" class="btn module-action-btn"><x-icon name="plus" /> <span>Nueva cita</span></a></div>
+                </div>
             </div>
             <form method="GET" action="{{ route('citas.index') }}" class="filter-form appointment-list-filter">
                 <input type="hidden" name="periodo" value="rango">
@@ -24,7 +27,6 @@
                 </div>
             </form>
         </div>
-        <div class="module-primary-actions"><a href="{{ route('citas.create') }}" class="btn btn-primary"><x-icon name="plus" /> Nueva cita</a></div>
     </div>
 
     <div class="range-indicator">

@@ -27,7 +27,10 @@
         <div class="filter-panel">
             <div class="filter-panel-head">
                 <div class="filter-panel-heading"><span class="filter-panel-icon"><x-icon name="filter" /></span><div><strong class="filter-panel-title">Filtrar usuarios</strong><span class="filter-panel-subtitle">Combina la búsqueda con rol y estado.</span></div></div>
-                <span class="filter-result-count"><strong>{{ $usuarios->total() }}</strong> resultados</span>
+                <div class="filter-panel-meta">
+                    <span class="filter-result-count"><strong>{{ $usuarios->total() }}</strong> resultados</span>
+                    <div class="module-primary-actions"><a href="{{ route('usuarios.create') }}" class="btn module-action-btn"><x-icon name="plus" /> <span>Nuevo usuario</span></a></div>
+                </div>
             </div>
             <form method="GET" action="{{ route('usuarios.index') }}" class="filter-form">
                 <label class="filter-field filter-field-grow"><span class="filter-label">Nombre o correo</span><span class="filter-search-control"><x-icon name="search" /><input type="search" name="buscar" value="{{ $buscar }}" placeholder="Buscar usuario" autocomplete="off"></span></label>
@@ -39,7 +42,6 @@
                 </div>
             </form>
         </div>
-        <div class="module-primary-actions"><a href="{{ route('usuarios.create') }}" class="btn btn-primary"><x-icon name="plus" /> Agregar usuario</a></div>
     </div>
 
     <table>

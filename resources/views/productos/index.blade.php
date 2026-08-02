@@ -27,7 +27,10 @@
         <div class="filter-panel">
             <div class="filter-panel-head">
                 <div class="filter-panel-heading"><span class="filter-panel-icon"><x-icon name="filter" /></span><div><strong class="filter-panel-title">Filtrar inventario</strong><span class="filter-panel-subtitle">Busca productos y detecta existencias bajas.</span></div></div>
-                <span class="filter-result-count"><strong>{{ $productos->total() }}</strong> resultados</span>
+                <div class="filter-panel-meta">
+                    <span class="filter-result-count"><strong>{{ $productos->total() }}</strong> resultados</span>
+                    <div class="module-primary-actions"><a href="{{ route('productos.create') }}" class="btn module-action-btn"><x-icon name="plus" /> <span>Nuevo producto</span></a></div>
+                </div>
             </div>
             <form method="GET" action="{{ route('productos.index') }}" class="filter-form">
                 <label class="filter-field filter-field-grow"><span class="filter-label">Producto</span><span class="filter-search-control"><x-icon name="search" /><input type="search" name="buscar" value="{{ $buscar }}" placeholder="Nombre o descripción" autocomplete="off"></span></label>
@@ -35,7 +38,6 @@
                 <div class="filter-actions"><button type="submit" class="btn btn-secondary"><x-icon name="filter" /> Aplicar</button>@if (filled($buscar) || $filtro !== 'todos')<a href="{{ route('productos.index') }}" class="btn filter-clear" title="Limpiar filtros"><x-icon name="close" /><span class="sr-only">Limpiar filtros</span></a>@endif</div>
             </form>
         </div>
-        <div class="module-primary-actions"><a href="{{ route('productos.create') }}" class="btn btn-primary"><x-icon name="plus" /> Agregar producto</a></div>
     </div>
 
     <table>

@@ -13,7 +13,10 @@
                     <span class="filter-panel-icon"><x-icon name="filter" /></span>
                     <div><strong class="filter-panel-title">Buscar clientes</strong><span class="filter-panel-subtitle">Consulta por nombre, apellido o teléfono.</span></div>
                 </div>
-                <span class="filter-result-count"><strong>{{ $clientes->total() }}</strong> resultados</span>
+                <div class="filter-panel-meta">
+                    <span class="filter-result-count"><strong>{{ $clientes->total() }}</strong> resultados</span>
+                    <div class="module-primary-actions"><a href="{{ route('clientes.create') }}" class="btn module-action-btn"><x-icon name="plus" /> <span>Nuevo cliente</span></a></div>
+                </div>
             </div>
             <form method="GET" action="{{ route('clientes.index') }}" class="filter-form">
                 <label class="filter-field filter-field-grow">
@@ -27,9 +30,6 @@
                     @endif
                 </div>
             </form>
-        </div>
-        <div class="module-primary-actions">
-            <a href="{{ route('clientes.create') }}" class="btn btn-primary"><x-icon name="plus" /> Agregar cliente</a>
         </div>
     </div>
 

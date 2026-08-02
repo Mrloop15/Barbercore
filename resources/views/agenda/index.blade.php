@@ -10,7 +10,7 @@
         <h3>{{ $tituloPeriodo }}</h3>
         <p>Visualiza la ocupación del equipo y consulta el detalle de cada cita.</p>
     </div>
-    <a href="{{ route('citas.create') }}" class="btn btn-primary">Nueva cita</a>
+    <a href="{{ route('citas.create') }}" class="btn module-action-btn"><x-icon name="plus" /> <span>Agendar cita</span></a>
 </section>
 
 <section class="agenda-toolbar">

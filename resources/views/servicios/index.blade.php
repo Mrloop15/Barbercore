@@ -12,14 +12,16 @@
         <div class="filter-panel">
             <div class="filter-panel-head">
                 <div class="filter-panel-heading"><span class="filter-panel-icon"><x-icon name="filter" /></span><div><strong class="filter-panel-title">Buscar servicios</strong><span class="filter-panel-subtitle">Localiza rápidamente un servicio del catálogo.</span></div></div>
-                <span class="filter-result-count"><strong>{{ $servicios->total() }}</strong> resultados</span>
+                <div class="filter-panel-meta">
+                    <span class="filter-result-count"><strong>{{ $servicios->total() }}</strong> resultados</span>
+                    <div class="module-primary-actions"><a href="{{ route('servicios.create') }}" class="btn module-action-btn"><x-icon name="plus" /> <span>Nuevo servicio</span></a></div>
+                </div>
             </div>
             <form method="GET" action="{{ route('servicios.index') }}" class="filter-form">
                 <label class="filter-field filter-field-grow"><span class="filter-label">Nombre o descripción</span><span class="filter-search-control"><x-icon name="search" /><input type="search" name="buscar" value="{{ $buscar }}" placeholder="Ej. Corte clásico" autocomplete="off"></span></label>
                 <div class="filter-actions"><button type="submit" class="btn btn-secondary"><x-icon name="search" /> Buscar</button>@if (filled($buscar))<a href="{{ route('servicios.index') }}" class="btn filter-clear"><x-icon name="close" /> Limpiar</a>@endif</div>
             </form>
         </div>
-        <div class="module-primary-actions"><a href="{{ route('servicios.create') }}" class="btn btn-primary"><x-icon name="plus" /> Agregar servicio</a></div>
     </div>
 
     <table>

@@ -27,16 +27,18 @@
         <div class="filter-panel">
             <div class="filter-panel-head">
                 <div class="filter-panel-heading"><span class="filter-panel-icon"><x-icon name="filter" /></span><div><strong class="filter-panel-title">Buscar recompensas</strong><span class="filter-panel-subtitle">Consulta por nombre, descripción o tipo.</span></div></div>
-                <span class="filter-result-count"><strong>{{ $recompensas->total() }}</strong> resultados</span>
+                <div class="filter-panel-meta">
+                    <span class="filter-result-count"><strong>{{ $recompensas->total() }}</strong> resultados</span>
+                    <div class="module-primary-actions">
+                        <a href="{{ route('recompensas.formCanjear') }}" class="btn module-action-btn-secondary"><x-icon name="gift" /> Canjear</a>
+                        <a href="{{ route('recompensas.create') }}" class="btn module-action-btn"><x-icon name="plus" /> <span>Nueva recompensa</span></a>
+                    </div>
+                </div>
             </div>
             <form method="GET" action="{{ route('recompensas.index') }}" class="filter-form">
                 <label class="filter-field filter-field-grow"><span class="filter-label">Recompensa</span><span class="filter-search-control"><x-icon name="search" /><input type="search" name="buscar" value="{{ $buscar }}" placeholder="Ej. Corte gratis" autocomplete="off"></span></label>
                 <div class="filter-actions"><button type="submit" class="btn btn-secondary"><x-icon name="search" /> Buscar</button>@if (filled($buscar))<a href="{{ route('recompensas.index') }}" class="btn filter-clear"><x-icon name="close" /> Limpiar</a>@endif</div>
             </form>
-        </div>
-        <div class="module-primary-actions">
-            <a href="{{ route('recompensas.formCanjear') }}" class="btn btn-success">Canjear</a>
-            <a href="{{ route('recompensas.create') }}" class="btn btn-primary"><x-icon name="plus" /> Agregar</a>
         </div>
     </div>
 
