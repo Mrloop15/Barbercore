@@ -1,46 +1,89 @@
 const statusChip = document.getElementById("connectionStatus");
 const statusLabel = document.getElementById("connectionStatusLabel");
+const RETRY_INTERVAL = 5000;
+const REQUEST_TIMEOUT = 4000;
+let retryTimer = null;
+let checkingConnection = false;
 
 function mostrarEstado(mensaje, tipo) {
     if (!statusChip || !statusLabel) return;
 
     statusChip.className = "connection-status " + tipo;
     statusChip.title = mensaje;
-    statusLabel.textContent = tipo === "online" ? "En línea" : "Sin conexión";
+    statusLabel.textContent = tipo === "online"
+        ? "En línea"
+        : (tipo === "checking" ? "Comprobando" : "Sin conexión");
 }
 
-async function verificarApi() {
+function iniciarReintentos() {
+    if (retryTimer) return;
+    retryTimer = setInterval(verificarConexion, RETRY_INTERVAL);
+}
+
+function detenerReintentos() {
+    if (!retryTimer) return;
+    clearInterval(retryTimer);
+    retryTimer = null;
+}
+
+function marcarSinConexion(mensaje = "Sin conexión. Intentando reconectar…") {
+    mostrarEstado(mensaje, "offline");
+    iniciarReintentos();
+}
+
+async function verificarConexion() {
+    if (checkingConnection) return;
+
+    if (!navigator.onLine) {
+        marcarSinConexion("Sin conexión a internet. Intentando reconectar…");
+        return;
+    }
+
+    checkingConnection = true;
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT);
+
     try {
-        const response = await fetch("/api/status", {
+        const response = await fetch("/api/status?connection_check=" + Date.now(), {
+            cache: "no-store",
+            signal: controller.signal,
             headers: {
                 Accept: "application/json",
+                "X-Requested-With": "XMLHttpRequest",
             },
         });
-
         const data = await response.json();
 
         if (response.ok && data.ok) {
+            detenerReintentos();
             mostrarEstado("BarberCore disponible", "online");
         } else {
-            mostrarEstado("La API no respondió correctamente", "offline");
+            marcarSinConexion("BarberCore no está disponible. Reconectando…");
         }
     } catch (error) {
-        mostrarEstado("Sin conexión con BarberCore", "offline");
+        marcarSinConexion(navigator.onLine
+            ? "No se puede conectar con BarberCore. Reconectando…"
+            : "Sin conexión a internet. Intentando reconectar…");
+    } finally {
+        clearTimeout(timeout);
+        checkingConnection = false;
     }
 }
 
 window.addEventListener("online", () => {
-    verificarApi();
+    mostrarEstado("Comprobando conexión con BarberCore…", "checking");
+    verificarConexion();
 });
 
 window.addEventListener("offline", () => {
-    mostrarEstado("Sin conexión a internet", "offline");
+    marcarSinConexion("Sin conexión a internet. Intentando reconectar…");
 });
 
 window.addEventListener("load", () => {
     if (!navigator.onLine) {
-        mostrarEstado("Sin conexión a internet", "offline");
+        marcarSinConexion("Sin conexión a internet. Intentando reconectar…");
     } else {
-        verificarApi();
+        mostrarEstado("Comprobando conexión con BarberCore…", "checking");
+        verificarConexion();
     }
 });
