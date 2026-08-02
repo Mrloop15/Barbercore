@@ -1572,8 +1572,17 @@
         .topbar { background: transparent; border: 0; border-radius: 0; padding: 0 0 24px; margin-bottom: 8px; box-shadow: none; }
         .topbar h2 { font-size: clamp(24px, 3vw, 32px); letter-spacing: -1px; }
         .page-kicker { color: var(--dorado); font-size: 11px; font-weight: 800; letter-spacing: 1.6px; text-transform: uppercase; margin-bottom: 4px; }
-        .topbar-info { background: var(--blanco); border: 1px solid var(--borde); border-radius: 14px; padding: 10px 14px; line-height: 1.5; box-shadow: 0 7px 18px rgba(28,28,28,.04); }
-        .topbar-info div:first-child { color: var(--texto); font-weight: 700; }
+        .topbar-info { min-width: 310px; display: grid; grid-template-columns: 42px minmax(0,1fr); align-items: center; gap: 11px; padding: 10px 13px; border: 1px solid var(--borde); border-radius: 14px; background: var(--blanco); color: var(--texto); text-align: left; text-decoration: none; line-height: 1.4; box-shadow: 0 7px 18px rgba(28,28,28,.04); transition: border-color .18s ease, box-shadow .18s ease, transform .18s ease; }
+        .topbar-info:hover { border-color: rgba(201,162,39,.45); box-shadow: 0 10px 22px rgba(28,28,28,.075); transform: translateY(-1px); }
+        .topbar-barber-avatar { width: 42px; height: 42px; display: grid; place-items: center; border-radius: 12px; background: linear-gradient(145deg,var(--texto),#3a3832); color: var(--dorado); font-size: 13px; font-weight: 900; letter-spacing: .5px; }
+        .topbar-barber-content { min-width: 0; }
+        .topbar-barber-heading { display: flex; align-items: center; gap: 7px; min-width: 0; }
+        .topbar-barber-heading strong { overflow: hidden; color: var(--texto); font-size: 14px; text-overflow: ellipsis; white-space: nowrap; }
+        .topbar-role-chip { flex: 0 0 auto; padding: 3px 7px; border-radius: 999px; background: rgba(201,162,39,.12); color: var(--dorado); font-size: 9px; font-weight: 900; letter-spacing: .5px; text-transform: uppercase; }
+        .topbar-next-appointment { display: flex; align-items: center; gap: 5px; margin-top: 3px; color: var(--gris); font-size: 11px; }
+        .topbar-next-appointment .ui-icon { flex: 0 0 auto; color: var(--dorado); }
+        .topbar-next-appointment strong { color: var(--texto); font-size: 11px; }
+        .topbar-appointment-detail { display: block; overflow: hidden; margin-top: 3px; color: var(--gris); font-size: 10px; text-overflow: ellipsis; white-space: nowrap; }
         .content-card, .stat-card { border: 1px solid rgba(229,224,214,.9); border-radius: 20px; box-shadow: 0 10px 30px rgba(28,28,28,.055); transition: transform .2s ease, box-shadow .2s ease; }
         .content-card { padding: 26px; overflow: hidden; }
         .stat-card { position: relative; padding: 22px; overflow: hidden; }
@@ -1832,6 +1841,7 @@
         @media (max-width: 420px) { .custom-calendar, .custom-time-panel { position: fixed; left: 12px; right: 12px; top: 50%; width: auto; transform: translateY(-50%); } .custom-calendar.open, .custom-time-panel.open { animation: none; } .custom-time-panel { max-height: 80vh; } }
         @media (max-width: 900px) { .sidebar, body.sidebar-collapsed .sidebar { width: 278px; padding: 28px 20px 22px; z-index: 1001; overflow-x: hidden; overflow-y: auto; } .mobile-overlay { z-index: 1000; } .main, body.sidebar-collapsed .main { margin-left: 0; width: 100%; padding: 22px; } .sidebar-collapse-btn, body.sidebar-collapsed .menu-group-toggle { display: none; } .menu-group-items, body.sidebar-collapsed .menu-group-items { display: contents; position: static; } body.sidebar-collapsed .brand-text, body.sidebar-collapsed .menu-text { display: block; } body.sidebar-collapsed .menu-label { display: block; } body.sidebar-collapsed .sidebar-header { display: flex; min-height: 0; justify-content: space-between; flex-wrap: nowrap; } body.sidebar-collapsed .brand { padding: 0 8px; margin-bottom: 26px; justify-content: flex-start; } body.sidebar-collapsed .menu a, body.sidebar-collapsed .logout-button { justify-content: flex-start; padding: 11px 13px; gap: 12px; } }
         @media (max-width: 600px) { .main { padding: 18px 14px 30px; } .topbar { align-items: center; } .topbar-info { display: none; } .content-card { padding: 18px; overflow-x: auto; } .content-card > table { margin-left: -18px; margin-right: -18px; width: calc(100% + 36px); } .content-card > table th:first-child, .content-card > table td:first-child { padding-left: 18px; } .content-card > table th:last-child, .content-card > table td:last-child { padding-right: 18px; } .stat-card { padding: 18px; } .dashboard-intro { align-items: stretch; flex-direction: column; } }
+        @media (max-width: 600px) { .topbar-actions { width: 100%; align-items: stretch; flex-direction: column-reverse; } .topbar-info { display: grid; width: 100%; min-width: 0; } .pwa-install-btn { width: 100%; } }
         .idle-timer { position: fixed; right: 22px; bottom: 20px; z-index: 1300; display: flex; align-items: center; gap: 9px; padding: 10px 14px; border: 1px solid rgba(201,162,39,.4); border-radius: 999px; background: rgba(28,28,28,.94); color: var(--blanco); box-shadow: 0 10px 25px rgba(28,28,28,.18); font-size: 12px; font-weight: 700; opacity: 0; visibility: hidden; transform: translateY(8px); transition: .25s ease; pointer-events: none; }
         .idle-timer.visible { opacity: 1; visibility: visible; transform: translateY(0); }
         .idle-timer::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: var(--dorado); box-shadow: 0 0 0 4px rgba(201,162,39,.15); }
@@ -1958,10 +1968,28 @@
                     <x-icon name="download" size="16" />
                     <span>Instalar BarberCore</span>
                 </button>
-                <div class="topbar-info">
-                    <div>{{ auth()->user()->barberia->nombre ?? 'BarberCore Studio' }}</div>
-                    <div>{{ auth()->user()->nombre ?? auth()->user()->name ?? 'Usuario' }} · {{ now()->format('d/m/Y') }}</div>
-                </div>
+                <a href="{{ route('agenda.index') }}" class="topbar-info" title="Abrir mi agenda">
+                    <span class="topbar-barber-avatar" aria-hidden="true">{{ $inicialesBarbero ?: 'BC' }}</span>
+                    <span class="topbar-barber-content">
+                        <span class="topbar-barber-heading">
+                            <strong>{{ auth()->user()->nombre ?? auth()->user()->name ?? 'Usuario' }}</strong>
+                            <span class="topbar-role-chip">{{ ucfirst(auth()->user()->rol ?? 'barbero') }}</span>
+                        </span>
+                        @if ($proximaCitaBarbero && $proximaCitaInicio)
+                            <span class="topbar-next-appointment">
+                                <x-icon name="clock" size="13" />
+                                <span>Próxima cita</span>
+                                <strong class="js-next-appointment-countdown" data-start="{{ $proximaCitaInicio->toIso8601String() }}">Calculando…</strong>
+                            </span>
+                            <span class="topbar-appointment-detail">
+                                {{ $proximaCitaBarbero->cliente->nombre ?? 'Cliente' }} {{ $proximaCitaBarbero->cliente->apellido ?? '' }} · {{ $proximaCitaBarbero->servicio->nombre ?? 'Servicio' }} · {{ $proximaCitaInicio->format('d/m H:i') }}
+                            </span>
+                        @else
+                            <span class="topbar-next-appointment"><x-icon name="calendar" size="13" /><strong>Sin citas próximas</strong></span>
+                            <span class="topbar-appointment-detail">Tu agenda pendiente está libre.</span>
+                        @endif
+                    </span>
+                </a>
             </div>
         </div>
 
@@ -2559,6 +2587,44 @@
                 });
         });
     }
+</script>
+
+<script>
+    (function () {
+        const counters = document.querySelectorAll('.js-next-appointment-countdown');
+        if (!counters.length) return;
+
+        function updateCounter(counter) {
+            const start = new Date(counter.dataset.start);
+            const difference = start.getTime() - Date.now();
+
+            if (!Number.isFinite(start.getTime()) || difference <= 60000) {
+                counter.textContent = 'por comenzar';
+                return;
+            }
+
+            const totalMinutes = Math.ceil(difference / 60000);
+            if (totalMinutes < 60) {
+                counter.textContent = `en ${totalMinutes} min`;
+                return;
+            }
+
+            const hours = Math.floor(totalMinutes / 60);
+            const minutes = totalMinutes % 60;
+            if (hours < 24) {
+                counter.textContent = `en ${hours} h${minutes ? ` ${minutes} min` : ''}`;
+                return;
+            }
+
+            const days = Math.floor(hours / 24);
+            const remainingHours = hours % 24;
+            counter.textContent = `en ${days} ${days === 1 ? 'día' : 'días'}${remainingHours ? ` ${remainingHours} h` : ''}`;
+        }
+
+        const updateAll = () => counters.forEach(updateCounter);
+        updateAll();
+        window.setInterval(updateAll, 30000);
+    })();
 </script>
 
 <script src="/js/pwa-install.js"></script>
