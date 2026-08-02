@@ -85,7 +85,7 @@
                                 <x-icon name="edit" /><span class="sr-only">Editar cliente</span>
                             </a>
 
-                            <form method="POST" action="{{ route('clientes.destroy', $cliente->id_cliente) }}" onsubmit="return confirm('¿Seguro que deseas eliminar este cliente?');">
+                            <form method="POST" action="{{ route('clientes.destroy', $cliente->id_cliente) }}" data-confirm-title="Eliminar cliente" data-confirm="Se eliminará a {{ $cliente->nombre }} {{ $cliente->apellido }} y dejará de aparecer en los listados activos." data-confirm-text="Sí, eliminar" data-confirm-tone="danger">
                                 @csrf
                                 @method('DELETE')
 

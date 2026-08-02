@@ -93,7 +93,7 @@
                                 <x-icon name="edit" /><span class="sr-only">Editar recompensa</span>
                             </a>
 
-                            <form method="POST" action="{{ route('recompensas.destroy', $recompensa->id_recompensa) }}" onsubmit="return confirm('¿Seguro que deseas eliminar esta recompensa?');">
+                            <form method="POST" action="{{ route('recompensas.destroy', $recompensa->id_recompensa) }}" data-confirm-title="Eliminar recompensa" data-confirm="La recompensa {{ $recompensa->nombre }} dejará de estar disponible para nuevos canjes." data-confirm-text="Sí, eliminar" data-confirm-tone="danger">
                                 @csrf
                                 @method('DELETE')
 

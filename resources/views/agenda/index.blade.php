@@ -135,6 +135,8 @@
                                data-status="{{ $cita->estado }}"
                                data-notes="{{ $cita->observaciones ?? 'Sin observaciones' }}"
                                data-edit-url="{{ $cita->estado === 'pendiente' ? route('citas.edit', $cita->id_cita) : '' }}"
+                               data-complete-url="{{ $cita->estado === 'pendiente' ? route('citas.completar', $cita->id_cita) : '' }}"
+                               data-cancel-url="{{ $cita->estado === 'pendiente' ? route('citas.cancelar', $cita->id_cita) : '' }}"
                                aria-label="Ver detalle de la cita de {{ $cita->cliente->nombre ?? 'cliente' }}">
                                 <i aria-hidden="true"></i>
                                 <strong><time>{{ $inicioCita->format('H:i') }}</time><span>{{ $cita->cliente->nombre ?? 'Sin cliente' }}</span></strong>
@@ -241,7 +243,19 @@
         </div>
         <footer class="appointment-modal-footer">
             <button type="button" class="btn btn-secondary" data-modal-close>Cerrar</button>
-            <a href="#" class="btn btn-primary" id="modalEditLink">Editar cita</a>
+            <div class="modal-appointment-actions" id="modalAppointmentActions">
+                <form method="POST" action="#" id="modalCompleteForm" data-confirm-title="Completar cita" data-confirm="Se registrará el servicio como realizado y se actualizarán los puntos y el historial del cliente." data-confirm-text="Completar cita" data-confirm-tone="success">
+                    @csrf
+                    @method('PUT')
+                    <button type="submit" class="btn btn-success"><x-icon name="check" /> Completar</button>
+                </form>
+                <form method="POST" action="#" id="modalCancelForm" data-confirm-title="Cancelar cita" data-confirm="La cita quedará marcada como cancelada y el horario volverá a estar disponible." data-confirm-text="Cancelar cita" data-confirm-tone="danger">
+                    @csrf
+                    @method('PUT')
+                    <button type="submit" class="btn btn-danger"><x-icon name="close" /> Cancelar</button>
+                </form>
+                <a href="#" class="btn btn-primary" id="modalEditLink"><x-icon name="edit" /> Editar</a>
+            </div>
         </footer>
     </section>
 </div>
@@ -250,6 +264,9 @@
     (function () {
         const modal = document.getElementById('appointmentModal');
         const editLink = document.getElementById('modalEditLink');
+        const appointmentActions = document.getElementById('modalAppointmentActions');
+        const completeForm = document.getElementById('modalCompleteForm');
+        const cancelForm = document.getElementById('modalCancelForm');
         let lastTrigger = null;
 
         function openModal(trigger) {
@@ -270,6 +287,9 @@
             document.getElementById('modalMonth').textContent = (dateParts[3] || '---').slice(0, 3);
             editLink.style.display = data.editUrl ? 'inline-flex' : 'none';
             editLink.href = data.editUrl || '#';
+            appointmentActions.hidden = !data.completeUrl;
+            completeForm.action = data.completeUrl || '#';
+            cancelForm.action = data.cancelUrl || '#';
             modal.classList.add('open');
             modal.setAttribute('aria-hidden', 'false');
             document.body.classList.add('modal-open');

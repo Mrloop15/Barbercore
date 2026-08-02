@@ -75,7 +75,7 @@
                                 <x-icon name="edit" /><span class="sr-only">Editar servicio</span>
                             </a>
 
-                            <form method="POST" action="{{ route('servicios.destroy', $servicio->id_servicio) }}" onsubmit="return confirm('¿Seguro que deseas eliminar este servicio?');">
+                            <form method="POST" action="{{ route('servicios.destroy', $servicio->id_servicio) }}" data-confirm-title="Eliminar servicio" data-confirm="El servicio {{ $servicio->nombre }} dejará de estar disponible para nuevas citas." data-confirm-text="Sí, eliminar" data-confirm-tone="danger">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="btn btn-danger btn-icon" title="Eliminar servicio" aria-label="Eliminar servicio">

@@ -290,18 +290,14 @@ class CitaController extends Controller
             ->firstOrFail();
 
         if ($cita->estado === 'completada') {
-            return redirect()
-                ->route('citas.index')
-                ->with('error', 'No se puede cancelar una cita completada.');
+            return back()->with('error', 'No se puede cancelar una cita completada.');
         }
 
         $cita->update([
             'estado' => 'cancelada',
         ]);
 
-        return redirect()
-            ->route('citas.index')
-            ->with('success', 'Cita cancelada correctamente.');
+        return back()->with('success', 'Cita cancelada correctamente.');
     }
 
     public function completar(string $id)
@@ -315,9 +311,7 @@ class CitaController extends Controller
             ->firstOrFail();
 
         if ($cita->estado !== 'pendiente') {
-            return redirect()
-                ->route('citas.index')
-                ->with('error', 'Solo se pueden completar citas pendientes.');
+            return back()->with('error', 'Solo se pueden completar citas pendientes.');
         }
 
         DB::transaction(function () use ($cita, $idBarberia) {
@@ -351,8 +345,6 @@ class CitaController extends Controller
             ]);
         });
 
-        return redirect()
-            ->route('citas.index')
-            ->with('success', 'Cita completada correctamente. Se actualizó historial, última visita y puntos del cliente.');
+        return back()->with('success', 'Cita completada correctamente. Se actualizó historial, última visita y puntos del cliente.');
     }
 }

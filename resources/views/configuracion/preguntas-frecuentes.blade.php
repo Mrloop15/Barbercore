@@ -143,9 +143,16 @@
             const row = event.target.closest('[data-faq-row]');
             if (row) updateRow(row);
         });
-        list.addEventListener('click', (event) => {
+        list.addEventListener('click', async (event) => {
             const button = event.target.closest('[data-remove-faq]');
-            if (!button || !window.confirm('¿Eliminar esta pregunta? El cambio se aplicará al guardar.')) return;
+            if (!button) return;
+            const confirmed = await window.BarberDialog.confirm({
+                title: 'Eliminar pregunta',
+                message: 'La pregunta se quitará del listado. El cambio se aplicará cuando guardes la configuración.',
+                confirmText: 'Quitar pregunta',
+                tone: 'danger',
+            });
+            if (!confirmed) return;
             button.closest('[data-faq-row]').remove();
             reindex();
         });

@@ -121,7 +121,7 @@
                                 <x-icon name="edit" /><span class="sr-only">Editar producto</span>
                             </a>
 
-                            <form method="POST" action="{{ route('productos.destroy', $producto->id_producto) }}" onsubmit="return confirm('¿Seguro que deseas eliminar este producto?');">
+                            <form method="POST" action="{{ route('productos.destroy', $producto->id_producto) }}" data-confirm-title="Eliminar producto" data-confirm="El producto {{ $producto->nombre }} dejará de estar disponible en el inventario." data-confirm-text="Sí, eliminar" data-confirm-tone="danger">
                                 @csrf
                                 @method('DELETE')
 

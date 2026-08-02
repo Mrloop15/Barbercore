@@ -304,6 +304,7 @@
         </section>
     </main>
 
+    <script src="/js/barber-dialog.js"></script>
     <script src="/js/pwa-citas.js"></script>
 
     <script>

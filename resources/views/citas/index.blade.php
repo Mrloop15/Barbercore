@@ -86,7 +86,7 @@
                                     <x-icon name="edit" /><span class="sr-only">Editar cita</span>
                                 </a>
 
-                                <form method="POST" action="{{ route('citas.completar', $cita->id_cita) }}" onsubmit="return confirm('¿Deseas finalizar esta cita?');">
+                                <form method="POST" action="{{ route('citas.completar', $cita->id_cita) }}" data-confirm-title="Completar cita" data-confirm="Se registrará el servicio como realizado y se actualizarán los puntos y el historial del cliente." data-confirm-text="Completar cita" data-confirm-tone="success">
                                     @csrf
                                     @method('PUT')
 
@@ -95,7 +95,7 @@
                                     </button>
                                 </form>
 
-                                <form method="POST" action="{{ route('citas.cancelar', $cita->id_cita) }}" onsubmit="return confirm('¿Seguro que deseas cancelar esta cita?');">
+                                <form method="POST" action="{{ route('citas.cancelar', $cita->id_cita) }}" data-confirm-title="Cancelar cita" data-confirm="La cita quedará marcada como cancelada y el horario volverá a estar disponible." data-confirm-text="Cancelar cita" data-confirm-tone="danger">
                                     @csrf
                                     @method('PUT')
 

@@ -1728,7 +1728,10 @@
         .modal-detail strong { font-size: 14px; }
         .modal-notes { grid-column: 1 / -1; }
         .modal-notes p { margin: 0; color: var(--texto); font-size: 13px; line-height: 1.55; white-space: pre-wrap; }
-        .appointment-modal-footer { display: flex; justify-content: flex-end; gap: 9px; padding: 16px 24px 22px; border-top: 1px solid var(--borde); }
+        .appointment-modal-footer { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 16px 24px 22px; border-top: 1px solid var(--borde); }
+        .modal-appointment-actions { display: flex; justify-content: flex-end; align-items: center; gap: 8px; flex-wrap: wrap; }
+        .modal-appointment-actions form { display: inline-flex; margin: 0; }
+        .modal-appointment-actions .btn { gap: 6px; }
         @media (max-width: 800px) {
             .timeline-scroll { overflow: visible; }
             .gantt { grid-template-columns: 78px minmax(0,1fr); min-width: 0; }
@@ -1824,7 +1827,7 @@
         .custom-time-empty { grid-column: 1 / -1; padding: 12px; border-radius: 9px; background: var(--crema); color: var(--gris); font-size: 10px; font-weight: 700; text-align: center; }
         @media (max-width: 1100px) { .agenda-summary-wide { grid-template-columns: repeat(3,1fr); } }
         @media (max-width: 700px) { .agenda-hero, .agenda-toolbar, .timeline-card-header, .agenda-details-heading { align-items: stretch; flex-direction: column; } .agenda-toolbar .agenda-filter { width: 100%; } .agenda-toolbar .agenda-filter input { flex: 1; min-width: 0; } .agenda-summary-wide { grid-template-columns: repeat(2,1fr); } .timeline-legend { flex-wrap: wrap; } .appointment-form-card { padding: 18px; } .date-shortcut, .time-shortcut { flex: 1; } }
-        @media (max-width: 520px) { .appointment-modal { padding: 10px; } .appointment-modal-dialog { max-height: calc(100vh - 20px); border-radius: 19px; } .appointment-modal-header, .appointment-modal-body { padding: 18px; } .modal-appointment-heading { grid-template-columns: 52px 1fr; } .modal-appointment-heading > .badge { grid-column: 2; justify-self: start; } .modal-date-icon { width: 52px; height: 52px; } .modal-detail-grid { grid-template-columns: 1fr; } .modal-notes { grid-column: auto; } .appointment-modal-footer { padding: 14px 18px 18px; } }
+        @media (max-width: 520px) { .appointment-modal { padding: 10px; } .appointment-modal-dialog { max-height: calc(100vh - 20px); border-radius: 19px; } .appointment-modal-header, .appointment-modal-body { padding: 18px; } .modal-appointment-heading { grid-template-columns: 52px 1fr; } .modal-appointment-heading > .badge { grid-column: 2; justify-self: start; } .modal-date-icon { width: 52px; height: 52px; } .modal-detail-grid { grid-template-columns: 1fr; } .modal-notes { grid-column: auto; } .appointment-modal-footer { align-items: stretch; flex-direction: column-reverse; padding: 14px 18px 18px; } .appointment-modal-footer > .btn, .modal-appointment-actions, .modal-appointment-actions .btn, .modal-appointment-actions form { width: 100%; } .modal-appointment-actions { display: grid; grid-template-columns: 1fr 1fr; } .modal-appointment-actions #modalEditLink { grid-column: 1 / -1; } }
         @media (max-width: 600px) { .search-form .custom-date-picker, .agenda-filter .custom-date-picker, .month-filter .custom-date-picker { width: 100%; flex-basis: auto; } }
         @media (max-width: 420px) { .custom-calendar, .custom-time-panel { position: fixed; left: 12px; right: 12px; top: 50%; width: auto; transform: translateY(-50%); } .custom-calendar.open, .custom-time-panel.open { animation: none; } .custom-time-panel { max-height: 80vh; } }
         @media (max-width: 900px) { .sidebar, body.sidebar-collapsed .sidebar { width: 278px; padding: 28px 20px 22px; z-index: 1001; overflow-x: hidden; overflow-y: auto; } .mobile-overlay { z-index: 1000; } .main, body.sidebar-collapsed .main { margin-left: 0; width: 100%; padding: 22px; } .sidebar-collapse-btn, body.sidebar-collapsed .menu-group-toggle { display: none; } .menu-group-items, body.sidebar-collapsed .menu-group-items { display: contents; position: static; } body.sidebar-collapsed .brand-text, body.sidebar-collapsed .menu-text { display: block; } body.sidebar-collapsed .menu-label { display: block; } body.sidebar-collapsed .sidebar-header { display: flex; min-height: 0; justify-content: space-between; flex-wrap: nowrap; } body.sidebar-collapsed .brand { padding: 0 8px; margin-bottom: 26px; justify-content: flex-start; } body.sidebar-collapsed .menu a, body.sidebar-collapsed .logout-button { justify-content: flex-start; padding: 11px 13px; gap: 12px; } }
@@ -2549,6 +2552,7 @@
 
 <script src="/js/pwa-install.js"></script>
 <script src="/js/pwa-status.js"></script>
+<script src="/js/barber-dialog.js"></script>
 
 </body>
 </html>
