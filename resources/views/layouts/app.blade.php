@@ -35,34 +35,6 @@
             background: #b8921f;
         }
 
-        .pwa-status-bar {
-            position: fixed;
-            top: 16px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 10000;
-            width: max-content;
-            max-width: calc(100vw - 32px);
-            padding: 12px 20px;
-            border-radius: 999px;
-            font-size: 14px;
-            font-weight: 700;
-            line-height: 1.25;
-            text-align: center;
-            white-space: normal;
-            pointer-events: none;
-            box-shadow: 0 10px 24px rgba(0, 0, 0, 0.18);
-        }
-
-        .pwa-status-bar.online {
-            background: #2E7D32;
-            color: #FFFFFF;
-        }
-
-        .pwa-status-bar.offline {
-            background: #C62828;
-            color: #FFFFFF;
-        }
     </style>
 
     <meta charset="UTF-8">
@@ -224,6 +196,40 @@
             color: var(--gris);
             font-size: 12px;
         }
+
+        .connection-status {
+            width: max-content;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 7px;
+            padding: 4px 8px;
+            border: 1px solid rgba(46,125,50,.2);
+            border-radius: 999px;
+            background: rgba(46,125,50,.09);
+            color: #236b27;
+            font-size: 9px;
+            font-weight: 800;
+            line-height: 1;
+            letter-spacing: .3px;
+            text-transform: none;
+            transition: color .2s ease, border-color .2s ease, background .2s ease;
+        }
+
+        .connection-status-dot {
+            width: 7px;
+            height: 7px;
+            flex: 0 0 7px;
+            border-radius: 50%;
+            background: #2E7D32;
+            box-shadow: 0 0 0 3px rgba(46,125,50,.13);
+        }
+
+        .connection-status.checking { border-color: var(--borde); background: rgba(132,132,132,.08); color: var(--gris); }
+        .connection-status.checking .connection-status-dot { background: var(--gris); box-shadow: 0 0 0 3px rgba(132,132,132,.12); animation: connectionPulse 1.2s ease-in-out infinite; }
+        .connection-status.offline { border-color: rgba(198,40,40,.2); background: rgba(198,40,40,.09); color: var(--rojo); }
+        .connection-status.offline .connection-status-dot { background: var(--rojo); box-shadow: 0 0 0 3px rgba(198,40,40,.12); }
+        @keyframes connectionPulse { 50% { opacity: .42; } }
 
         .menu a,
         .logout-button {
@@ -1452,15 +1458,6 @@
                 word-break: normal;
             }
 
-            .pwa-status-bar {
-                top: auto;
-                bottom: calc(16px + env(safe-area-inset-bottom));
-                max-width: calc(100vw - 24px);
-                padding: 10px 14px;
-                border-radius: 16px;
-                font-size: 13px;
-            }
-
             .pwa-install-btn {
                 right: max(12px, env(safe-area-inset-right));
                 bottom: calc(12px + env(safe-area-inset-bottom));
@@ -1843,7 +1840,6 @@
 </head>
 <body>
 
-<div id="pwaStatusBar" class="pwa-status-bar" style="display: none;"></div>
 <div id="mobileOverlay" class="mobile-overlay" aria-hidden="true"></div>
 <div class="idle-timer" id="idleTimer" role="status" aria-live="polite"><span>Sesión por inactividad</span><strong id="idleTimerValue">10:00</strong></div>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
@@ -1875,6 +1871,10 @@
                 <div class="brand-text">
                     <strong>BarberCore</strong>
                     <span>Panel administrativo</span>
+                    <div id="connectionStatus" class="connection-status checking" role="status" aria-live="polite" title="Comprobando conexión con BarberCore">
+                        <i class="connection-status-dot" aria-hidden="true"></i>
+                        <span id="connectionStatusLabel">Comprobando</span>
+                    </div>
                 </div>
             </div>
 
