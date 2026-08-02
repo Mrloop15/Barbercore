@@ -24,27 +24,16 @@
         Este listado ayuda a detectar clientes que podrían necesitar seguimiento o recordatorio.
     </div>
 
-    <div class="filter-tabs">
-        <a 
-            href="{{ route('clientes.inactivos', ['filtro' => 'todos']) }}" 
-            class="filter-tab {{ $filtro === 'todos' ? 'active' : '' }}"
-        >
-            Todos
-        </a>
-
-        <a 
-            href="{{ route('clientes.inactivos', ['filtro' => 'con_cita']) }}" 
-            class="filter-tab {{ $filtro === 'con_cita' ? 'active' : '' }}"
-        >
-            Con cita pendiente
-        </a>
-
-        <a 
-            href="{{ route('clientes.inactivos', ['filtro' => 'sin_cita']) }}" 
-            class="filter-tab {{ $filtro === 'sin_cita' ? 'active' : '' }}"
-        >
-            Sin cita pendiente
-        </a>
+    <div class="filter-panel" style="margin-bottom: 18px;">
+        <div class="filter-panel-head">
+            <div class="filter-panel-heading"><span class="filter-panel-icon"><x-icon name="filter" /></span><div><strong class="filter-panel-title">Estado de seguimiento</strong><span class="filter-panel-subtitle">Separa a quienes ya tienen cita de quienes requieren contacto.</span></div></div>
+            <span class="filter-result-count"><strong>{{ $clientes->count() }}</strong> visibles</span>
+        </div>
+        <nav class="filter-tabs" aria-label="Filtrar clientes inactivos">
+            <a href="{{ route('clientes.inactivos', ['filtro' => 'todos']) }}" class="filter-tab {{ $filtro === 'todos' ? 'active' : '' }}" @if($filtro === 'todos') aria-current="page" @endif>Todos</a>
+            <a href="{{ route('clientes.inactivos', ['filtro' => 'con_cita']) }}" class="filter-tab {{ $filtro === 'con_cita' ? 'active' : '' }}" @if($filtro === 'con_cita') aria-current="page" @endif>Con cita pendiente</a>
+            <a href="{{ route('clientes.inactivos', ['filtro' => 'sin_cita']) }}" class="filter-tab {{ $filtro === 'sin_cita' ? 'active' : '' }}" @if($filtro === 'sin_cita') aria-current="page" @endif>Sin cita pendiente</a>
+        </nav>
     </div>
 
     <table>

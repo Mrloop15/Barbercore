@@ -10,20 +10,26 @@
         <h3>{{ $tituloPeriodo }}</h3>
         <p>Visualiza la ocupación del equipo y consulta el detalle de cada cita.</p>
     </div>
-    <a href="{{ route('citas.create') }}" class="btn btn-primary">Nueva cita</a>
+    <a href="{{ route('citas.create') }}" class="btn module-action-btn"><x-icon name="plus" /> <span>Agendar cita</span></a>
 </section>
 
 <section class="agenda-toolbar">
-    <div class="agenda-tabs" aria-label="Tipo de vista">
-        <a href="{{ route('agenda.index', ['vista' => 'dia', 'fecha' => $fechaBase->toDateString()]) }}" class="agenda-tab {{ $vista === 'dia' ? 'active' : '' }}">Día</a>
-        <a href="{{ route('agenda.index', ['vista' => 'semana', 'fecha' => $fechaBase->toDateString()]) }}" class="agenda-tab {{ $vista === 'semana' ? 'active' : '' }}">Semana</a>
-        <a href="{{ route('agenda.index', ['vista' => 'mes', 'fecha' => $fechaBase->toDateString()]) }}" class="agenda-tab {{ $vista === 'mes' ? 'active' : '' }}">Mes</a>
+    <div class="agenda-view-selector">
+        <span class="filter-label">Vista de agenda</span>
+        <nav class="agenda-tabs" aria-label="Tipo de vista">
+            <a href="{{ route('agenda.index', ['vista' => 'dia', 'fecha' => $fechaBase->toDateString()]) }}" class="agenda-tab {{ $vista === 'dia' ? 'active' : '' }}" @if($vista === 'dia') aria-current="page" @endif>Día</a>
+            <a href="{{ route('agenda.index', ['vista' => 'semana', 'fecha' => $fechaBase->toDateString()]) }}" class="agenda-tab {{ $vista === 'semana' ? 'active' : '' }}" @if($vista === 'semana') aria-current="page" @endif>Semana</a>
+            <a href="{{ route('agenda.index', ['vista' => 'mes', 'fecha' => $fechaBase->toDateString()]) }}" class="agenda-tab {{ $vista === 'mes' ? 'active' : '' }}" @if($vista === 'mes') aria-current="page" @endif>Mes</a>
+        </nav>
     </div>
 
     <form method="GET" action="{{ route('agenda.index') }}" class="agenda-filter">
         <input type="hidden" name="vista" value="{{ $vista }}">
-        <input type="date" name="fecha" value="{{ $fechaBase->toDateString() }}" aria-label="Fecha de la agenda">
-        <button type="submit" class="btn btn-secondary">Ir a fecha</button>
+        <label class="filter-field filter-field-date"><span class="filter-label">Fecha de referencia</span><input type="date" name="fecha" value="{{ $fechaBase->toDateString() }}"></label>
+        <div class="filter-actions">
+            <button type="submit" class="btn btn-secondary"><x-icon name="calendar" /> Ir a fecha</button>
+            @if (!$fechaBase->isToday())<a href="{{ route('agenda.index', ['vista' => $vista, 'fecha' => now()->toDateString()]) }}" class="btn filter-clear">Hoy</a>@endif
+        </div>
     </form>
 </section>
 
@@ -129,6 +135,8 @@
                                data-status="{{ $cita->estado }}"
                                data-notes="{{ $cita->observaciones ?? 'Sin observaciones' }}"
                                data-edit-url="{{ $cita->estado === 'pendiente' ? route('citas.edit', $cita->id_cita) : '' }}"
+                               data-complete-url="{{ $cita->estado === 'pendiente' ? route('citas.completar', $cita->id_cita) : '' }}"
+                               data-cancel-url="{{ $cita->estado === 'pendiente' ? route('citas.cancelar', $cita->id_cita) : '' }}"
                                aria-label="Ver detalle de la cita de {{ $cita->cliente->nombre ?? 'cliente' }}">
                                 <i aria-hidden="true"></i>
                                 <strong><time>{{ $inicioCita->format('H:i') }}</time><span>{{ $cita->cliente->nombre ?? 'Sin cliente' }}</span></strong>
@@ -235,7 +243,19 @@
         </div>
         <footer class="appointment-modal-footer">
             <button type="button" class="btn btn-secondary" data-modal-close>Cerrar</button>
-            <a href="#" class="btn btn-primary" id="modalEditLink">Editar cita</a>
+            <div class="modal-appointment-actions" id="modalAppointmentActions">
+                <form method="POST" action="#" id="modalCompleteForm" data-confirm-title="Completar cita" data-confirm="Se registrará el servicio como realizado y se actualizarán los puntos y el historial del cliente." data-confirm-text="Completar cita" data-confirm-tone="success">
+                    @csrf
+                    @method('PUT')
+                    <button type="submit" class="btn btn-success"><x-icon name="check" /> Completar</button>
+                </form>
+                <form method="POST" action="#" id="modalCancelForm" data-confirm-title="Cancelar cita" data-confirm="La cita quedará marcada como cancelada y el horario volverá a estar disponible." data-confirm-text="Cancelar cita" data-confirm-tone="danger">
+                    @csrf
+                    @method('PUT')
+                    <button type="submit" class="btn btn-danger"><x-icon name="close" /> Cancelar</button>
+                </form>
+                <a href="#" class="btn btn-primary" id="modalEditLink"><x-icon name="edit" /> Editar</a>
+            </div>
         </footer>
     </section>
 </div>
@@ -244,6 +264,9 @@
     (function () {
         const modal = document.getElementById('appointmentModal');
         const editLink = document.getElementById('modalEditLink');
+        const appointmentActions = document.getElementById('modalAppointmentActions');
+        const completeForm = document.getElementById('modalCompleteForm');
+        const cancelForm = document.getElementById('modalCancelForm');
         let lastTrigger = null;
 
         function openModal(trigger) {
@@ -264,6 +287,9 @@
             document.getElementById('modalMonth').textContent = (dateParts[3] || '---').slice(0, 3);
             editLink.style.display = data.editUrl ? 'inline-flex' : 'none';
             editLink.href = data.editUrl || '#';
+            appointmentActions.hidden = !data.completeUrl;
+            completeForm.action = data.completeUrl || '#';
+            cancelForm.action = data.cancelUrl || '#';
             modal.classList.add('open');
             modal.setAttribute('aria-hidden', 'false');
             document.body.classList.add('modal-open');

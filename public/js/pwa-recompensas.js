@@ -202,7 +202,12 @@ btnCanjear.addEventListener("click", async function () {
         return;
     }
 
-    const confirmar = confirm("¿Seguro que quieres canjear esta recompensa?");
+    const confirmar = await window.BarberDialog.confirm({
+        title: "Canjear recompensa",
+        message: "Se descontarán los puntos requeridos del saldo del cliente.",
+        confirmText: "Confirmar canje",
+        tone: "success",
+    });
 
     if (!confirmar) return;
 

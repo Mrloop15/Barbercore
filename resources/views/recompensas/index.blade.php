@@ -23,28 +23,22 @@
 </div>
 
 <div class="content-card">
-    <div class="page-actions">
-        <form method="GET" action="{{ route('recompensas.index') }}" class="search-form">
-            <input 
-                type="text" 
-                name="buscar" 
-                value="{{ $buscar }}" 
-                placeholder="Buscar recompensa por nombre, descripción o tipo"
-            >
-
-            <button type="submit" class="btn btn-secondary">
-                Buscar
-            </button>
-        </form>
-
-        <div class="actions">
-            <a href="{{ route('recompensas.formCanjear') }}" class="btn btn-success">
-                Canjear recompensa
-            </a>
-
-            <a href="{{ route('recompensas.create') }}" class="btn btn-primary">
-                Agregar recompensa
-            </a>
+    <div class="module-tools">
+        <div class="filter-panel">
+            <div class="filter-panel-head">
+                <div class="filter-panel-heading"><span class="filter-panel-icon"><x-icon name="filter" /></span><div><strong class="filter-panel-title">Buscar recompensas</strong><span class="filter-panel-subtitle">Consulta por nombre, descripción o tipo.</span></div></div>
+                <div class="filter-panel-meta">
+                    <span class="filter-result-count"><strong>{{ $recompensas->total() }}</strong> resultados</span>
+                    <div class="module-primary-actions">
+                        <a href="{{ route('recompensas.formCanjear') }}" class="btn module-action-btn-secondary"><x-icon name="gift" /> Canjear</a>
+                        <a href="{{ route('recompensas.create') }}" class="btn module-action-btn"><x-icon name="plus" /> <span>Nueva recompensa</span></a>
+                    </div>
+                </div>
+            </div>
+            <form method="GET" action="{{ route('recompensas.index') }}" class="filter-form">
+                <label class="filter-field filter-field-grow"><span class="filter-label">Recompensa</span><span class="filter-search-control"><x-icon name="search" /><input type="search" name="buscar" value="{{ $buscar }}" placeholder="Ej. Corte gratis" autocomplete="off"></span></label>
+                <div class="filter-actions"><button type="submit" class="btn btn-secondary"><x-icon name="search" /> Buscar</button>@if (filled($buscar))<a href="{{ route('recompensas.index') }}" class="btn filter-clear"><x-icon name="close" /> Limpiar</a>@endif</div>
+            </form>
         </div>
     </div>
 
@@ -99,7 +93,7 @@
                                 <x-icon name="edit" /><span class="sr-only">Editar recompensa</span>
                             </a>
 
-                            <form method="POST" action="{{ route('recompensas.destroy', $recompensa->id_recompensa) }}" onsubmit="return confirm('¿Seguro que deseas eliminar esta recompensa?');">
+                            <form method="POST" action="{{ route('recompensas.destroy', $recompensa->id_recompensa) }}" data-confirm-title="Eliminar recompensa" data-confirm="La recompensa {{ $recompensa->nombre }} dejará de estar disponible para nuevos canjes." data-confirm-text="Sí, eliminar" data-confirm-tone="danger">
                                 @csrf
                                 @method('DELETE')
 

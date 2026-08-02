@@ -9,11 +9,15 @@
 </div>
 
 <div class="content-card report-builder">
+    <div class="filter-panel-head">
+        <div class="filter-panel-heading"><span class="filter-panel-icon"><x-icon name="filter" /></span><div><strong class="filter-panel-title">Configurar reporte</strong><span class="filter-panel-subtitle">Define el periodo y el estado antes de exportar.</span></div></div>
+        <span class="filter-result-count"><strong>{{ $totalCitas }}</strong> registros</span>
+    </div>
     <form method="GET" action="{{ route('estadisticas.index') }}" class="report-filter">
         <div class="form-group"><label for="desde">Desde</label><input type="date" id="desde" name="desde" value="{{ $desde->toDateString() }}"></div>
         <div class="form-group"><label for="hasta">Hasta</label><input type="date" id="hasta" name="hasta" value="{{ $hasta->toDateString() }}"></div>
         <div class="form-group"><label for="estado">Estado de citas</label><select id="estado" name="estado"><option value="todos">Todos</option><option value="pendiente" @selected($estado === 'pendiente')>Pendientes</option><option value="completada" @selected($estado === 'completada')>Completadas</option><option value="cancelada" @selected($estado === 'cancelada')>Canceladas</option></select></div>
-        <div class="report-filter-actions"><button class="btn btn-secondary" type="submit">Vista previa</button><a class="btn btn-primary" href="{{ route('estadisticas.pdf', ['desde' => $desde->toDateString(), 'hasta' => $hasta->toDateString(), 'estado' => $estado]) }}">Descargar PDF</a><a class="btn btn-success" href="{{ route('estadisticas.excel', ['desde' => $desde->toDateString(), 'hasta' => $hasta->toDateString(), 'estado' => $estado]) }}">Descargar Excel</a></div>
+        <div class="report-filter-actions"><button class="btn btn-secondary" type="submit"><x-icon name="search" /> Vista previa</button><a class="btn btn-primary" href="{{ route('estadisticas.pdf', ['desde' => $desde->toDateString(), 'hasta' => $hasta->toDateString(), 'estado' => $estado]) }}"><x-icon name="download" /> PDF</a><a class="btn btn-success" href="{{ route('estadisticas.excel', ['desde' => $desde->toDateString(), 'hasta' => $hasta->toDateString(), 'estado' => $estado]) }}"><x-icon name="download" /> Excel</a>@if ($estado !== 'todos' || !$desde->isSameDay(now()->startOfMonth()) || !$hasta->isSameDay(now()->endOfMonth()))<a class="btn filter-clear" href="{{ route('estadisticas.index') }}" title="Restablecer filtros"><x-icon name="close" /><span class="sr-only">Restablecer filtros</span></a>@endif</div>
     </form>
 </div>
 

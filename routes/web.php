@@ -40,6 +40,7 @@ Route::middleware(['auth', 'idle', 'tenant'])->group(function () {
     Route::resource('clientes', ClienteController::class);
     Route::patch('/servicios/{servicio}/landing', [ServicioController::class, 'cambiarVisibilidadLanding'])->middleware('role:admin')->name('servicios.landing');
     Route::resource('servicios', ServicioController::class)->except(['show'])->middleware('role:admin');
+    Route::get('/citas/disponibilidad', [CitaController::class, 'disponibilidad'])->name('citas.disponibilidad');
     Route::put('/citas/{cita}/cancelar', [CitaController::class, 'cancelar'])->name('citas.cancelar');
     Route::put('/citas/{cita}/completar', [CitaController::class, 'completar'])->name('citas.completar');
     Route::resource('citas', CitaController::class)->except(['show', 'destroy']);

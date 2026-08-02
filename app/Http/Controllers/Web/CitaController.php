@@ -97,6 +97,80 @@ class CitaController extends Controller
         return view('citas.create', compact('clientes', 'servicios', 'barberos', 'horarios', 'fechaInicial'));
     }
 
+    public function disponibilidad(Request $request)
+    {
+        $usuario = Auth::user();
+        $idBarberia = $usuario->id_barberia ?? 1;
+
+        $datos = $request->validate([
+            'fecha' => ['required', 'date', 'after_or_equal:today'],
+            'id_barbero' => ['required', 'integer'],
+            'id_servicio' => ['required', 'integer'],
+        ]);
+
+        $servicio = Servicio::where('id_barberia', $idBarberia)
+            ->where('id_servicio', $datos['id_servicio'])
+            ->where('activo', 1)
+            ->firstOrFail();
+
+        Usuario::where('id_barberia', $idBarberia)
+            ->where('id_usuario', $datos['id_barbero'])
+            ->where('activo', 1)
+            ->whereIn('rol', ['admin', 'barbero'])
+            ->firstOrFail();
+
+        $fecha = Carbon::parse($datos['fecha']);
+        $diaSemana = $fecha->dayOfWeekIso - 1;
+        $horario = HorarioAtencion::where('id_barberia', $idBarberia)
+            ->where('dia_semana', $diaSemana)
+            ->first();
+
+        if (! $horario?->abierto || ! $horario->hora_apertura || ! $horario->hora_cierre) {
+            return response()->json([
+                'horarios' => [],
+                'message' => 'La barbería no brinda atención en el día seleccionado.',
+            ]);
+        }
+
+        $inicioJornada = Carbon::parse($fecha->toDateString() . ' ' . $horario->hora_apertura);
+        $finJornada = Carbon::parse($fecha->toDateString() . ' ' . $horario->hora_cierre);
+        $ahora = now();
+        $citasOcupadas = Cita::where('id_barberia', $idBarberia)
+            ->where('id_barbero', $datos['id_barbero'])
+            ->whereDate('fecha', $fecha->toDateString())
+            ->where('estado', '!=', 'cancelada')
+            ->get(['hora_inicio', 'hora_fin']);
+
+        $horariosDisponibles = [];
+        for ($inicio = $inicioJornada->copy(); $inicio->copy()->addMinutes($servicio->duracion_minutos)->lte($finJornada); $inicio->addMinutes(15)) {
+            $fin = $inicio->copy()->addMinutes($servicio->duracion_minutos);
+
+            if ($fecha->isToday() && $inicio->lte($ahora)) {
+                continue;
+            }
+
+            $ocupado = $citasOcupadas->contains(function ($cita) use ($fecha, $inicio, $fin) {
+                $inicioOcupado = Carbon::parse($fecha->toDateString() . ' ' . $cita->hora_inicio);
+                $finOcupado = Carbon::parse($fecha->toDateString() . ' ' . $cita->hora_fin);
+
+                return $inicio->lt($finOcupado) && $fin->gt($inicioOcupado);
+            });
+
+            if (! $ocupado) {
+                $horariosDisponibles[] = $inicio->format('H:i');
+            }
+        }
+
+        return response()->json([
+            'horarios' => $horariosDisponibles,
+            'apertura' => substr($horario->hora_apertura, 0, 5),
+            'cierre' => substr($horario->hora_cierre, 0, 5),
+            'message' => empty($horariosDisponibles)
+                ? 'No quedan horarios disponibles para este barbero y servicio.'
+                : null,
+        ]);
+    }
+
     public function store(Request $request)
     {
         $usuario = Auth::user();
@@ -124,8 +198,37 @@ class CitaController extends Controller
             ->where('activo', 1)
             ->firstOrFail();
 
+        $clienteValido = Cliente::where('id_barberia', $idBarberia)
+            ->where('id_cliente', $request->id_cliente)
+            ->where('activo', 1)
+            ->exists();
+        $barberoValido = Usuario::where('id_barberia', $idBarberia)
+            ->where('id_usuario', $request->id_barbero)
+            ->where('activo', 1)
+            ->whereIn('rol', ['admin', 'barbero'])
+            ->exists();
+
+        if (! $clienteValido || ! $barberoValido) {
+            return back()
+                ->withInput()
+                ->with('error', 'El cliente o barbero seleccionado no está disponible en esta barbería.');
+        }
+
         $horaInicio = Carbon::createFromFormat('H:i', $request->hora_inicio);
         $horaFin = $horaInicio->copy()->addMinutes($servicio->duracion_minutos);
+
+        if ($horaInicio->minute % 15 !== 0) {
+            return back()
+                ->withInput()
+                ->with('error', 'Selecciona uno de los horarios disponibles en intervalos de 15 minutos.');
+        }
+
+        $inicioCita = Carbon::parse($request->fecha . ' ' . $request->hora_inicio);
+        if ($inicioCita->lte(now())) {
+            return back()
+                ->withInput()
+                ->with('error', 'La cita debe programarse en una fecha y hora futuras.');
+        }
 
         $horaInicioSql = $horaInicio->format('H:i:s');
         $horaFinSql = $horaFin->format('H:i:s');
@@ -290,18 +393,14 @@ class CitaController extends Controller
             ->firstOrFail();
 
         if ($cita->estado === 'completada') {
-            return redirect()
-                ->route('citas.index')
-                ->with('error', 'No se puede cancelar una cita completada.');
+            return back()->with('error', 'No se puede cancelar una cita completada.');
         }
 
         $cita->update([
             'estado' => 'cancelada',
         ]);
 
-        return redirect()
-            ->route('citas.index')
-            ->with('success', 'Cita cancelada correctamente.');
+        return back()->with('success', 'Cita cancelada correctamente.');
     }
 
     public function completar(string $id)
@@ -315,9 +414,7 @@ class CitaController extends Controller
             ->firstOrFail();
 
         if ($cita->estado !== 'pendiente') {
-            return redirect()
-                ->route('citas.index')
-                ->with('error', 'Solo se pueden completar citas pendientes.');
+            return back()->with('error', 'Solo se pueden completar citas pendientes.');
         }
 
         DB::transaction(function () use ($cita, $idBarberia) {
@@ -351,8 +448,6 @@ class CitaController extends Controller
             ]);
         });
 
-        return redirect()
-            ->route('citas.index')
-            ->with('success', 'Cita completada correctamente. Se actualizó historial, última visita y puntos del cliente.');
+        return back()->with('success', 'Cita completada correctamente. Se actualizó historial, última visita y puntos del cliente.');
     }
 }

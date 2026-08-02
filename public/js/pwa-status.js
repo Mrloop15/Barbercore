@@ -1,17 +1,12 @@
-const statusBar = document.getElementById("pwaStatusBar");
+const statusChip = document.getElementById("connectionStatus");
+const statusLabel = document.getElementById("connectionStatusLabel");
 
 function mostrarEstado(mensaje, tipo) {
-    if (!statusBar) return;
+    if (!statusChip || !statusLabel) return;
 
-    statusBar.textContent = mensaje;
-    statusBar.className = "pwa-status-bar " + tipo;
-    statusBar.style.display = "block";
-
-    if (tipo === "online") {
-        setTimeout(() => {
-            statusBar.style.display = "none";
-        }, 3000);
-    }
+    statusChip.className = "connection-status " + tipo;
+    statusChip.title = mensaje;
+    statusLabel.textContent = tipo === "online" ? "En línea" : "Sin conexión";
 }
 
 async function verificarApi() {
@@ -25,7 +20,7 @@ async function verificarApi() {
         const data = await response.json();
 
         if (response.ok && data.ok) {
-            mostrarEstado("Conexión con BarberCore activa", "online");
+            mostrarEstado("BarberCore disponible", "online");
         } else {
             mostrarEstado("La API no respondió correctamente", "offline");
         }

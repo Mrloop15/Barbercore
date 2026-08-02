@@ -8,13 +8,20 @@
 @include('servicios._landing_styles')
 
 <div class="content-card">
-    <div class="page-actions">
-        <form method="GET" action="{{ route('servicios.index') }}" class="search-form">
-            <input type="text" name="buscar" value="{{ $buscar }}" placeholder="Buscar servicio por nombre o descripción">
-            <button type="submit" class="btn btn-secondary">Buscar</button>
-        </form>
-
-        <a href="{{ route('servicios.create') }}" class="btn btn-primary">Agregar servicio</a>
+    <div class="module-tools">
+        <div class="filter-panel">
+            <div class="filter-panel-head">
+                <div class="filter-panel-heading"><span class="filter-panel-icon"><x-icon name="filter" /></span><div><strong class="filter-panel-title">Buscar servicios</strong><span class="filter-panel-subtitle">Localiza rápidamente un servicio del catálogo.</span></div></div>
+                <div class="filter-panel-meta">
+                    <span class="filter-result-count"><strong>{{ $servicios->total() }}</strong> resultados</span>
+                    <div class="module-primary-actions"><a href="{{ route('servicios.create') }}" class="btn module-action-btn"><x-icon name="plus" /> <span>Nuevo servicio</span></a></div>
+                </div>
+            </div>
+            <form method="GET" action="{{ route('servicios.index') }}" class="filter-form">
+                <label class="filter-field filter-field-grow"><span class="filter-label">Nombre o descripción</span><span class="filter-search-control"><x-icon name="search" /><input type="search" name="buscar" value="{{ $buscar }}" placeholder="Ej. Corte clásico" autocomplete="off"></span></label>
+                <div class="filter-actions"><button type="submit" class="btn btn-secondary"><x-icon name="search" /> Buscar</button>@if (filled($buscar))<a href="{{ route('servicios.index') }}" class="btn filter-clear"><x-icon name="close" /> Limpiar</a>@endif</div>
+            </form>
+        </div>
     </div>
 
     <table>
@@ -68,7 +75,7 @@
                                 <x-icon name="edit" /><span class="sr-only">Editar servicio</span>
                             </a>
 
-                            <form method="POST" action="{{ route('servicios.destroy', $servicio->id_servicio) }}" onsubmit="return confirm('¿Seguro que deseas eliminar este servicio?');">
+                            <form method="POST" action="{{ route('servicios.destroy', $servicio->id_servicio) }}" data-confirm-title="Eliminar servicio" data-confirm="El servicio {{ $servicio->nombre }} dejará de estar disponible para nuevas citas." data-confirm-text="Sí, eliminar" data-confirm-tone="danger">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="btn btn-danger btn-icon" title="Eliminar servicio" aria-label="Eliminar servicio">

@@ -213,7 +213,12 @@ citaForm.addEventListener("submit", async function (event) {
 });
 
 async function cancelarCita(idCita) {
-    const confirmar = confirm("¿Seguro que quieres cancelar esta cita?");
+    const confirmar = await window.BarberDialog.confirm({
+        title: "Cancelar cita",
+        message: "La cita quedará cancelada y el horario volverá a estar disponible.",
+        confirmText: "Cancelar cita",
+        tone: "danger",
+    });
 
     if (!confirmar) return;
 
@@ -240,7 +245,12 @@ async function cancelarCita(idCita) {
 }
 
 async function completarCita(idCita) {
-    const confirmar = confirm("¿Seguro que quieres completar esta cita?");
+    const confirmar = await window.BarberDialog.confirm({
+        title: "Completar cita",
+        message: "Se registrará el servicio como realizado y se actualizará la información del cliente.",
+        confirmText: "Completar cita",
+        tone: "success",
+    });
 
     if (!confirmar) return;
 

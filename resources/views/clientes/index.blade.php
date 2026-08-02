@@ -6,23 +6,31 @@
 @section('content')
 
 <div class="content-card">
-    <div class="page-actions">
-        <form method="GET" action="{{ route('clientes.index') }}" class="search-form">
-            <input 
-                type="text" 
-                name="buscar" 
-                value="{{ $buscar }}" 
-                placeholder="Buscar por nombre, apellido o teléfono"
-            >
-
-            <button type="submit" class="btn btn-secondary">
-                Buscar
-            </button>
-        </form>
-
-        <a href="{{ route('clientes.create') }}" class="btn btn-primary">
-            Agregar cliente
-        </a>
+    <div class="module-tools">
+        <div class="filter-panel">
+            <div class="filter-panel-head">
+                <div class="filter-panel-heading">
+                    <span class="filter-panel-icon"><x-icon name="filter" /></span>
+                    <div><strong class="filter-panel-title">Buscar clientes</strong><span class="filter-panel-subtitle">Consulta por nombre, apellido o teléfono.</span></div>
+                </div>
+                <div class="filter-panel-meta">
+                    <span class="filter-result-count"><strong>{{ $clientes->total() }}</strong> resultados</span>
+                    <div class="module-primary-actions"><a href="{{ route('clientes.create') }}" class="btn module-action-btn"><x-icon name="plus" /> <span>Nuevo cliente</span></a></div>
+                </div>
+            </div>
+            <form method="GET" action="{{ route('clientes.index') }}" class="filter-form">
+                <label class="filter-field filter-field-grow">
+                    <span class="filter-label">Buscar</span>
+                    <span class="filter-search-control"><x-icon name="search" /><input type="search" name="buscar" value="{{ $buscar }}" placeholder="Ej. Carlos Ramírez" autocomplete="off"></span>
+                </label>
+                <div class="filter-actions">
+                    <button type="submit" class="btn btn-secondary"><x-icon name="search" /> Buscar</button>
+                    @if (filled($buscar))
+                        <a href="{{ route('clientes.index') }}" class="btn filter-clear"><x-icon name="close" /> Limpiar</a>
+                    @endif
+                </div>
+            </form>
+        </div>
     </div>
 
     <table>
@@ -77,7 +85,7 @@
                                 <x-icon name="edit" /><span class="sr-only">Editar cliente</span>
                             </a>
 
-                            <form method="POST" action="{{ route('clientes.destroy', $cliente->id_cliente) }}" onsubmit="return confirm('¿Seguro que deseas eliminar este cliente?');">
+                            <form method="POST" action="{{ route('clientes.destroy', $cliente->id_cliente) }}" data-confirm-title="Eliminar cliente" data-confirm="Se eliminará a {{ $cliente->nombre }} {{ $cliente->apellido }} y dejará de aparecer en los listados activos." data-confirm-text="Sí, eliminar" data-confirm-tone="danger">
                                 @csrf
                                 @method('DELETE')
 
