@@ -2449,7 +2449,7 @@
                 trigger.disabled = unavailable;
 
                 if (unavailable) {
-                    label.textContent = 'Día sin horarios disponibles';
+                    label.textContent = input.dataset.unavailableLabel || 'Sin horarios disponibles';
                     const message = input.dataset.unavailableMessage || 'El negocio no atiende este día.';
                     const empty = document.createElement('span');
                     empty.className = 'custom-time-empty';
@@ -2465,11 +2465,14 @@
                 const step = Math.max(5, parseInt(input.step || '900', 10) / 60);
                 const start = input.min ? toMinutes(input.min) : 8 * 60;
                 const end = input.max ? toMinutes(input.max) : 20 * 60;
+                const restrictAvailableTimes = input.hasAttribute('data-available-times');
+                const availableTimes = (input.dataset.availableTimes || '').split(',').filter(Boolean);
                 const now = new Date();
                 const nearestNow = Math.round((now.getHours() * 60 + now.getMinutes()) / step) * step;
 
                 for (let minutes = start; minutes <= end; minutes += step) {
                     const value = toValue(minutes);
+                    if (restrictAvailableTimes && !availableTimes.includes(value)) continue;
                     const button = document.createElement('button');
                     button.type = 'button';
                     button.className = 'time-slot';
@@ -2484,6 +2487,14 @@
                         render();
                     });
                     (minutes < 12 * 60 ? morning : afternoon).appendChild(button);
+                }
+
+                if (!morning.children.length && !afternoon.children.length) {
+                    const empty = document.createElement('span');
+                    empty.className = 'custom-time-empty';
+                    empty.textContent = input.dataset.unavailableMessage || 'No hay horarios disponibles.';
+                    morning.appendChild(empty);
+                    afternoonPeriod.style.display = 'none';
                 }
             }
 

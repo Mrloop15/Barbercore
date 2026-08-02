@@ -95,6 +95,11 @@
                     id="hora_inicio" 
                     value="{{ old('hora_inicio') }}" 
                     step="900"
+                    data-availability-url="{{ route('citas.disponibilidad') }}"
+                    data-available-times=""
+                    data-unavailable="true"
+                    data-unavailable-label="Selecciona los datos"
+                    data-unavailable-message="Selecciona servicio, barbero y fecha para consultar los horarios."
                     required
                 >
                 <div class="time-shortcuts" id="timeShortcuts"></div>
@@ -137,6 +142,7 @@
 
 <script>
     const servicioSelect = document.getElementById('id_servicio');
+    const barberoSelect = document.getElementById('id_barbero');
     const resumenPrecio = document.getElementById('resumenPrecio');
     const resumenDuracion = document.getElementById('resumenDuracion');
     const resumenHorario = document.getElementById('resumenHorario');
@@ -146,13 +152,7 @@
     const horarioDiaHelp = document.getElementById('horarioDiaHelp');
     const timeShortcuts = document.getElementById('timeShortcuts');
     const horariosAtencion = @json($horariosCita);
-
-    const minutos = hora => {
-        const [h, m] = (hora || '00:00').split(':').map(Number);
-        return (h * 60) + m;
-    };
-
-    const horaDesdeMinutos = total => `${String(Math.floor(total / 60)).padStart(2, '0')}:${String(total % 60).padStart(2, '0')}`;
+    let availabilityRequest = 0;
 
     function horarioParaFecha(fecha) {
         if (!fecha) return null;
@@ -162,53 +162,24 @@
         return horario?.abierto && horario.apertura && horario.cierre ? horario : null;
     }
 
-    function actualizarDisponibilidad() {
-        const horario = horarioParaFecha(fechaInput.value);
-        const duracion = Math.max(15, parseInt(servicioSelect.options[servicioSelect.selectedIndex]?.getAttribute('data-duracion') || 0, 10));
+    function marcarHorarioNoDisponible(label, message) {
+        horaInput.value = '';
+        horaInput.dataset.availableTimes = '';
+        horaInput.dataset.unavailable = 'true';
+        horaInput.dataset.unavailableLabel = label;
+        horaInput.dataset.unavailableMessage = message;
+        horaInput.removeAttribute('min');
+        horaInput.removeAttribute('max');
+        horarioDiaHelp.textContent = message;
+        horaInput.dispatchEvent(new Event('change', { bubbles: true }));
+    }
+
+    function agregarAccesosRapidos(horarios) {
         timeShortcuts.innerHTML = '';
+        const seleccionados = horarios.filter((hora, index) => index % 8 === 0).slice(0, 5);
+        if (horarios.length && !seleccionados.includes(horarios.at(-1)) && seleccionados.length < 5) seleccionados.push(horarios.at(-1));
 
-        if (!horario) {
-            horaInput.value = '';
-            horaInput.dataset.unavailable = 'true';
-            horaInput.dataset.unavailableMessage = 'La barbería permanece cerrada este día.';
-            horaInput.removeAttribute('min');
-            horaInput.removeAttribute('max');
-            horarioDiaHelp.textContent = 'La barbería permanece cerrada este día.';
-            fechaInput.setCustomValidity('Selecciona un día con horario de atención.');
-            horaInput.dispatchEvent(new Event('change', { bubbles: true }));
-            return;
-        }
-
-        fechaInput.setCustomValidity('');
-        horaInput.dataset.unavailable = 'false';
-        delete horaInput.dataset.unavailableMessage;
-        const apertura = minutos(horario.apertura);
-        const ultimoInicio = minutos(horario.cierre) - duracion;
-
-        if (ultimoInicio < apertura) {
-            horaInput.value = '';
-            horaInput.dataset.unavailable = 'true';
-            horaInput.dataset.unavailableMessage = 'Este servicio no cabe dentro del horario de atención de este día.';
-            horaInput.removeAttribute('min');
-            horaInput.removeAttribute('max');
-            horarioDiaHelp.textContent = horaInput.dataset.unavailableMessage;
-            horaInput.dispatchEvent(new Event('change', { bubbles: true }));
-            return;
-        }
-
-        horaInput.min = horario.apertura;
-        horaInput.max = horaDesdeMinutos(ultimoInicio);
-        horarioDiaHelp.textContent = `Atención de ${horario.apertura} a ${horario.cierre}. Último inicio para este servicio: ${horaInput.max}.`;
-
-        if (horaInput.value && (minutos(horaInput.value) < apertura || minutos(horaInput.value) > ultimoInicio)) {
-            horaInput.value = '';
-        }
-
-        const candidatos = [];
-        for (let valor = apertura; valor <= ultimoInicio && candidatos.length < 5; valor += 120) candidatos.push(valor);
-        if (ultimoInicio >= apertura && !candidatos.includes(ultimoInicio)) candidatos.push(ultimoInicio);
-        candidatos.slice(0, 5).forEach(valor => {
-            const hora = horaDesdeMinutos(valor);
+        seleccionados.forEach(hora => {
             const button = document.createElement('button');
             button.type = 'button';
             button.className = 'time-shortcut';
@@ -220,8 +191,59 @@
             });
             timeShortcuts.appendChild(button);
         });
+    }
 
-        horaInput.dispatchEvent(new Event('change', { bubbles: true }));
+    async function actualizarDisponibilidad() {
+        const requestId = ++availabilityRequest;
+        const horario = horarioParaFecha(fechaInput.value);
+        const horaPrevia = horaInput.value.slice(0, 5);
+        timeShortcuts.innerHTML = '';
+
+        if (!horario) {
+            fechaInput.setCustomValidity('Selecciona un día con horario de atención.');
+            marcarHorarioNoDisponible('Día cerrado', 'La barbería permanece cerrada este día.');
+            return;
+        }
+
+        fechaInput.setCustomValidity('');
+        if (!servicioSelect.value || !barberoSelect.value || !fechaInput.value) {
+            marcarHorarioNoDisponible('Selecciona los datos', 'Selecciona servicio, barbero y fecha para consultar los horarios.');
+            return;
+        }
+
+        marcarHorarioNoDisponible('Consultando horarios', 'Revisando la agenda del barbero…');
+
+        try {
+            const query = new URLSearchParams({
+                fecha: fechaInput.value,
+                id_barbero: barberoSelect.value,
+                id_servicio: servicioSelect.value,
+            });
+            const response = await fetch(`${horaInput.dataset.availabilityUrl}?${query}`, { headers: { Accept: 'application/json' } });
+            const data = await response.json();
+            if (requestId !== availabilityRequest) return;
+            if (!response.ok) throw new Error(data.message || 'No fue posible consultar la disponibilidad.');
+
+            const horarios = Array.isArray(data.horarios) ? data.horarios : [];
+            if (!horarios.length) {
+                marcarHorarioNoDisponible('Sin disponibilidad', data.message || 'No quedan horarios disponibles para esta selección.');
+                return;
+            }
+
+            horaInput.dataset.availableTimes = horarios.join(',');
+            horaInput.dataset.unavailable = 'false';
+            delete horaInput.dataset.unavailableLabel;
+            delete horaInput.dataset.unavailableMessage;
+            horaInput.min = horarios[0];
+            horaInput.max = horarios.at(-1);
+            horaInput.value = horarios.includes(horaPrevia) ? horaPrevia : '';
+            horarioDiaHelp.textContent = `${horarios.length} horarios disponibles · atención de ${data.apertura} a ${data.cierre}.`;
+            agregarAccesosRapidos(horarios);
+            horaInput.dispatchEvent(new Event('change', { bubbles: true }));
+        } catch (error) {
+            if (requestId !== availabilityRequest) return;
+            marcarHorarioNoDisponible('No disponible', error.message || 'No fue posible consultar los horarios.');
+        }
     }
 
     function actualizarResumenServicio() {
@@ -256,6 +278,7 @@
     horaInput.addEventListener('change', actualizarHorario);
 
     servicioSelect.addEventListener('change', actualizarResumenServicio);
+    barberoSelect.addEventListener('change', actualizarDisponibilidad);
     actualizarResumenServicio();
 </script>
 
