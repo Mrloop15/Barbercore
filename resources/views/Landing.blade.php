@@ -4,8 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Cortes, barba y cuidado personal en {{ $barberia?->nombre ?? 'BarberCore Studio' }}.">
+    <meta name="theme-color" content="#C9A227">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
     <title>{{ $barberia?->nombre ?? 'BarberCore Studio' }} | Barbería profesional</title>
     <link rel="icon" type="image/png" href="{{ asset('images/branding/icon_192_Barbercore.png') }}">
+    <link rel="apple-touch-icon" href="/icons/icon-192.png">
+    <link rel="manifest" href="/manifest.json">
     <script>document.documentElement.classList.add('js');</script>
 
     <style>
@@ -278,9 +283,9 @@
         .footer-bottom { display: flex; justify-content: space-between; gap: 20px; padding-top: 22px; border-top: 1px solid rgba(229,224,214,.16); color: var(--gris); font-size: 10px; }
 
         .whatsapp-widget { position: fixed; right: 22px; bottom: 22px; z-index: 70; font-family: Arial, Helvetica, sans-serif; }
-        .whatsapp-toggle { position: relative; width: 62px; height: 62px; display: grid; place-items: center; border: 3px solid var(--blanco); border-radius: 50%; background: var(--verde); color: var(--blanco); box-shadow: 0 14px 32px rgba(17,17,17,.25); cursor: pointer; transition: transform .2s ease, box-shadow .2s ease; }
+        .whatsapp-toggle { appearance: none; position: relative; width: 62px; height: 62px; display: block; padding: 0; border: 3px solid var(--blanco); border-radius: 50%; background: var(--verde); color: var(--blanco); box-shadow: 0 14px 32px rgba(17,17,17,.25); cursor: pointer; line-height: 0; transition: transform .2s ease, box-shadow .2s ease; }
         .whatsapp-toggle:hover { transform: translateY(-4px); box-shadow: 0 18px 38px rgba(17,17,17,.3); }
-        .whatsapp-toggle svg { width: 28px; height: 28px; fill: currentColor; }
+        .whatsapp-toggle > svg { position: absolute; top: 50%; left: 50%; width: 27px; height: 27px; display: block; overflow: visible; fill: currentColor; transform: translate(-50%, -50%) translateY(1px); transform-origin: center; pointer-events: none; }
         .whatsapp-badge { position: absolute; top: -2px; right: -2px; width: 18px; height: 18px; display: grid; place-items: center; border: 2px solid var(--blanco); border-radius: 50%; background: var(--dorado); color: var(--oscuro); font-size: 9px; font-weight: 900; }
         .whatsapp-prompt { position: absolute; right: 74px; bottom: 8px; width: max-content; max-width: 210px; border: 1px solid var(--borde); border-radius: 10px; padding: 11px 14px; background: var(--blanco); color: var(--texto); box-shadow: 0 10px 28px rgba(17,17,17,.12); font-size: 12px; font-weight: 700; opacity: 0; visibility: hidden; transform: translateX(8px); transition: opacity .25s ease, transform .25s ease, visibility .25s ease; }
         .whatsapp-prompt::after { content: ""; position: absolute; right: -6px; bottom: 15px; width: 10px; height: 10px; border-top: 1px solid var(--borde); border-right: 1px solid var(--borde); background: var(--blanco); transform: rotate(45deg); }
@@ -1367,6 +1372,11 @@
 
             window.setTimeout(() => widget.classList.add('show-prompt'), 1400);
         });
+    </script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => navigator.serviceWorker.register('/sw.js'));
+        }
     </script>
 </body>
 </html>

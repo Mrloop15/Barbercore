@@ -1847,6 +1847,20 @@
         .idle-timer::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: var(--dorado); box-shadow: 0 0 0 4px rgba(201,162,39,.15); }
         .idle-timer strong { color: var(--dorado); font-variant-numeric: tabular-nums; }
         @media (max-width: 600px) { .idle-timer { right: 14px; bottom: 14px; } }
+        .quick-context-menu { position: fixed; z-index: 4000; width: min(280px, calc(100vw - 24px)); padding: 9px; border: 1px solid var(--borde); border-radius: 16px; background: rgba(255,255,255,.98); box-shadow: 0 22px 55px rgba(28,28,28,.2); opacity: 0; visibility: hidden; transform: translateY(7px) scale(.98); transform-origin: top left; transition: opacity .14s ease, transform .14s ease, visibility .14s ease; }
+        .quick-context-menu.open { opacity: 1; visibility: visible; transform: translateY(0) scale(1); }
+        .quick-context-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 7px 9px 9px; color: var(--gris); font-size: 9px; font-weight: 900; letter-spacing: 1.1px; text-transform: uppercase; }
+        .quick-context-heading span:last-child { color: var(--dorado); font-size: 8px; letter-spacing: .6px; }
+        .quick-context-list { display: grid; gap: 3px; }
+        .quick-context-item { display: grid; grid-template-columns: 36px minmax(0,1fr); align-items: center; gap: 10px; min-height: 50px; padding: 7px 9px; border-radius: 11px; color: var(--texto); text-decoration: none; }
+        .quick-context-item:hover, .quick-context-item:focus-visible { outline: 0; background: var(--crema); color: var(--dorado); }
+        .quick-context-icon { width: 36px; height: 36px; display: grid; place-items: center; border: 1px solid rgba(201,162,39,.2); border-radius: 10px; background: rgba(201,162,39,.09); color: var(--dorado); }
+        .quick-context-icon svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+        .quick-context-copy { min-width: 0; }
+        .quick-context-copy strong, .quick-context-copy small { display: block; }
+        .quick-context-copy strong { color: inherit; font-size: 12px; }
+        .quick-context-copy small { margin-top: 2px; overflow: hidden; color: var(--gris); font-size: 9px; text-overflow: ellipsis; white-space: nowrap; }
+        @media (hover: none), (pointer: coarse) { .quick-context-menu { display: none; } }
     </style>
 </head>
 <body>
@@ -2009,7 +2023,84 @@
     </main>
 </div>
 
+<nav class="quick-context-menu" id="quickContextMenu" aria-label="Accesos rápidos" aria-hidden="true">
+    <div class="quick-context-heading"><span>Accesos rápidos</span><span>BarberCore</span></div>
+    <div class="quick-context-list">
+        <a class="quick-context-item" href="{{ route('citas.create') }}">
+            <span class="quick-context-icon"><svg><use href="#i-calendar"/></svg></span>
+            <span class="quick-context-copy"><strong>Nueva cita</strong><small>Registrar una cita rápidamente</small></span>
+        </a>
+        <a class="quick-context-item" href="{{ route('agenda.index', ['vista' => 'dia', 'fecha' => now()->toDateString()]) }}">
+            <span class="quick-context-icon"><svg><use href="#i-clock"/></svg></span>
+            <span class="quick-context-copy"><strong>Agenda de hoy</strong><small>Consultar horarios y disponibilidad</small></span>
+        </a>
+        @if(auth()->user()->rol === 'admin')
+        <a class="quick-context-item" href="{{ route('ventas-productos.create') }}">
+            <span class="quick-context-icon"><svg><use href="#i-cart"/></svg></span>
+            <span class="quick-context-copy"><strong>Registrar venta</strong><small>Crear una venta de productos</small></span>
+        </a>
+        @endif
+        <a class="quick-context-item" href="{{ route('clientes.create') }}">
+            <span class="quick-context-icon"><svg><use href="#i-users"/></svg></span>
+            <span class="quick-context-copy"><strong>Nuevo cliente</strong><small>Agregar un cliente al sistema</small></span>
+        </a>
+    </div>
+</nav>
+
 <script>
+    (function () {
+        const menu = document.getElementById('quickContextMenu');
+        if (!menu || !window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+
+        const links = Array.from(menu.querySelectorAll('a'));
+
+        function closeMenu() {
+            menu.classList.remove('open');
+            menu.setAttribute('aria-hidden', 'true');
+        }
+
+        function openMenu(clientX, clientY) {
+            menu.style.left = '0px';
+            menu.style.top = '0px';
+            menu.classList.add('open');
+            menu.setAttribute('aria-hidden', 'false');
+
+            const margin = 12;
+            const width = menu.offsetWidth;
+            const height = menu.offsetHeight;
+            const left = Math.min(Math.max(margin, clientX), window.innerWidth - width - margin);
+            const top = Math.min(Math.max(margin, clientY), window.innerHeight - height - margin);
+
+            menu.style.left = `${left}px`;
+            menu.style.top = `${top}px`;
+        }
+
+        document.addEventListener('contextmenu', function (event) {
+            event.preventDefault();
+            openMenu(event.clientX, event.clientY);
+        });
+
+        document.addEventListener('pointerdown', function (event) {
+            if (!menu.contains(event.target)) closeMenu();
+        });
+
+        document.addEventListener('keydown', function (event) {
+            if (event.key === 'Escape') {
+                closeMenu();
+                return;
+            }
+
+            if (event.shiftKey && event.key === 'F10') {
+                event.preventDefault();
+                openMenu(window.innerWidth / 2, window.innerHeight / 2);
+                links[0]?.focus();
+            }
+        });
+
+        window.addEventListener('resize', closeMenu);
+        window.addEventListener('scroll', closeMenu, true);
+    })();
+
     (function () {
         const TIMEOUT_MS = 10 * 60 * 1000;
         const SHOW_AFTER_MS = 5000;

@@ -2,12 +2,18 @@
     "name": "BarberCore",
     "short_name": "BarberCore",
     "description": "Panel administrativo para gestión de barberías",
-    "start_url": "/pwa/login",
+    "id": "/pwa/login",
+    "start_url": "/login?source=pwa",
     "scope": "/",
     "display": "standalone",
     "background_color": "#FAF8F2",
     "theme_color": "#C9A227",
-    "orientation": "portrait-primary",
+    "orientation": "any",
+    "shortcuts": [
+        { "name": "Dashboard", "url": "/dashboard" },
+        { "name": "Citas", "url": "/citas" },
+        { "name": "Agenda", "url": "/agenda" }
+    ],
     "icons": [
         {
             "src": "/icons/icon-192.png",
