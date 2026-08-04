@@ -80,7 +80,7 @@
                     <td>
                         <strong>{{ $producto->nombre }}</strong>
                         <br>
-                        <span style="color: var(--gris); font-size: 13px;">
+                        <span class="muted-value-sm">
                             {{ $producto->descripcion ?? 'Sin descripción' }}
                         </span>
                     </td>

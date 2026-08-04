@@ -7,14 +7,11 @@
 
 <div class="content-card">
     <div class="page-actions">
-        <div>
-            <h3 style="margin: 0;">
-                {{ $cliente->nombre }} {{ $cliente->apellido }}
-            </h3>
-            <p style="margin: 6px 0 0; color: var(--gris);">
+        <x-section-heading :title="$cliente->nombre . ' ' . $cliente->apellido">
+            <x-slot:subtitle>
                 Información general, puntos e historial de citas.
-            </p>
-        </div>
+            </x-slot:subtitle>
+        </x-section-heading>
 
         <div class="actions">
             <a href="{{ route('clientes.edit', $cliente->id_cliente) }}" class="btn btn-primary">
@@ -52,15 +49,15 @@
             </strong>
         </div>
 
-        <div class="detail-item" style="grid-column: 1 / -1;">
+        <div class="detail-item detail-item-full">
             <span>Observaciones</span>
             <strong>{{ $cliente->observaciones ?? 'Sin observaciones.' }}</strong>
         </div>
     </div>
 </div>
 
-<div class="content-card" style="margin-top: 22px;">
-    <h3 style="margin-top: 0;">Historial de citas</h3>
+<div class="content-card content-card-spaced">
+    <h3 class="card-title-flush">Historial de citas</h3>
 
     <table>
         <thead>

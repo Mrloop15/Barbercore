@@ -57,7 +57,7 @@
 </div>
 
 <div class="content-card">
-    <h3 style="margin-top: 0;">Próximas citas</h3>
+    <h3 class="card-title-flush">Próximas citas</h3>
 
     <table>
         <thead>
@@ -95,12 +95,12 @@
 </div>
 
 <div class="stats-two-columns stats-section">
-    <div class="content-card"><h3 style="margin-top:0;">Servicios más vendidos</h3><div class="chart-list">
+    <div class="content-card"><h3 class="card-title-flush">Servicios más vendidos</h3><div class="chart-list">
         @forelse ($serviciosMasVendidos as $servicio)
             <div class="chart-item"><div class="chart-label">{{ $servicio->nombre }}</div><div class="chart-bar-bg"><div class="chart-bar" style="width: {{ ($servicio->total / $maxServicios) * 100 }}%;"></div></div><div class="chart-value">{{ $servicio->total }}</div></div>
         @empty <p class="no-action">Sin servicios completados en este periodo.</p> @endforelse
     </div></div>
-    <div class="content-card"><h3 style="margin-top:0;">Clientes más frecuentes</h3><div class="chart-list">
+    <div class="content-card"><h3 class="card-title-flush">Clientes más frecuentes</h3><div class="chart-list">
         @forelse ($clientesFrecuentes as $cliente)
             <div class="chart-item"><div class="chart-label">{{ $cliente->nombre }} {{ $cliente->apellido }}</div><div class="chart-bar-bg"><div class="chart-bar" style="width: {{ ($cliente->total / $maxClientes) * 100 }}%;"></div></div><div class="chart-value">{{ $cliente->total }}</div></div>
         @empty <p class="no-action">Sin clientes frecuentes en este periodo.</p> @endforelse
@@ -108,7 +108,7 @@
 </div>
 
 <div class="content-card stats-section">
-    <h3 style="margin-top:0;">Productos más vendidos</h3>
+    <h3 class="card-title-flush">Productos más vendidos</h3>
     <div class="chart-list">
         @forelse ($productosVendidos as $producto)
             <div class="chart-item"><div class="chart-label">{{ $producto->nombre }}</div><div class="chart-bar-bg"><div class="chart-bar" style="width: {{ ($producto->total_vendido / $maxProductos) * 100 }}%;"></div></div><div class="chart-value">{{ $producto->total_vendido }}</div></div>

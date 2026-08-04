@@ -60,7 +60,7 @@
                     <td>
                         <strong>{{ $recompensa->nombre }}</strong>
                         <br>
-                        <span style="color: var(--gris); font-size: 13px;">
+                        <span class="muted-value-sm">
                             {{ $recompensa->descripcion ?? 'Sin descripción' }}
                         </span>
                     </td>

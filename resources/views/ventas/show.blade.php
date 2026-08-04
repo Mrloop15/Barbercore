@@ -7,12 +7,11 @@
 
 <div class="content-card">
     <div class="page-actions">
-        <div>
-            <h3 style="margin: 0;">Venta #{{ $venta->id_venta }}</h3>
-            <p style="margin: 6px 0 0; color: var(--gris);">
+        <x-section-heading :title="'Venta #' . $venta->id_venta">
+            <x-slot:subtitle>
                 Registrada el {{ \Carbon\Carbon::parse($venta->fecha_venta)->format('d/m/Y H:i') }}
-            </p>
-        </div>
+            </x-slot:subtitle>
+        </x-section-heading>
 
         <a href="{{ route('ventas-productos.index') }}" class="btn btn-secondary">
             Volver
@@ -48,8 +47,8 @@
     </div>
 </div>
 
-<div class="content-card" style="margin-top: 22px;">
-    <h3 style="margin-top: 0;">Productos de la venta</h3>
+<div class="content-card content-card-spaced">
+    <h3 class="card-title-flush">Productos de la venta</h3>
 
     <table>
         <thead>

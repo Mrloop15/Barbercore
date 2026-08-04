@@ -64,14 +64,14 @@
             </button>
         </div>
 
-        <div class="points-box" style="margin-top: 18px;">
-            <span style="color: var(--gris);">Total estimado</span>
+        <div class="points-box points-box-spaced">
+            <span class="muted-value">Total estimado</span>
             <br>
             <strong id="totalVenta">$0.00</strong>
 
             <br><br>
 
-            <span style="color: var(--gris);">Puntos estimados para el cliente</span>
+            <span class="muted-value">Puntos estimados para el cliente</span>
             <br>
             <strong id="puntosEstimados">0 pts</strong>
         </div>

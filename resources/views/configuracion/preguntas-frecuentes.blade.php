@@ -16,43 +16,9 @@
         ])->all();
     }
 @endphp
-
-<style>
-    .faq-admin { max-width: 980px; margin: 0 auto; }
-    .faq-admin-head { display: flex; align-items: center; justify-content: space-between; gap: 20px; margin-bottom: 18px; }
-    .faq-admin-head h3 { margin: 0 0 5px; font-size: 21px; }
-    .faq-admin-head p { margin: 0; color: var(--gris); font-size: 13px; line-height: 1.55; }
-    .faq-list { display: grid; gap: 10px; }
-    .faq-editor { overflow: hidden; border: 1px solid var(--borde); border-radius: 14px; background: var(--blanco); }
-    .faq-editor summary { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding: 16px 18px; cursor: pointer; list-style: none; }
-    .faq-editor summary::-webkit-details-marker { display: none; }
-    .faq-editor summary::after { content: "Editar"; color: var(--dorado); font-size: 11px; font-weight: 800; text-transform: uppercase; }
-    .faq-editor[open] summary { border-bottom: 1px solid var(--borde); background: var(--fondo); }
-    .faq-editor[open] summary::after { content: "Cerrar"; }
-    .faq-summary-main { min-width: 0; display: flex; align-items: center; gap: 12px; }
-    .faq-number { width: 30px; height: 30px; display: grid; place-items: center; flex: 0 0 auto; border-radius: 9px; background: rgba(201,162,39,.13); color: var(--dorado); font-size: 11px; font-weight: 900; }
-    .faq-summary-main strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 14px; }
-    .faq-visibility { flex: 0 0 auto; padding: 5px 8px; border-radius: 999px; background: rgba(39,174,96,.1); color: var(--verde); font-size: 9px; font-weight: 900; text-transform: uppercase; }
-    .faq-visibility.is-hidden { background: rgba(107,107,107,.1); color: var(--gris); }
-    .faq-editor-body { padding: 18px; }
-    .faq-fields { display: grid; grid-template-columns: 1fr 1.35fr; gap: 18px; }
-    .faq-fields textarea { min-height: 105px; }
-    .faq-options { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-top: 14px; }
-    .faq-active { display: inline-flex; align-items: center; gap: 8px; margin: 0; font-size: 12px; }
-    .faq-active input { width: 17px; height: 17px; accent-color: var(--dorado); }
-    .faq-empty { padding: 34px; border: 1px dashed var(--borde); border-radius: 14px; color: var(--gris); text-align: center; }
-    .faq-actions { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-top: 18px; padding-top: 18px; border-top: 1px solid var(--borde); }
-    .faq-actions-main { display: flex; gap: 10px; }
-    .btn-outline-danger { border: 1px solid rgba(192,57,43,.28); background: transparent; color: var(--rojo); }
-
-    @media (max-width: 700px) {
-        .faq-admin-head, .faq-options, .faq-actions { align-items: stretch; flex-direction: column; }
-        .faq-fields { grid-template-columns: 1fr; }
-        .faq-actions-main { display: grid; }
-        .faq-editor summary { padding: 14px; }
-        .faq-visibility { display: none; }
-    }
-</style>
+@push('styles')
+<link rel="stylesheet" href="{{ asset('css/modules/faq.css') }}">
+@endpush
 
 <div class="faq-admin">
     @if ($errors->any())<div class="alert alert-error">{{ $errors->first() }}</div>@endif

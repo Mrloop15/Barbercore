@@ -104,7 +104,7 @@
                                     </button>
                                 </form>
                             @else
-                                <span style="color: var(--gris); font-size: 13px;">
+                                <span class="muted-value-sm">
                                     Sin acciones
                                 </span>
                             @endif

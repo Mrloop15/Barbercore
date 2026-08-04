@@ -7,12 +7,11 @@
 
 <div class="content-card">
     <div class="page-actions">
-        <div>
-            <h3 style="margin: 0;">Seguimiento de clientes inactivos</h3>
-            <p style="margin: 6px 0 0; color: var(--gris);">
+        <x-section-heading title="Seguimiento de clientes inactivos">
+            <x-slot:subtitle>
                 Clientes con {{ $diasLimite }} días o más sin visitar la barbería.
-            </p>
-        </div>
+            </x-slot:subtitle>
+        </x-section-heading>
 
         <a href="{{ route('clientes.index') }}" class="btn btn-secondary">
             Ver clientes
@@ -24,7 +23,7 @@
         Este listado ayuda a detectar clientes que podrían necesitar seguimiento o recordatorio.
     </div>
 
-    <div class="filter-panel" style="margin-bottom: 18px;">
+    <div class="filter-panel filter-panel-spaced">
         <div class="filter-panel-head">
             <div class="filter-panel-heading"><span class="filter-panel-icon"><x-icon name="filter" /></span><div><strong class="filter-panel-title">Estado de seguimiento</strong><span class="filter-panel-subtitle">Separa a quienes ya tienen cita de quienes requieren contacto.</span></div></div>
             <span class="filter-result-count"><strong>{{ $clientes->count() }}</strong> visibles</span>
@@ -63,7 +62,7 @@
                     <td>
                         <strong>{{ $cliente->nombre }} {{ $cliente->apellido }}</strong>
                         <br>
-                        <span style="color: var(--gris); font-size: 13px;">
+                        <span class="muted-value-sm">
                             Puntos: {{ $cliente->puntos }}
                         </span>
                     </td>
@@ -90,7 +89,7 @@
 
                             <br>
 
-                            <span style="color: var(--gris); font-size: 13px;">
+                            <span class="muted-value-sm">
                                 Próxima:
                                 {{ \Carbon\Carbon::parse($cliente->citas->first()->fecha)->format('d/m/Y') }}
                                 {{ $cliente->citas->first()->hora_inicio }}

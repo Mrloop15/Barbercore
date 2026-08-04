@@ -61,7 +61,7 @@
                     <td>
                         <strong>{{ $cliente->nombre }} {{ $cliente->apellido }}</strong>
                         <br>
-                        <span style="color: var(--gris); font-size: 13px;">
+                        <span class="muted-value-sm">
                             Cumpleaños: 
                             {{ $cliente->cumpleanos ? \Carbon\Carbon::parse($cliente->cumpleanos)->format('d/m/Y') : 'No registrado' }}
                         </span>

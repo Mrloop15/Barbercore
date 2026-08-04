@@ -9,89 +9,9 @@
     $horariosAnteriores = old('horarios');
     $tieneLogo = filled($barberia?->logo) && file_exists(public_path('storage/' . $barberia->logo));
 @endphp
-
-<style>
-    .config-intro { display: flex; align-items: end; justify-content: space-between; gap: 24px; margin-bottom: 22px; padding: 24px 26px; border-radius: 20px; background: linear-gradient(120deg, var(--texto), #303030); color: var(--blanco); }
-    .config-intro h3 { margin: 4px 0 7px; font-size: 24px; }
-    .config-intro p { max-width: 650px; margin: 0; color: rgba(255,255,255,.68); line-height: 1.6; }
-    .config-kicker { color: var(--dorado); font-size: 10px; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; }
-    .config-nav { display: flex; flex-wrap: wrap; gap: 8px; }
-    .config-nav a { padding: 9px 12px; border: 1px solid rgba(255,255,255,.18); border-radius: 9px; color: var(--blanco); font-size: 12px; font-weight: 700; }
-    .config-nav a:hover { border-color: var(--dorado); color: var(--dorado); }
-    .config-stack { display: grid; gap: 22px; }
-    .config-card-header { display: flex; align-items: start; justify-content: space-between; gap: 20px; margin-bottom: 22px; padding-bottom: 17px; border-bottom: 1px solid var(--borde); }
-    .config-card-header h3 { margin: 0 0 5px; font-size: 19px; }
-    .config-card-header p { margin: 0; color: var(--gris); font-size: 13px; line-height: 1.55; }
-    .config-number { width: 34px; height: 34px; display: grid; place-items: center; flex: 0 0 auto; border-radius: 10px; background: rgba(201,162,39,.13); color: var(--dorado); font-size: 12px; font-weight: 900; }
-    .business-layout { display: grid; gap: 22px; }
-    .business-logo { display: grid; grid-template-columns: 110px minmax(0, 1fr); gap: 18px; align-items: center; padding: 16px; border: 1px solid var(--borde); border-radius: 16px; background: var(--fondo); }
-    .logo-visual { width: 110px; height: 110px; }
-    .business-logo .logo-preview, .business-logo .logo-placeholder { width: 110px; height: 110px; margin: 0; }
-    .business-logo .logo-placeholder { flex-direction: column; gap: 7px; border-style: dashed; background: linear-gradient(145deg, var(--blanco), rgba(201,162,39,.09)); }
-    .business-logo .logo-placeholder span { font-family: 'Manrope', sans-serif; font-size: 30px; font-weight: 900; letter-spacing: -1px; }
-    .business-logo .logo-placeholder small { margin: 0; color: var(--gris); font-size: 9px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; }
-    .business-logo small { display: block; margin-top: 8px; color: var(--gris); font-size: 11px; line-height: 1.5; }
-    .business-logo .is-hidden { display: none !important; }
-    .logo-upload-content { min-width: 0; }
-    .logo-field-label { display: block; margin-bottom: 8px; color: var(--texto); font-size: 12px; font-weight: 800; }
-    .logo-upload-input { position: absolute; width: 1px; height: 1px; min-height: 0 !important; padding: 0 !important; overflow: hidden; clip: rect(0, 0, 0, 0); border: 0 !important; opacity: 0; }
-    .logo-upload-button { width: fit-content; min-height: 42px; display: flex; align-items: center; justify-content: center; gap: 8px; margin: 0; border: 1px solid var(--texto); border-radius: 10px; padding: 10px 14px; background: var(--texto); color: var(--blanco); cursor: pointer; font-size: 11px; font-weight: 800; transition: background .18s ease, border-color .18s ease, transform .18s ease; }
-    .logo-upload-button:hover { border-color: var(--dorado); background: var(--dorado); transform: translateY(-1px); }
-    .logo-upload-input:focus-visible + .logo-upload-button { outline: 3px solid rgba(201,162,39,.25); outline-offset: 3px; }
-    .logo-upload-button .ui-icon { width: 16px; height: 16px; }
-    .logo-file-name { display: block; overflow: hidden; margin-top: 9px; color: var(--gris); font-size: 10px; line-height: 1.4; text-overflow: ellipsis; white-space: nowrap; }
-    .business-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 0 20px; }
-    .business-fields .full { grid-column: 1 / -1; }
-    .field-note { display: block; margin-top: 6px; color: var(--gris); font-size: 11px; line-height: 1.45; }
-    .hours-list { display: grid; gap: 9px; }
-    .hours-row { display: grid; grid-template-columns: 125px 92px minmax(130px, 1fr) minmax(130px, 1fr); align-items: center; gap: 13px; padding: 12px 14px; border: 1px solid var(--borde); border-radius: 13px; background: var(--fondo); }
-    .hours-day { font-weight: 800; font-size: 13px; }
-    .hours-toggle { display: inline-flex; align-items: center; gap: 7px; margin: 0; font-size: 12px; cursor: pointer; }
-    .hours-toggle input { width: 17px; height: 17px; accent-color: var(--dorado); }
-    .hours-field span { display: block; margin-bottom: 4px; color: var(--gris); font-size: 9px; font-weight: 800; letter-spacing: .7px; text-transform: uppercase; }
-    .hours-field input { padding: 9px 11px; }
-    .hours-row.is-closed .hours-field { opacity: .42; }
-    .faq-list { display: grid; gap: 13px; }
-    .faq-editor { padding: 17px; border: 1px solid var(--borde); border-radius: 15px; background: var(--fondo); }
-    .faq-editor-head { display: flex; align-items: center; justify-content: space-between; gap: 15px; margin-bottom: 12px; }
-    .faq-editor-title { color: var(--dorado); font-size: 11px; font-weight: 900; letter-spacing: 1px; text-transform: uppercase; }
-    .faq-editor-grid { display: grid; grid-template-columns: 1fr 1.35fr; gap: 16px; }
-    .faq-editor textarea { min-height: 92px; }
-    .faq-editor-options { display: flex; align-items: center; justify-content: space-between; margin-top: 12px; }
-    .faq-active { display: inline-flex; align-items: center; gap: 8px; margin: 0; font-size: 12px; }
-    .faq-active input { width: 17px; height: 17px; accent-color: var(--dorado); }
-    .btn-outline-danger { border: 1px solid rgba(192,57,43,.28); background: transparent; color: var(--rojo); }
-    .config-add { display: flex; justify-content: flex-start; margin-top: 15px; }
-    .account-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
-    .config-empty { padding: 25px; border: 1px dashed var(--borde); border-radius: 14px; color: var(--gris); text-align: center; }
-    .faq-shortcut { display: flex; align-items: center; justify-content: space-between; gap: 22px; padding: 18px; border: 1px solid var(--borde); border-radius: 15px; background: var(--fondo); }
-    .faq-shortcut strong { display: block; margin-bottom: 4px; font-size: 16px; }
-    .faq-shortcut span { color: var(--gris); font-size: 12px; }
-
-    @media (max-width: 950px) {
-        .config-intro { align-items: start; flex-direction: column; }
-        .account-grid { grid-template-columns: 1fr; }
-        .faq-shortcut { align-items: stretch; flex-direction: column; }
-    }
-
-    @media (max-width: 700px) {
-        .business-fields, .faq-editor-grid { grid-template-columns: 1fr; }
-        .business-fields .full { grid-column: auto; }
-        .hours-row { grid-template-columns: 1fr 1fr; }
-        .hours-day { grid-column: 1; }
-        .hours-toggle { justify-self: end; }
-        .config-intro { padding: 20px; }
-    }
-
-    @media (max-width: 460px) {
-        .business-logo { grid-template-columns: 1fr; }
-        .logo-visual { width: 100%; height: 120px; }
-        .business-logo .logo-preview, .business-logo .logo-placeholder { width: 100%; height: 120px; }
-        .hours-row { grid-template-columns: 1fr; }
-        .hours-toggle { justify-self: start; }
-        .faq-editor-options { align-items: flex-start; flex-direction: column; }
-    }
-</style>
+@push('styles')
+<link rel="stylesheet" href="{{ asset('css/modules/configuration.css') }}">
+@endpush
 
 @if ($errors->any())
     <div class="alert alert-error">{{ $errors->first() }}</div>

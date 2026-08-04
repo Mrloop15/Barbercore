@@ -7,12 +7,11 @@
 
 <div class="content-card">
     <div class="page-actions">
-        <div>
-            <h3 style="margin: 0;">Canje de puntos</h3>
-            <p style="margin: 6px 0 0; color: var(--gris);">
+        <x-section-heading title="Canje de puntos">
+            <x-slot:subtitle>
                 Selecciona un cliente y una recompensa disponible.
-            </p>
-        </div>
+            </x-slot:subtitle>
+        </x-section-heading>
 
         <a href="{{ route('recompensas.index') }}" class="btn btn-secondary">
             Volver a recompensas
@@ -64,19 +63,19 @@
 
             <div class="form-group full">
                 <div class="points-box">
-                    <span style="color: var(--gris);">Puntos del cliente</span>
+                    <span class="muted-value">Puntos del cliente</span>
                     <br>
                     <strong id="puntosCliente">0 pts</strong>
 
                     <br><br>
 
-                    <span style="color: var(--gris);">Puntos requeridos</span>
+                    <span class="muted-value">Puntos requeridos</span>
                     <br>
                     <strong id="puntosRequeridos">0 pts</strong>
 
                     <br><br>
 
-                    <span style="color: var(--gris);">Resultado</span>
+                    <span class="muted-value">Resultado</span>
                     <br>
                     <strong id="resultadoCanje">Selecciona cliente y recompensa</strong>
                 </div>
@@ -95,8 +94,8 @@
     </form>
 </div>
 
-<div class="content-card" style="margin-top: 22px;">
-    <h3 style="margin-top: 0;">Últimos canjes</h3>
+<div class="content-card content-card-spaced">
+    <h3 class="card-title-flush">Últimos canjes</h3>
 
     <table>
         <thead>
