@@ -1813,7 +1813,8 @@
         .custom-date-trigger { width: 100%; min-height: 44px; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 11px 13px; border: 1px solid var(--borde); border-radius: 10px; background: var(--blanco); color: var(--texto); cursor: pointer; font-weight: 700; text-align: left; }
         .custom-date-trigger:hover, .custom-date-trigger[aria-expanded="true"] { border-color: var(--dorado); box-shadow: 0 0 0 3px rgba(201,162,39,.12); }
         .custom-date-trigger svg { color: var(--dorado); flex: 0 0 auto; }
-        .custom-calendar { display: none; position: absolute; z-index: 3000; top: calc(100% + 8px); left: 0; width: 310px; padding: 16px; border: 1px solid var(--borde); border-radius: 18px; background: var(--blanco); box-shadow: 0 22px 55px rgba(28,28,28,.18); }
+        .custom-calendar { display: none; position: fixed; z-index: 5100; width: 310px; max-height: calc(100vh - 24px); overflow-y: auto; scrollbar-width: none; padding: 16px; border: 1px solid var(--borde); border-radius: 18px; background: var(--blanco); box-shadow: 0 22px 55px rgba(28,28,28,.18); }
+        .custom-calendar::-webkit-scrollbar { display: none; }
         .custom-calendar.open { display: block; animation: calendar-in .16s ease-out; }
         @keyframes calendar-in { from { opacity: 0; transform: translateY(-5px) scale(.98); } to { opacity: 1; transform: none; } }
         .calendar-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 15px; }
@@ -1828,6 +1829,14 @@
         .calendar-day.today { box-shadow: inset 0 0 0 1px var(--dorado); color: var(--dorado); }
         .calendar-day.selected { background: var(--dorado); color: var(--blanco); box-shadow: 0 5px 12px rgba(201,162,39,.25); }
         .calendar-day:disabled { opacity: .28; cursor: not-allowed; background: transparent; color: var(--gris); }
+        .calendar-manual { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--borde); }
+        .calendar-manual > label { margin-bottom: 6px; color: var(--gris); font-size: 9px; font-weight: 800; letter-spacing: .7px; text-transform: uppercase; }
+        .calendar-manual-row { display: grid; grid-template-columns: minmax(0,1fr) 38px; gap: 6px; }
+        .calendar-manual-input { min-height: 38px; padding: 8px 10px; border: 1px solid var(--borde); border-radius: 9px; background: var(--fondo); color: var(--texto); font-size: 11px; font-weight: 700; letter-spacing: .4px; }
+        .calendar-manual-input:focus { border-color: var(--dorado); box-shadow: 0 0 0 3px rgba(201,162,39,.11); }
+        .calendar-manual-apply { width: 38px; height: 38px; display: grid; place-items: center; border: 0; border-radius: 9px; background: var(--texto); color: var(--dorado); cursor: pointer; }
+        .calendar-manual-apply:hover { background: var(--dorado); color: var(--blanco); }
+        .calendar-manual-error { min-height: 14px; display: block; padding-top: 4px; color: var(--rojo); font-size: 9px; font-weight: 700; }
         .calendar-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--borde); margin-top: 12px; padding-top: 12px; }
         .calendar-footer button { border: 0; background: transparent; color: var(--dorado); padding: 4px; font-size: 11px; font-weight: 800; cursor: pointer; }
         .calendar-footer span { color: var(--gris); font-size: 10px; }
@@ -2738,7 +2747,7 @@
         const formatLabel = value => value ? fromValue(value).toLocaleDateString('es-MX', { day: 'numeric', month: 'long', year: 'numeric' }) : 'Seleccionar fecha';
 
         document.querySelectorAll('input[type="date"]').forEach(function (input) {
-            if (input.dataset.customDateReady) return;
+            if (input.dataset.customDateReady || input.readOnly || input.disabled) return;
             input.dataset.customDateReady = 'true';
             input.classList.add('native-date-enhanced');
 
@@ -2753,6 +2762,14 @@
                     <div class="calendar-head"><button type="button" class="calendar-nav prev" aria-label="Mes anterior">‹</button><strong></strong><button type="button" class="calendar-nav next" aria-label="Mes siguiente">›</button></div>
                     <div class="calendar-week">${weekdays.map(day => `<span>${day}</span>`).join('')}</div>
                     <div class="calendar-days"></div>
+                    <div class="calendar-manual">
+                        <label>Escribir una fecha</label>
+                        <div class="calendar-manual-row">
+                            <input type="text" class="calendar-manual-input" inputmode="numeric" maxlength="10" placeholder="dd/mm/aaaa" aria-label="Escribir fecha en formato día, mes y año">
+                            <button type="button" class="calendar-manual-apply" aria-label="Aplicar fecha escrita">✓</button>
+                        </div>
+                        <span class="calendar-manual-error" role="status" aria-live="polite"></span>
+                    </div>
                     <div class="calendar-footer"><button type="button" class="calendar-today">Ir a hoy</button><span>Selecciona un día</span></div>
                 </div>`;
             input.insertAdjacentElement('afterend', picker);
@@ -2762,12 +2779,98 @@
             const calendar = picker.querySelector('.custom-calendar');
             const title = picker.querySelector('.calendar-head strong');
             const days = picker.querySelector('.calendar-days');
+            const manualInput = picker.querySelector('.calendar-manual-input');
+            const manualApply = picker.querySelector('.calendar-manual-apply');
+            const manualError = picker.querySelector('.calendar-manual-error');
             const restrictWeekdays = input.hasAttribute('data-open-weekdays');
             const openWeekdays = (input.dataset.openWeekdays || '').split(',').filter(Boolean).map(Number);
             let cursor = fromValue(input.value);
 
+            function toManualValue(value) {
+                if (!value) return '';
+                const date = fromValue(value);
+                return pad(date.getDate()) + '/' + pad(date.getMonth() + 1) + '/' + date.getFullYear();
+            }
+
+            function parseManualValue(value) {
+                const match = value.trim().match(/^(\d{1,2})[\/.-](\d{1,2})[\/.-](\d{4})$/);
+                if (!match) return null;
+                const day = Number(match[1]);
+                const month = Number(match[2]);
+                const year = Number(match[3]);
+                const date = new Date(year, month - 1, day, 12);
+                if (date.getFullYear() !== year || date.getMonth() !== month - 1 || date.getDate() !== day) return null;
+                return date;
+            }
+
+            function dateAvailabilityError(date) {
+                const value = toValue(date);
+                if (input.min && value < input.min) return 'La fecha es anterior al límite permitido.';
+                if (input.max && value > input.max) return 'La fecha supera el límite permitido.';
+                const weekday = (date.getDay() + 6) % 7;
+                if (restrictWeekdays && !openWeekdays.includes(weekday)) return 'Ese día no está disponible.';
+                return '';
+            }
+
+            function applyManualDate() {
+                const date = parseManualValue(manualInput.value);
+                if (!date) {
+                    manualError.textContent = 'Escribe una fecha válida: dd/mm/aaaa.';
+                    manualInput.focus();
+                    return;
+                }
+                const availabilityError = dateAvailabilityError(date);
+                if (availabilityError) {
+                    manualError.textContent = availabilityError;
+                    manualInput.focus();
+                    return;
+                }
+
+                input.value = toValue(date);
+                input.dispatchEvent(new Event('change', { bubbles: true }));
+                cursor = date;
+                manualError.textContent = '';
+                closeCalendar();
+                render();
+                trigger.focus();
+            }
+
+            function closeCalendar() {
+                calendar.classList.remove('open');
+                trigger.setAttribute('aria-expanded', 'false');
+            }
+
+            function positionCalendar() {
+                if (window.matchMedia('(max-width: 420px)').matches) {
+                    calendar.style.left = '12px';
+                    calendar.style.right = '12px';
+                    calendar.style.top = '50%';
+                    return;
+                }
+
+                calendar.style.right = 'auto';
+                const triggerRect = trigger.getBoundingClientRect();
+                const calendarRect = calendar.getBoundingClientRect();
+                const margin = 12;
+                const gap = 8;
+                const availableBelow = window.innerHeight - triggerRect.bottom - margin;
+                const availableAbove = triggerRect.top - margin;
+                const openUp = calendarRect.height > availableBelow && availableAbove > availableBelow;
+                const left = Math.min(
+                    Math.max(margin, triggerRect.left),
+                    window.innerWidth - calendarRect.width - margin
+                );
+                const top = openUp
+                    ? Math.max(margin, triggerRect.top - calendarRect.height - gap)
+                    : Math.min(window.innerHeight - calendarRect.height - margin, triggerRect.bottom + gap);
+
+                calendar.style.left = `${left}px`;
+                calendar.style.top = `${Math.max(margin, top)}px`;
+            }
+
             function render() {
                 triggerLabel.textContent = formatLabel(input.value);
+                if (document.activeElement !== manualInput) manualInput.value = toManualValue(input.value);
                 title.textContent = months[cursor.getMonth()] + ' ' + cursor.getFullYear();
                 days.innerHTML = '';
                 const first = new Date(cursor.getFullYear(), cursor.getMonth(), 1);
@@ -2793,8 +2896,7 @@
                         input.value = value;
                         input.dispatchEvent(new Event('change', { bubbles: true }));
                         cursor = date;
-                        calendar.classList.remove('open');
-                        trigger.setAttribute('aria-expanded', 'false');
+                        closeCalendar();
                         render();
                     });
                     days.appendChild(button);
@@ -2802,9 +2904,15 @@
             }
 
             trigger.addEventListener('click', function () {
-                document.querySelectorAll('.custom-calendar.open').forEach(open => { if (open !== calendar) open.classList.remove('open'); });
+                document.querySelectorAll('.custom-calendar.open').forEach(open => {
+                    if (open !== calendar) {
+                        open.classList.remove('open');
+                        open.closest('.custom-date-picker')?.querySelector('.custom-date-trigger')?.setAttribute('aria-expanded', 'false');
+                    }
+                });
                 calendar.classList.toggle('open');
                 trigger.setAttribute('aria-expanded', calendar.classList.contains('open') ? 'true' : 'false');
+                if (calendar.classList.contains('open')) positionCalendar();
             });
             picker.querySelector('.prev').addEventListener('click', () => { cursor = new Date(cursor.getFullYear(), cursor.getMonth() - 1, 1); render(); });
             picker.querySelector('.next').addEventListener('click', () => { cursor = new Date(cursor.getFullYear(), cursor.getMonth() + 1, 1); render(); });
@@ -2820,16 +2928,45 @@
                 cursor = today;
                 render();
             });
+            manualInput.addEventListener('input', function () {
+                manualError.textContent = '';
+                const digits = manualInput.value.replace(/\D/g, '').slice(0, 8);
+                manualInput.value = [digits.slice(0, 2), digits.slice(2, 4), digits.slice(4, 8)].filter(Boolean).join('/');
+            });
+            manualInput.addEventListener('keydown', function (event) {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                    applyManualDate();
+                }
+            });
+            manualApply.addEventListener('click', applyManualDate);
             input.addEventListener('change', function () { cursor = fromValue(input.value); render(); });
             render();
         });
 
         document.addEventListener('click', function (event) {
-            if (!event.target.closest('.custom-date-picker')) document.querySelectorAll('.custom-calendar.open').forEach(calendar => calendar.classList.remove('open'));
+            if (!event.target.closest('.custom-date-picker')) document.querySelectorAll('.custom-calendar.open').forEach(calendar => {
+                calendar.classList.remove('open');
+                calendar.closest('.custom-date-picker')?.querySelector('.custom-date-trigger')?.setAttribute('aria-expanded', 'false');
+            });
         });
         document.addEventListener('keydown', function (event) {
-            if (event.key === 'Escape') document.querySelectorAll('.custom-calendar.open').forEach(calendar => calendar.classList.remove('open'));
+            if (event.key === 'Escape') document.querySelectorAll('.custom-calendar.open').forEach(calendar => {
+                calendar.classList.remove('open');
+                calendar.closest('.custom-date-picker')?.querySelector('.custom-date-trigger')?.setAttribute('aria-expanded', 'false');
+            });
         });
+        function closeOpenCalendars() {
+            document.querySelectorAll('.custom-calendar.open').forEach(calendar => {
+                calendar.classList.remove('open');
+                calendar.closest('.custom-date-picker')?.querySelector('.custom-date-trigger')?.setAttribute('aria-expanded', 'false');
+            });
+        }
+        window.addEventListener('resize', closeOpenCalendars);
+        window.addEventListener('scroll', function (event) {
+            if (event.target instanceof Element && event.target.closest('.custom-calendar')) return;
+            closeOpenCalendars();
+        }, true);
     })();
 </script>
 
