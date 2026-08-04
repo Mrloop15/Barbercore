@@ -72,33 +72,35 @@
             @endif
 
             <div class="form-group">
-                <label for="ultima_visita">Última visita</label>
-                <input 
-                    type="date" 
-                    name="ultima_visita" 
-                    id="ultima_visita" 
-                    value="{{ old('ultima_visita', $cliente->ultima_visita) }}"
-                >
+                <label>Última visita registrada</label>
+                <div class="system-data-field" aria-label="Última visita calculada por el sistema">
+                    <span class="system-data-icon"><x-icon name="calendar" size="18" /></span>
+                    <span>
+                        <strong>{{ $ultimaVisita ? \Carbon\Carbon::parse($ultimaVisita)->format('d/m/Y') : 'Sin visitas completadas' }}</strong>
+                        <small>Se actualiza automáticamente al completar una cita.</small>
+                    </span>
+                </div>
             </div>
 
             <div class="form-group full">
                 <label>Foto actual</label>
 
                 @if ($cliente->foto)
-                    <img src="{{ asset('storage/' . $cliente->foto) }}" alt="Foto cliente" class="client-photo">
+                    <img src="{{ asset('storage/' . $cliente->foto) }}" alt="Foto de {{ $cliente->nombreCompleto() }}" class="client-edit-photo">
                 @else
-                    <p style="color: var(--gris); margin: 0;">Sin foto registrada.</p>
+                    <div class="client-edit-photo-placeholder"><x-icon name="image" size="34" /><span>Sin foto registrada</span></div>
                 @endif
             </div>
 
-            <div class="form-group full">
+            <div class="form-group full client-photo-upload">
                 <label for="foto">Cambiar foto</label>
                 <input 
                     type="file" 
                     name="foto" 
                     id="foto" 
-                    accept="image/*"
+                    accept="image/jpeg,image/png,image/webp"
                 >
+                <small>La vista previa aparecerá en tamaño ampliado. Máximo 2 MB.</small>
             </div>
 
             <div class="form-group full">

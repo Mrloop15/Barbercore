@@ -839,6 +839,22 @@
             background: var(--fondo);
         }
 
+        .client-edit-photo, .client-edit-photo-placeholder {
+            width: 160px;
+            height: 160px;
+            border: 1px solid var(--borde);
+            border-radius: 22px;
+            background: var(--fondo);
+        }
+        .client-edit-photo { display: block; object-fit: cover; box-shadow: 0 10px 26px rgba(28,28,28,.09); }
+        .client-edit-photo-placeholder { display: grid; place-items: center; align-content: center; gap: 8px; color: var(--gris); font-size: 11px; font-weight: 700; }
+        .client-edit-photo-placeholder svg { color: var(--dorado); }
+        .system-data-field { min-height: 48px; display: flex; align-items: center; gap: 11px; padding: 9px 12px; border: 1px solid var(--borde); border-radius: 11px; background: var(--fondo); }
+        .system-data-icon { width: 32px; height: 32px; flex: 0 0 32px; display: grid; place-items: center; border-radius: 9px; background: rgba(201,162,39,.12); color: var(--dorado); }
+        .system-data-field strong, .system-data-field small { display: block; }
+        .system-data-field strong { font-size: 12px; }
+        .system-data-field small { margin-top: 2px; color: var(--gris); font-size: 9px; line-height: 1.35; }
+
         .table-image-placeholder {
             position: relative;
             width: 48px;
@@ -1615,6 +1631,8 @@
         }
         .image-selection-preview.show { display: grid; }
         .image-selection-preview img { width: 76px; height: 76px; border-radius: 10px; object-fit: cover; background: var(--fondo); }
+        .client-photo-upload .image-selection-preview { grid-template-columns: 160px minmax(0,1fr); max-width: 470px; padding: 12px; }
+        .client-photo-upload .image-selection-preview img { width: 160px; height: 160px; border-radius: 18px; }
         .image-selection-preview strong, .image-selection-preview span { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         .image-selection-preview strong { font-size: 13px; margin-bottom: 4px; }
         .image-selection-preview span { color: var(--gris); font-size: 12px; }
@@ -1795,7 +1813,8 @@
         .custom-date-trigger { width: 100%; min-height: 44px; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 11px 13px; border: 1px solid var(--borde); border-radius: 10px; background: var(--blanco); color: var(--texto); cursor: pointer; font-weight: 700; text-align: left; }
         .custom-date-trigger:hover, .custom-date-trigger[aria-expanded="true"] { border-color: var(--dorado); box-shadow: 0 0 0 3px rgba(201,162,39,.12); }
         .custom-date-trigger svg { color: var(--dorado); flex: 0 0 auto; }
-        .custom-calendar { display: none; position: absolute; z-index: 3000; top: calc(100% + 8px); left: 0; width: 310px; padding: 16px; border: 1px solid var(--borde); border-radius: 18px; background: var(--blanco); box-shadow: 0 22px 55px rgba(28,28,28,.18); }
+        .custom-calendar { display: none; position: fixed; z-index: 5100; width: 310px; max-height: calc(100vh - 24px); overflow-y: auto; scrollbar-width: none; padding: 16px; border: 1px solid var(--borde); border-radius: 18px; background: var(--blanco); box-shadow: 0 22px 55px rgba(28,28,28,.18); }
+        .custom-calendar::-webkit-scrollbar { display: none; }
         .custom-calendar.open { display: block; animation: calendar-in .16s ease-out; }
         @keyframes calendar-in { from { opacity: 0; transform: translateY(-5px) scale(.98); } to { opacity: 1; transform: none; } }
         .calendar-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 15px; }
@@ -1810,6 +1829,14 @@
         .calendar-day.today { box-shadow: inset 0 0 0 1px var(--dorado); color: var(--dorado); }
         .calendar-day.selected { background: var(--dorado); color: var(--blanco); box-shadow: 0 5px 12px rgba(201,162,39,.25); }
         .calendar-day:disabled { opacity: .28; cursor: not-allowed; background: transparent; color: var(--gris); }
+        .calendar-manual { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--borde); }
+        .calendar-manual > label { margin-bottom: 6px; color: var(--gris); font-size: 9px; font-weight: 800; letter-spacing: .7px; text-transform: uppercase; }
+        .calendar-manual-row { display: grid; grid-template-columns: minmax(0,1fr) 38px; gap: 6px; }
+        .calendar-manual-input { min-height: 38px; padding: 8px 10px; border: 1px solid var(--borde); border-radius: 9px; background: var(--fondo); color: var(--texto); font-size: 11px; font-weight: 700; letter-spacing: .4px; }
+        .calendar-manual-input:focus { border-color: var(--dorado); box-shadow: 0 0 0 3px rgba(201,162,39,.11); }
+        .calendar-manual-apply { width: 38px; height: 38px; display: grid; place-items: center; border: 0; border-radius: 9px; background: var(--texto); color: var(--dorado); cursor: pointer; }
+        .calendar-manual-apply:hover { background: var(--dorado); color: var(--blanco); }
+        .calendar-manual-error { min-height: 14px; display: block; padding-top: 4px; color: var(--rojo); font-size: 9px; font-weight: 700; }
         .calendar-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--borde); margin-top: 12px; padding-top: 12px; }
         .calendar-footer button { border: 0; background: transparent; color: var(--dorado); padding: 4px; font-size: 11px; font-weight: 800; cursor: pointer; }
         .calendar-footer span { color: var(--gris); font-size: 10px; }
@@ -1847,6 +1874,46 @@
         .idle-timer::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: var(--dorado); box-shadow: 0 0 0 4px rgba(201,162,39,.15); }
         .idle-timer strong { color: var(--dorado); font-variant-numeric: tabular-nums; }
         @media (max-width: 600px) { .idle-timer { right: 14px; bottom: 14px; } }
+        .quick-context-menu { position: fixed; z-index: 4000; width: min(280px, calc(100vw - 24px)); padding: 9px; border: 1px solid var(--borde); border-radius: 16px; background: rgba(255,255,255,.98); box-shadow: 0 22px 55px rgba(28,28,28,.2); opacity: 0; visibility: hidden; transform: translateY(7px) scale(.98); transform-origin: top left; transition: opacity .14s ease, transform .14s ease, visibility .14s ease; }
+        .quick-context-menu.open { opacity: 1; visibility: visible; transform: translateY(0) scale(1); }
+        .quick-context-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 7px 9px 9px; color: var(--gris); font-size: 9px; font-weight: 900; letter-spacing: 1.1px; text-transform: uppercase; }
+        .quick-context-heading span:last-child { color: var(--dorado); font-size: 8px; letter-spacing: .6px; }
+        .quick-context-list { display: grid; gap: 3px; }
+        .quick-context-item { display: grid; grid-template-columns: 36px minmax(0,1fr); align-items: center; gap: 10px; min-height: 50px; padding: 7px 9px; border-radius: 11px; color: var(--texto); text-decoration: none; }
+        .quick-context-item:hover, .quick-context-item:focus-visible { outline: 0; background: var(--crema); color: var(--dorado); }
+        .quick-context-icon { width: 36px; height: 36px; display: grid; place-items: center; border: 1px solid rgba(201,162,39,.2); border-radius: 10px; background: rgba(201,162,39,.09); color: var(--dorado); }
+        .quick-context-icon svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+        .quick-context-copy { min-width: 0; }
+        .quick-context-copy strong, .quick-context-copy small { display: block; }
+        .quick-context-copy strong { color: inherit; font-size: 12px; }
+        .quick-context-copy small { margin-top: 2px; overflow: hidden; color: var(--gris); font-size: 9px; text-overflow: ellipsis; white-space: nowrap; }
+        @media (hover: none), (pointer: coarse) { .quick-context-menu { display: none; } }
+        .barber-tooltip { position: fixed; z-index: 5000; max-width: 240px; padding: 8px 11px; border: 1px solid rgba(201,162,39,.42); border-radius: 9px; background: rgba(28,28,28,.97); color: var(--blanco); box-shadow: 0 10px 28px rgba(28,28,28,.24); font-size: 10px; font-weight: 700; line-height: 1.4; letter-spacing: .1px; text-align: center; pointer-events: none; opacity: 0; visibility: hidden; transform: translateY(3px) scale(.97); transition: opacity .16s ease, transform .16s ease, visibility .16s ease; }
+        .barber-tooltip.visible { opacity: 1; visibility: visible; transform: translateY(0) scale(1); }
+        .barber-tooltip::after { content: ''; position: absolute; width: 7px; height: 7px; border-right: 1px solid rgba(201,162,39,.42); border-bottom: 1px solid rgba(201,162,39,.42); background: #1c1c1c; }
+        .barber-tooltip[data-placement="top"]::after { bottom: -5px; left: calc(50% - 4px); transform: rotate(45deg); }
+        .barber-tooltip[data-placement="bottom"]::after { top: -5px; left: calc(50% - 4px); transform: rotate(225deg); }
+        .barber-tooltip[data-placement="right"]::after { top: calc(50% - 4px); left: -5px; transform: rotate(135deg); }
+        @media (hover: none), (pointer: coarse) { .barber-tooltip { display: none; } }
+        .bc-select { position: relative; width: 100%; min-width: 0; }
+        .bc-select-native { position: absolute !important; width: 1px !important; height: 1px !important; left: 8px; bottom: 0; padding: 0 !important; border: 0 !important; opacity: 0; pointer-events: none; }
+        .bc-select-trigger { width: 100%; min-height: 46px; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 11px 13px; border: 1px solid var(--borde); border-radius: 11px; background: var(--blanco); color: var(--texto); cursor: pointer; font: inherit; font-size: 13px; text-align: left; transition: border-color .18s ease, box-shadow .18s ease, background .18s ease; }
+        .bc-select-trigger:hover { border-color: rgba(201,162,39,.65); background: #fffefb; }
+        .bc-select-trigger:focus-visible, .bc-select.open .bc-select-trigger { outline: 0; border-color: var(--dorado); box-shadow: 0 0 0 3px rgba(201,162,39,.13); }
+        .bc-select-trigger:disabled { cursor: not-allowed; opacity: .58; background: var(--fondo); }
+        .bc-select-value { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .bc-select-chevron { width: 22px; height: 22px; flex: 0 0 22px; display: grid; place-items: center; border-radius: 7px; background: rgba(201,162,39,.1); color: var(--dorado); transition: transform .2s ease, background .2s ease; }
+        .bc-select-chevron svg { width: 13px; height: 13px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+        .bc-select.open .bc-select-chevron { transform: rotate(180deg); background: rgba(201,162,39,.18); }
+        .bc-select-menu { position: fixed; z-index: 5200; display: grid; gap: 3px; max-height: 280px; overflow-y: auto; scrollbar-width: thin; scrollbar-color: rgba(201,162,39,.45) transparent; padding: 7px; border: 1px solid var(--borde); border-radius: 13px; background: rgba(255,255,255,.99); box-shadow: 0 18px 45px rgba(28,28,28,.18); opacity: 0; visibility: hidden; transform: translateY(-5px) scale(.985); transform-origin: top center; transition: opacity .15s ease, transform .15s ease, visibility .15s ease; }
+        .bc-select-menu.open { opacity: 1; visibility: visible; transform: translateY(0) scale(1); }
+        .bc-select-option { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 39px; padding: 9px 11px; border: 0; border-radius: 9px; background: transparent; color: var(--texto); cursor: pointer; font: inherit; font-size: 12px; font-weight: 600; text-align: left; }
+        .bc-select-option:hover, .bc-select-option:focus-visible { outline: 0; background: var(--crema); color: var(--dorado); }
+        .bc-select-option.selected { background: var(--texto); color: var(--blanco); }
+        .bc-select-option.selected::after { content: '✓'; color: var(--dorado); font-size: 12px; font-weight: 900; }
+        .bc-select-option:disabled { cursor: not-allowed; opacity: .4; }
+        .bc-select-menu.drop-up { transform-origin: bottom center; }
+        .timeline-jump .bc-select-trigger { min-height: 36px; padding: 7px 9px; font-size: 11px; }
     </style>
 </head>
 <body>
@@ -2009,7 +2076,350 @@
     </main>
 </div>
 
+<nav class="quick-context-menu" id="quickContextMenu" aria-label="Accesos rápidos" aria-hidden="true">
+    <div class="quick-context-heading"><span>Accesos rápidos</span><span>BarberCore</span></div>
+    <div class="quick-context-list">
+        <a class="quick-context-item" href="{{ route('citas.create') }}">
+            <span class="quick-context-icon"><svg><use href="#i-calendar"/></svg></span>
+            <span class="quick-context-copy"><strong>Nueva cita</strong><small>Registrar una cita rápidamente</small></span>
+        </a>
+        <a class="quick-context-item" href="{{ route('agenda.index', ['vista' => 'dia', 'fecha' => now()->toDateString()]) }}">
+            <span class="quick-context-icon"><svg><use href="#i-clock"/></svg></span>
+            <span class="quick-context-copy"><strong>Agenda de hoy</strong><small>Consultar horarios y disponibilidad</small></span>
+        </a>
+        @if(auth()->user()->rol === 'admin')
+        <a class="quick-context-item" href="{{ route('ventas-productos.create') }}">
+            <span class="quick-context-icon"><svg><use href="#i-cart"/></svg></span>
+            <span class="quick-context-copy"><strong>Registrar venta</strong><small>Crear una venta de productos</small></span>
+        </a>
+        @endif
+        <a class="quick-context-item" href="{{ route('clientes.create') }}">
+            <span class="quick-context-icon"><svg><use href="#i-users"/></svg></span>
+            <span class="quick-context-copy"><strong>Nuevo cliente</strong><small>Agregar un cliente al sistema</small></span>
+        </a>
+    </div>
+</nav>
+<div class="barber-tooltip" id="barberTooltip" role="tooltip" aria-hidden="true"></div>
+
 <script>
+    (function () {
+        const instances = new Map();
+        let opened = null;
+        let sequence = 0;
+
+        function close(instance = opened, restoreFocus = false) {
+            if (!instance) return;
+            instance.wrapper.classList.remove('open');
+            instance.menu.classList.remove('open');
+            instance.trigger.setAttribute('aria-expanded', 'false');
+            if (restoreFocus) instance.trigger.focus();
+            if (opened === instance) opened = null;
+        }
+
+        function position(instance) {
+            const rect = instance.trigger.getBoundingClientRect();
+            const margin = 10;
+            const gap = 6;
+            const availableBelow = window.innerHeight - rect.bottom - margin;
+            const menuHeight = Math.min(instance.menu.scrollHeight, 280);
+            const dropUp = availableBelow < Math.min(menuHeight, 180) && rect.top > availableBelow;
+            const width = Math.max(rect.width, 170);
+            const left = Math.min(Math.max(margin, rect.left), window.innerWidth - width - margin);
+            const top = dropUp
+                ? Math.max(margin, rect.top - menuHeight - gap)
+                : Math.min(window.innerHeight - menuHeight - margin, rect.bottom + gap);
+
+            instance.menu.classList.toggle('drop-up', dropUp);
+            instance.menu.style.width = `${width}px`;
+            instance.menu.style.left = `${left}px`;
+            instance.menu.style.top = `${top}px`;
+        }
+
+        function sync(instance, rebuild = false) {
+            const { select, trigger, menu } = instance;
+            if (rebuild) {
+                menu.replaceChildren();
+                Array.from(select.options).forEach(function (option, index) {
+                    const item = document.createElement('button');
+                    item.type = 'button';
+                    item.className = 'bc-select-option';
+                    item.setAttribute('role', 'option');
+                    item.dataset.index = String(index);
+                    item.textContent = option.textContent.trim();
+                    item.disabled = option.disabled;
+                    item.addEventListener('click', function () {
+                        select.selectedIndex = index;
+                        select.dispatchEvent(new Event('change', { bubbles: true }));
+                        close(instance, true);
+                    });
+                    menu.appendChild(item);
+                });
+            }
+
+            const selected = select.options[select.selectedIndex];
+            trigger.querySelector('.bc-select-value').textContent = selected?.textContent.trim() || 'Selecciona una opción';
+            trigger.disabled = select.disabled;
+            menu.querySelectorAll('.bc-select-option').forEach(function (item) {
+                const isSelected = Number(item.dataset.index) === select.selectedIndex;
+                item.classList.toggle('selected', isSelected);
+                item.setAttribute('aria-selected', String(isSelected));
+            });
+        }
+
+        function open(instance, focusSelected = false) {
+            if (instance.select.disabled) return;
+            if (opened && opened !== instance) close(opened);
+            opened = instance;
+            instance.wrapper.classList.add('open');
+            instance.menu.classList.add('open');
+            instance.trigger.setAttribute('aria-expanded', 'true');
+            position(instance);
+            if (focusSelected) {
+                (instance.menu.querySelector('.selected:not(:disabled)') || instance.menu.querySelector('.bc-select-option:not(:disabled)'))?.focus();
+            }
+        }
+
+        function enhance(select) {
+            if (!(select instanceof HTMLSelectElement) || select.multiple || instances.has(select)) return;
+
+            const wrapper = document.createElement('div');
+            wrapper.className = 'bc-select';
+            const trigger = document.createElement('button');
+            const menu = document.createElement('div');
+            const menuId = `bc-select-menu-${++sequence}`;
+            trigger.type = 'button';
+            trigger.className = 'bc-select-trigger';
+            trigger.setAttribute('aria-haspopup', 'listbox');
+            trigger.setAttribute('aria-expanded', 'false');
+            trigger.setAttribute('aria-controls', menuId);
+            trigger.innerHTML = '<span class="bc-select-value"></span><span class="bc-select-chevron" aria-hidden="true"><svg viewBox="0 0 20 20"><path d="m5 7 5 5 5-5"/></svg></span>';
+            menu.id = menuId;
+            menu.className = 'bc-select-menu';
+            menu.setAttribute('role', 'listbox');
+
+            select.parentNode.insertBefore(wrapper, select);
+            wrapper.appendChild(select);
+            wrapper.appendChild(trigger);
+            document.body.appendChild(menu);
+            select.classList.add('bc-select-native');
+
+            const instance = { select, wrapper, trigger, menu };
+            instances.set(select, instance);
+            sync(instance, true);
+
+            if (select.id) {
+                document.querySelectorAll('label[for]').forEach(function (label) {
+                    if (label.htmlFor !== select.id) return;
+                    label.addEventListener('click', function (event) {
+                        if (event.target === label) {
+                            event.preventDefault();
+                            trigger.focus();
+                        }
+                    });
+                });
+            }
+
+            trigger.addEventListener('click', () => opened === instance ? close(instance) : open(instance));
+            select.addEventListener('focus', () => trigger.focus());
+            trigger.addEventListener('keydown', function (event) {
+                if (['ArrowDown', 'ArrowUp', 'Enter', ' '].includes(event.key)) {
+                    event.preventDefault();
+                    open(instance, true);
+                }
+            });
+            menu.addEventListener('keydown', function (event) {
+                const options = Array.from(menu.querySelectorAll('.bc-select-option:not(:disabled)'));
+                const current = options.indexOf(document.activeElement);
+                if (event.key === 'Escape' || event.key === 'Tab') return close(instance, event.key === 'Escape');
+                if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+                    event.preventDefault();
+                    const direction = event.key === 'ArrowDown' ? 1 : -1;
+                    options[(current + direction + options.length) % options.length]?.focus();
+                }
+                if (event.key === 'Home' || event.key === 'End') {
+                    event.preventDefault();
+                    options[event.key === 'Home' ? 0 : options.length - 1]?.focus();
+                }
+            });
+            select.addEventListener('change', () => sync(instance));
+            select.addEventListener('invalid', function (event) {
+                event.preventDefault();
+                trigger.focus();
+                open(instance, true);
+            });
+            select.form?.addEventListener('reset', () => window.setTimeout(() => sync(instance), 0));
+
+            new MutationObserver(() => sync(instance, true)).observe(select, { childList: true, subtree: true, attributes: true, attributeFilter: ['disabled', 'selected'] });
+        }
+
+        document.querySelectorAll('select').forEach(enhance);
+        new MutationObserver(function (mutations) {
+            mutations.forEach(function (mutation) {
+                mutation.addedNodes.forEach(function (node) {
+                    if (!(node instanceof Element)) return;
+                    if (node.matches('select')) enhance(node);
+                    node.querySelectorAll('select').forEach(enhance);
+                });
+            });
+        }).observe(document.body, { childList: true, subtree: true });
+        document.addEventListener('pointerdown', function (event) {
+            if (opened && !opened.wrapper.contains(event.target) && !opened.menu.contains(event.target)) close(opened);
+        });
+        window.addEventListener('resize', () => opened && position(opened));
+        window.addEventListener('scroll', () => close(opened), true);
+    })();
+
+    (function () {
+        const tooltip = document.getElementById('barberTooltip');
+        if (!tooltip || !window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+
+        let activeTarget = null;
+        let showTimer = null;
+
+        function enhance(element) {
+            if (!(element instanceof Element) || !element.hasAttribute('title')) return;
+            const text = element.getAttribute('title')?.trim();
+            if (text) {
+                element.dataset.tooltip = text;
+                if (!element.hasAttribute('aria-label') && !element.textContent.trim()) {
+                    element.setAttribute('aria-label', text);
+                }
+            }
+            element.removeAttribute('title');
+        }
+
+        function enhanceTree(root) {
+            if (!(root instanceof Element || root instanceof Document)) return;
+            if (root instanceof Element) enhance(root);
+            root.querySelectorAll('[title]').forEach(enhance);
+        }
+
+        function hideTooltip() {
+            window.clearTimeout(showTimer);
+            activeTarget = null;
+            tooltip.classList.remove('visible');
+            tooltip.setAttribute('aria-hidden', 'true');
+        }
+
+        function positionTooltip(target) {
+            const targetRect = target.getBoundingClientRect();
+            const tooltipRect = tooltip.getBoundingClientRect();
+            const margin = 9;
+            const gap = 9;
+            let placement = 'top';
+            let left = targetRect.left + (targetRect.width - tooltipRect.width) / 2;
+            let top = targetRect.top - tooltipRect.height - gap;
+
+            if (target.closest('.sidebar') && document.body.classList.contains('sidebar-collapsed')) {
+                placement = 'right';
+                left = targetRect.right + gap;
+                top = targetRect.top + (targetRect.height - tooltipRect.height) / 2;
+            } else if (top < margin) {
+                placement = 'bottom';
+                top = targetRect.bottom + gap;
+            }
+
+            left = Math.min(Math.max(margin, left), window.innerWidth - tooltipRect.width - margin);
+            top = Math.min(Math.max(margin, top), window.innerHeight - tooltipRect.height - margin);
+            tooltip.dataset.placement = placement;
+            tooltip.style.left = `${left}px`;
+            tooltip.style.top = `${top}px`;
+        }
+
+        function scheduleTooltip(target, immediate = false) {
+            const text = target?.dataset.tooltip?.trim();
+            if (!text) return;
+            window.clearTimeout(showTimer);
+            activeTarget = target;
+            showTimer = window.setTimeout(function () {
+                if (activeTarget !== target || !target.isConnected) return;
+                tooltip.textContent = text;
+                tooltip.classList.add('visible');
+                tooltip.setAttribute('aria-hidden', 'false');
+                positionTooltip(target);
+            }, immediate ? 0 : 260);
+        }
+
+        enhanceTree(document);
+
+        document.addEventListener('pointerover', function (event) {
+            const target = event.target.closest?.('[data-tooltip]');
+            if (target && !target.contains(event.relatedTarget)) scheduleTooltip(target);
+        });
+        document.addEventListener('pointerout', function (event) {
+            const target = event.target.closest?.('[data-tooltip]');
+            if (target && !target.contains(event.relatedTarget)) hideTooltip();
+        });
+        document.addEventListener('focusin', function (event) {
+            const target = event.target.closest?.('[data-tooltip]');
+            if (target) scheduleTooltip(target, true);
+        });
+        document.addEventListener('focusout', hideTooltip);
+        document.addEventListener('contextmenu', hideTooltip);
+        window.addEventListener('scroll', hideTooltip, true);
+        window.addEventListener('resize', hideTooltip);
+
+        new MutationObserver(function (mutations) {
+            mutations.forEach(function (mutation) {
+                if (mutation.type === 'attributes') enhance(mutation.target);
+                mutation.addedNodes.forEach((node) => enhanceTree(node));
+            });
+        }).observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['title'] });
+    })();
+
+    (function () {
+        const menu = document.getElementById('quickContextMenu');
+        if (!menu || !window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+
+        const links = Array.from(menu.querySelectorAll('a'));
+
+        function closeMenu() {
+            menu.classList.remove('open');
+            menu.setAttribute('aria-hidden', 'true');
+        }
+
+        function openMenu(clientX, clientY) {
+            menu.style.left = '0px';
+            menu.style.top = '0px';
+            menu.classList.add('open');
+            menu.setAttribute('aria-hidden', 'false');
+
+            const margin = 12;
+            const width = menu.offsetWidth;
+            const height = menu.offsetHeight;
+            const left = Math.min(Math.max(margin, clientX), window.innerWidth - width - margin);
+            const top = Math.min(Math.max(margin, clientY), window.innerHeight - height - margin);
+
+            menu.style.left = `${left}px`;
+            menu.style.top = `${top}px`;
+        }
+
+        document.addEventListener('contextmenu', function (event) {
+            event.preventDefault();
+            openMenu(event.clientX, event.clientY);
+        });
+
+        document.addEventListener('pointerdown', function (event) {
+            if (!menu.contains(event.target)) closeMenu();
+        });
+
+        document.addEventListener('keydown', function (event) {
+            if (event.key === 'Escape') {
+                closeMenu();
+                return;
+            }
+
+            if (event.shiftKey && event.key === 'F10') {
+                event.preventDefault();
+                openMenu(window.innerWidth / 2, window.innerHeight / 2);
+                links[0]?.focus();
+            }
+        });
+
+        window.addEventListener('resize', closeMenu);
+        window.addEventListener('scroll', closeMenu, true);
+    })();
+
     (function () {
         const TIMEOUT_MS = 10 * 60 * 1000;
         const SHOW_AFTER_MS = 5000;
@@ -2337,7 +2747,7 @@
         const formatLabel = value => value ? fromValue(value).toLocaleDateString('es-MX', { day: 'numeric', month: 'long', year: 'numeric' }) : 'Seleccionar fecha';
 
         document.querySelectorAll('input[type="date"]').forEach(function (input) {
-            if (input.dataset.customDateReady) return;
+            if (input.dataset.customDateReady || input.readOnly || input.disabled) return;
             input.dataset.customDateReady = 'true';
             input.classList.add('native-date-enhanced');
 
@@ -2352,6 +2762,14 @@
                     <div class="calendar-head"><button type="button" class="calendar-nav prev" aria-label="Mes anterior">‹</button><strong></strong><button type="button" class="calendar-nav next" aria-label="Mes siguiente">›</button></div>
                     <div class="calendar-week">${weekdays.map(day => `<span>${day}</span>`).join('')}</div>
                     <div class="calendar-days"></div>
+                    <div class="calendar-manual">
+                        <label>Escribir una fecha</label>
+                        <div class="calendar-manual-row">
+                            <input type="text" class="calendar-manual-input" inputmode="numeric" maxlength="10" placeholder="dd/mm/aaaa" aria-label="Escribir fecha en formato día, mes y año">
+                            <button type="button" class="calendar-manual-apply" aria-label="Aplicar fecha escrita">✓</button>
+                        </div>
+                        <span class="calendar-manual-error" role="status" aria-live="polite"></span>
+                    </div>
                     <div class="calendar-footer"><button type="button" class="calendar-today">Ir a hoy</button><span>Selecciona un día</span></div>
                 </div>`;
             input.insertAdjacentElement('afterend', picker);
@@ -2361,12 +2779,98 @@
             const calendar = picker.querySelector('.custom-calendar');
             const title = picker.querySelector('.calendar-head strong');
             const days = picker.querySelector('.calendar-days');
+            const manualInput = picker.querySelector('.calendar-manual-input');
+            const manualApply = picker.querySelector('.calendar-manual-apply');
+            const manualError = picker.querySelector('.calendar-manual-error');
             const restrictWeekdays = input.hasAttribute('data-open-weekdays');
             const openWeekdays = (input.dataset.openWeekdays || '').split(',').filter(Boolean).map(Number);
             let cursor = fromValue(input.value);
 
+            function toManualValue(value) {
+                if (!value) return '';
+                const date = fromValue(value);
+                return pad(date.getDate()) + '/' + pad(date.getMonth() + 1) + '/' + date.getFullYear();
+            }
+
+            function parseManualValue(value) {
+                const match = value.trim().match(/^(\d{1,2})[\/.-](\d{1,2})[\/.-](\d{4})$/);
+                if (!match) return null;
+                const day = Number(match[1]);
+                const month = Number(match[2]);
+                const year = Number(match[3]);
+                const date = new Date(year, month - 1, day, 12);
+                if (date.getFullYear() !== year || date.getMonth() !== month - 1 || date.getDate() !== day) return null;
+                return date;
+            }
+
+            function dateAvailabilityError(date) {
+                const value = toValue(date);
+                if (input.min && value < input.min) return 'La fecha es anterior al límite permitido.';
+                if (input.max && value > input.max) return 'La fecha supera el límite permitido.';
+                const weekday = (date.getDay() + 6) % 7;
+                if (restrictWeekdays && !openWeekdays.includes(weekday)) return 'Ese día no está disponible.';
+                return '';
+            }
+
+            function applyManualDate() {
+                const date = parseManualValue(manualInput.value);
+                if (!date) {
+                    manualError.textContent = 'Escribe una fecha válida: dd/mm/aaaa.';
+                    manualInput.focus();
+                    return;
+                }
+                const availabilityError = dateAvailabilityError(date);
+                if (availabilityError) {
+                    manualError.textContent = availabilityError;
+                    manualInput.focus();
+                    return;
+                }
+
+                input.value = toValue(date);
+                input.dispatchEvent(new Event('change', { bubbles: true }));
+                cursor = date;
+                manualError.textContent = '';
+                closeCalendar();
+                render();
+                trigger.focus();
+            }
+
+            function closeCalendar() {
+                calendar.classList.remove('open');
+                trigger.setAttribute('aria-expanded', 'false');
+            }
+
+            function positionCalendar() {
+                if (window.matchMedia('(max-width: 420px)').matches) {
+                    calendar.style.left = '12px';
+                    calendar.style.right = '12px';
+                    calendar.style.top = '50%';
+                    return;
+                }
+
+                calendar.style.right = 'auto';
+                const triggerRect = trigger.getBoundingClientRect();
+                const calendarRect = calendar.getBoundingClientRect();
+                const margin = 12;
+                const gap = 8;
+                const availableBelow = window.innerHeight - triggerRect.bottom - margin;
+                const availableAbove = triggerRect.top - margin;
+                const openUp = calendarRect.height > availableBelow && availableAbove > availableBelow;
+                const left = Math.min(
+                    Math.max(margin, triggerRect.left),
+                    window.innerWidth - calendarRect.width - margin
+                );
+                const top = openUp
+                    ? Math.max(margin, triggerRect.top - calendarRect.height - gap)
+                    : Math.min(window.innerHeight - calendarRect.height - margin, triggerRect.bottom + gap);
+
+                calendar.style.left = `${left}px`;
+                calendar.style.top = `${Math.max(margin, top)}px`;
+            }
+
             function render() {
                 triggerLabel.textContent = formatLabel(input.value);
+                if (document.activeElement !== manualInput) manualInput.value = toManualValue(input.value);
                 title.textContent = months[cursor.getMonth()] + ' ' + cursor.getFullYear();
                 days.innerHTML = '';
                 const first = new Date(cursor.getFullYear(), cursor.getMonth(), 1);
@@ -2392,8 +2896,7 @@
                         input.value = value;
                         input.dispatchEvent(new Event('change', { bubbles: true }));
                         cursor = date;
-                        calendar.classList.remove('open');
-                        trigger.setAttribute('aria-expanded', 'false');
+                        closeCalendar();
                         render();
                     });
                     days.appendChild(button);
@@ -2401,9 +2904,15 @@
             }
 
             trigger.addEventListener('click', function () {
-                document.querySelectorAll('.custom-calendar.open').forEach(open => { if (open !== calendar) open.classList.remove('open'); });
+                document.querySelectorAll('.custom-calendar.open').forEach(open => {
+                    if (open !== calendar) {
+                        open.classList.remove('open');
+                        open.closest('.custom-date-picker')?.querySelector('.custom-date-trigger')?.setAttribute('aria-expanded', 'false');
+                    }
+                });
                 calendar.classList.toggle('open');
                 trigger.setAttribute('aria-expanded', calendar.classList.contains('open') ? 'true' : 'false');
+                if (calendar.classList.contains('open')) positionCalendar();
             });
             picker.querySelector('.prev').addEventListener('click', () => { cursor = new Date(cursor.getFullYear(), cursor.getMonth() - 1, 1); render(); });
             picker.querySelector('.next').addEventListener('click', () => { cursor = new Date(cursor.getFullYear(), cursor.getMonth() + 1, 1); render(); });
@@ -2419,16 +2928,45 @@
                 cursor = today;
                 render();
             });
+            manualInput.addEventListener('input', function () {
+                manualError.textContent = '';
+                const digits = manualInput.value.replace(/\D/g, '').slice(0, 8);
+                manualInput.value = [digits.slice(0, 2), digits.slice(2, 4), digits.slice(4, 8)].filter(Boolean).join('/');
+            });
+            manualInput.addEventListener('keydown', function (event) {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                    applyManualDate();
+                }
+            });
+            manualApply.addEventListener('click', applyManualDate);
             input.addEventListener('change', function () { cursor = fromValue(input.value); render(); });
             render();
         });
 
         document.addEventListener('click', function (event) {
-            if (!event.target.closest('.custom-date-picker')) document.querySelectorAll('.custom-calendar.open').forEach(calendar => calendar.classList.remove('open'));
+            if (!event.target.closest('.custom-date-picker')) document.querySelectorAll('.custom-calendar.open').forEach(calendar => {
+                calendar.classList.remove('open');
+                calendar.closest('.custom-date-picker')?.querySelector('.custom-date-trigger')?.setAttribute('aria-expanded', 'false');
+            });
         });
         document.addEventListener('keydown', function (event) {
-            if (event.key === 'Escape') document.querySelectorAll('.custom-calendar.open').forEach(calendar => calendar.classList.remove('open'));
+            if (event.key === 'Escape') document.querySelectorAll('.custom-calendar.open').forEach(calendar => {
+                calendar.classList.remove('open');
+                calendar.closest('.custom-date-picker')?.querySelector('.custom-date-trigger')?.setAttribute('aria-expanded', 'false');
+            });
         });
+        function closeOpenCalendars() {
+            document.querySelectorAll('.custom-calendar.open').forEach(calendar => {
+                calendar.classList.remove('open');
+                calendar.closest('.custom-date-picker')?.querySelector('.custom-date-trigger')?.setAttribute('aria-expanded', 'false');
+            });
+        }
+        window.addEventListener('resize', closeOpenCalendars);
+        window.addEventListener('scroll', function (event) {
+            if (event.target instanceof Element && event.target.closest('.custom-calendar')) return;
+            closeOpenCalendars();
+        }, true);
     })();
 </script>
 

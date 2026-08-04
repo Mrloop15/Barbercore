@@ -23,6 +23,18 @@ Route::middleware('guest')->group(function () {
     Route::post('/login', [AuthController::class, 'iniciarSesion'])->middleware('throttle:5,1')->name('login.post');
 });
 
+// Conserva los accesos de la PWA anterior, pero los lleva a la interfaz web completa.
+Route::redirect('/pwa/login', '/login')->name('pwa.login');
+Route::redirect('/pwa/dashboard', '/dashboard')->name('pwa.dashboard');
+Route::redirect('/pwa/clientes', '/clientes')->name('pwa.clientes');
+Route::redirect('/pwa/agenda', '/agenda')->name('pwa.agenda');
+Route::redirect('/pwa/productos', '/productos')->name('pwa.productos');
+Route::redirect('/pwa/usuarios', '/usuarios')->name('pwa.usuarios');
+Route::redirect('/pwa/citas', '/citas')->name('pwa.citas');
+Route::redirect('/pwa/ventas', '/ventas-productos')->name('pwa.ventas');
+Route::redirect('/pwa/recompensas', '/recompensas')->name('pwa.recompensas');
+Route::redirect('/pwa/estadisticas', '/estadisticas')->name('pwa.estadisticas');
+
 Route::middleware(['auth', 'idle', 'tenant'])->group(function () {
     Route::post('/session/activity', fn () => response()->noContent())->name('session.activity');
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
@@ -64,14 +76,4 @@ Route::middleware(['auth', 'idle', 'tenant'])->group(function () {
     });
     Route::post('/logout', [AuthController::class, 'cerrarSesion'])->name('logout');
 
-    Route::view('/pwa/login', 'pwa.login')->name('pwa.login');
-    Route::view('/pwa/dashboard', 'pwa.dashboard')->name('pwa.dashboard');
-    Route::view('/pwa/clientes', 'pwa.clientes')->name('pwa.clientes');
-    Route::view('/pwa/agenda', 'pwa.agenda')->name('pwa.agenda');
-    Route::view('/pwa/productos', 'pwa.productos')->name('pwa.productos');
-    Route::view('/pwa/usuarios', 'pwa.usuarios')->name('pwa.usuarios');
-    Route::view('/pwa/citas', 'pwa.citas')->name('pwa.citas');
-    Route::view('/pwa/ventas', 'pwa.ventas')->name('pwa.ventas');
-    Route::view('/pwa/recompensas', 'pwa.recompensas')->name('pwa.recompensas');
-    Route::view('/pwa/estadisticas', 'pwa.estadisticas')->name('pwa.estadisticas');
 });

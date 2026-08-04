@@ -126,6 +126,11 @@
         const primeraFila = document.querySelector('.producto-row');
         const nuevaFila = primeraFila.cloneNode(true);
 
+        nuevaFila.querySelectorAll('.bc-select').forEach(customSelect => {
+            const nativeSelect = customSelect.querySelector(':scope > select');
+            if (nativeSelect) customSelect.replaceWith(nativeSelect);
+        });
+
         nuevaFila.querySelector('.producto-select').value = '';
         nuevaFila.querySelector('.cantidad-input').value = 1;
 

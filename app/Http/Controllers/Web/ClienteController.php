@@ -107,7 +107,6 @@ class ClienteController extends Controller
             'cumpleanos' => 'nullable|date',
             'foto' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
             'observaciones' => 'nullable|string',
-            'ultima_visita' => 'nullable|date',
         ], [
             'nombre.required' => 'El nombre del cliente es obligatorio.',
             'foto.image' => 'El archivo debe ser una imagen.',
@@ -134,7 +133,7 @@ class ClienteController extends Controller
             'foto' => $rutaFoto,
             'observaciones' => $request->observaciones,
             'puntos' => $usuario->rol === 'admin' ? max(0, (int) $request->input('puntos', 0)) : 0,
-            'ultima_visita' => $request->ultima_visita,
+            'ultima_visita' => null,
             'activo' => 1,
         ]);
 
@@ -165,7 +164,11 @@ class ClienteController extends Controller
             ->where('id_cliente', $id)
             ->firstOrFail();
 
-        return view('clientes.edit', compact('cliente'));
+        $ultimaVisita = $cliente->citas()
+            ->where('estado', 'completada')
+            ->max('fecha') ?? $cliente->ultima_visita;
+
+        return view('clientes.edit', compact('cliente', 'ultimaVisita'));
     }
 
     public function update(Request $request, string $id)
@@ -184,7 +187,6 @@ class ClienteController extends Controller
             'cumpleanos' => 'nullable|date',
             'foto' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
             'observaciones' => 'nullable|string',
-            'ultima_visita' => 'nullable|date',
         ], [
             'nombre.required' => 'El nombre del cliente es obligatorio.',
             'foto.image' => 'El archivo debe ser una imagen.',
@@ -209,7 +211,6 @@ class ClienteController extends Controller
             'cumpleanos' => $request->cumpleanos,
             'foto' => $rutaFoto,
             'observaciones' => $request->observaciones,
-            'ultima_visita' => $request->ultima_visita,
         ];
 
         if ($usuario->rol === 'admin') {
