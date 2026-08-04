@@ -839,6 +839,22 @@
             background: var(--fondo);
         }
 
+        .client-edit-photo, .client-edit-photo-placeholder {
+            width: 160px;
+            height: 160px;
+            border: 1px solid var(--borde);
+            border-radius: 22px;
+            background: var(--fondo);
+        }
+        .client-edit-photo { display: block; object-fit: cover; box-shadow: 0 10px 26px rgba(28,28,28,.09); }
+        .client-edit-photo-placeholder { display: grid; place-items: center; align-content: center; gap: 8px; color: var(--gris); font-size: 11px; font-weight: 700; }
+        .client-edit-photo-placeholder svg { color: var(--dorado); }
+        .system-data-field { min-height: 48px; display: flex; align-items: center; gap: 11px; padding: 9px 12px; border: 1px solid var(--borde); border-radius: 11px; background: var(--fondo); }
+        .system-data-icon { width: 32px; height: 32px; flex: 0 0 32px; display: grid; place-items: center; border-radius: 9px; background: rgba(201,162,39,.12); color: var(--dorado); }
+        .system-data-field strong, .system-data-field small { display: block; }
+        .system-data-field strong { font-size: 12px; }
+        .system-data-field small { margin-top: 2px; color: var(--gris); font-size: 9px; line-height: 1.35; }
+
         .table-image-placeholder {
             position: relative;
             width: 48px;
@@ -1615,6 +1631,8 @@
         }
         .image-selection-preview.show { display: grid; }
         .image-selection-preview img { width: 76px; height: 76px; border-radius: 10px; object-fit: cover; background: var(--fondo); }
+        .client-photo-upload .image-selection-preview { grid-template-columns: 160px minmax(0,1fr); max-width: 470px; padding: 12px; }
+        .client-photo-upload .image-selection-preview img { width: 160px; height: 160px; border-radius: 18px; }
         .image-selection-preview strong, .image-selection-preview span { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         .image-selection-preview strong { font-size: 13px; margin-bottom: 4px; }
         .image-selection-preview span { color: var(--gris); font-size: 12px; }
@@ -1861,6 +1879,32 @@
         .quick-context-copy strong { color: inherit; font-size: 12px; }
         .quick-context-copy small { margin-top: 2px; overflow: hidden; color: var(--gris); font-size: 9px; text-overflow: ellipsis; white-space: nowrap; }
         @media (hover: none), (pointer: coarse) { .quick-context-menu { display: none; } }
+        .barber-tooltip { position: fixed; z-index: 5000; max-width: 240px; padding: 8px 11px; border: 1px solid rgba(201,162,39,.42); border-radius: 9px; background: rgba(28,28,28,.97); color: var(--blanco); box-shadow: 0 10px 28px rgba(28,28,28,.24); font-size: 10px; font-weight: 700; line-height: 1.4; letter-spacing: .1px; text-align: center; pointer-events: none; opacity: 0; visibility: hidden; transform: translateY(3px) scale(.97); transition: opacity .16s ease, transform .16s ease, visibility .16s ease; }
+        .barber-tooltip.visible { opacity: 1; visibility: visible; transform: translateY(0) scale(1); }
+        .barber-tooltip::after { content: ''; position: absolute; width: 7px; height: 7px; border-right: 1px solid rgba(201,162,39,.42); border-bottom: 1px solid rgba(201,162,39,.42); background: #1c1c1c; }
+        .barber-tooltip[data-placement="top"]::after { bottom: -5px; left: calc(50% - 4px); transform: rotate(45deg); }
+        .barber-tooltip[data-placement="bottom"]::after { top: -5px; left: calc(50% - 4px); transform: rotate(225deg); }
+        .barber-tooltip[data-placement="right"]::after { top: calc(50% - 4px); left: -5px; transform: rotate(135deg); }
+        @media (hover: none), (pointer: coarse) { .barber-tooltip { display: none; } }
+        .bc-select { position: relative; width: 100%; min-width: 0; }
+        .bc-select-native { position: absolute !important; width: 1px !important; height: 1px !important; left: 8px; bottom: 0; padding: 0 !important; border: 0 !important; opacity: 0; pointer-events: none; }
+        .bc-select-trigger { width: 100%; min-height: 46px; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 11px 13px; border: 1px solid var(--borde); border-radius: 11px; background: var(--blanco); color: var(--texto); cursor: pointer; font: inherit; font-size: 13px; text-align: left; transition: border-color .18s ease, box-shadow .18s ease, background .18s ease; }
+        .bc-select-trigger:hover { border-color: rgba(201,162,39,.65); background: #fffefb; }
+        .bc-select-trigger:focus-visible, .bc-select.open .bc-select-trigger { outline: 0; border-color: var(--dorado); box-shadow: 0 0 0 3px rgba(201,162,39,.13); }
+        .bc-select-trigger:disabled { cursor: not-allowed; opacity: .58; background: var(--fondo); }
+        .bc-select-value { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .bc-select-chevron { width: 22px; height: 22px; flex: 0 0 22px; display: grid; place-items: center; border-radius: 7px; background: rgba(201,162,39,.1); color: var(--dorado); transition: transform .2s ease, background .2s ease; }
+        .bc-select-chevron svg { width: 13px; height: 13px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+        .bc-select.open .bc-select-chevron { transform: rotate(180deg); background: rgba(201,162,39,.18); }
+        .bc-select-menu { position: fixed; z-index: 5200; display: grid; gap: 3px; max-height: 280px; overflow-y: auto; scrollbar-width: thin; scrollbar-color: rgba(201,162,39,.45) transparent; padding: 7px; border: 1px solid var(--borde); border-radius: 13px; background: rgba(255,255,255,.99); box-shadow: 0 18px 45px rgba(28,28,28,.18); opacity: 0; visibility: hidden; transform: translateY(-5px) scale(.985); transform-origin: top center; transition: opacity .15s ease, transform .15s ease, visibility .15s ease; }
+        .bc-select-menu.open { opacity: 1; visibility: visible; transform: translateY(0) scale(1); }
+        .bc-select-option { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 39px; padding: 9px 11px; border: 0; border-radius: 9px; background: transparent; color: var(--texto); cursor: pointer; font: inherit; font-size: 12px; font-weight: 600; text-align: left; }
+        .bc-select-option:hover, .bc-select-option:focus-visible { outline: 0; background: var(--crema); color: var(--dorado); }
+        .bc-select-option.selected { background: var(--texto); color: var(--blanco); }
+        .bc-select-option.selected::after { content: '✓'; color: var(--dorado); font-size: 12px; font-weight: 900; }
+        .bc-select-option:disabled { cursor: not-allowed; opacity: .4; }
+        .bc-select-menu.drop-up { transform-origin: bottom center; }
+        .timeline-jump .bc-select-trigger { min-height: 36px; padding: 7px 9px; font-size: 11px; }
     </style>
 </head>
 <body>
@@ -2046,8 +2090,274 @@
         </a>
     </div>
 </nav>
+<div class="barber-tooltip" id="barberTooltip" role="tooltip" aria-hidden="true"></div>
 
 <script>
+    (function () {
+        const instances = new Map();
+        let opened = null;
+        let sequence = 0;
+
+        function close(instance = opened, restoreFocus = false) {
+            if (!instance) return;
+            instance.wrapper.classList.remove('open');
+            instance.menu.classList.remove('open');
+            instance.trigger.setAttribute('aria-expanded', 'false');
+            if (restoreFocus) instance.trigger.focus();
+            if (opened === instance) opened = null;
+        }
+
+        function position(instance) {
+            const rect = instance.trigger.getBoundingClientRect();
+            const margin = 10;
+            const gap = 6;
+            const availableBelow = window.innerHeight - rect.bottom - margin;
+            const menuHeight = Math.min(instance.menu.scrollHeight, 280);
+            const dropUp = availableBelow < Math.min(menuHeight, 180) && rect.top > availableBelow;
+            const width = Math.max(rect.width, 170);
+            const left = Math.min(Math.max(margin, rect.left), window.innerWidth - width - margin);
+            const top = dropUp
+                ? Math.max(margin, rect.top - menuHeight - gap)
+                : Math.min(window.innerHeight - menuHeight - margin, rect.bottom + gap);
+
+            instance.menu.classList.toggle('drop-up', dropUp);
+            instance.menu.style.width = `${width}px`;
+            instance.menu.style.left = `${left}px`;
+            instance.menu.style.top = `${top}px`;
+        }
+
+        function sync(instance, rebuild = false) {
+            const { select, trigger, menu } = instance;
+            if (rebuild) {
+                menu.replaceChildren();
+                Array.from(select.options).forEach(function (option, index) {
+                    const item = document.createElement('button');
+                    item.type = 'button';
+                    item.className = 'bc-select-option';
+                    item.setAttribute('role', 'option');
+                    item.dataset.index = String(index);
+                    item.textContent = option.textContent.trim();
+                    item.disabled = option.disabled;
+                    item.addEventListener('click', function () {
+                        select.selectedIndex = index;
+                        select.dispatchEvent(new Event('change', { bubbles: true }));
+                        close(instance, true);
+                    });
+                    menu.appendChild(item);
+                });
+            }
+
+            const selected = select.options[select.selectedIndex];
+            trigger.querySelector('.bc-select-value').textContent = selected?.textContent.trim() || 'Selecciona una opción';
+            trigger.disabled = select.disabled;
+            menu.querySelectorAll('.bc-select-option').forEach(function (item) {
+                const isSelected = Number(item.dataset.index) === select.selectedIndex;
+                item.classList.toggle('selected', isSelected);
+                item.setAttribute('aria-selected', String(isSelected));
+            });
+        }
+
+        function open(instance, focusSelected = false) {
+            if (instance.select.disabled) return;
+            if (opened && opened !== instance) close(opened);
+            opened = instance;
+            instance.wrapper.classList.add('open');
+            instance.menu.classList.add('open');
+            instance.trigger.setAttribute('aria-expanded', 'true');
+            position(instance);
+            if (focusSelected) {
+                (instance.menu.querySelector('.selected:not(:disabled)') || instance.menu.querySelector('.bc-select-option:not(:disabled)'))?.focus();
+            }
+        }
+
+        function enhance(select) {
+            if (!(select instanceof HTMLSelectElement) || select.multiple || instances.has(select)) return;
+
+            const wrapper = document.createElement('div');
+            wrapper.className = 'bc-select';
+            const trigger = document.createElement('button');
+            const menu = document.createElement('div');
+            const menuId = `bc-select-menu-${++sequence}`;
+            trigger.type = 'button';
+            trigger.className = 'bc-select-trigger';
+            trigger.setAttribute('aria-haspopup', 'listbox');
+            trigger.setAttribute('aria-expanded', 'false');
+            trigger.setAttribute('aria-controls', menuId);
+            trigger.innerHTML = '<span class="bc-select-value"></span><span class="bc-select-chevron" aria-hidden="true"><svg viewBox="0 0 20 20"><path d="m5 7 5 5 5-5"/></svg></span>';
+            menu.id = menuId;
+            menu.className = 'bc-select-menu';
+            menu.setAttribute('role', 'listbox');
+
+            select.parentNode.insertBefore(wrapper, select);
+            wrapper.appendChild(select);
+            wrapper.appendChild(trigger);
+            document.body.appendChild(menu);
+            select.classList.add('bc-select-native');
+
+            const instance = { select, wrapper, trigger, menu };
+            instances.set(select, instance);
+            sync(instance, true);
+
+            if (select.id) {
+                document.querySelectorAll('label[for]').forEach(function (label) {
+                    if (label.htmlFor !== select.id) return;
+                    label.addEventListener('click', function (event) {
+                        if (event.target === label) {
+                            event.preventDefault();
+                            trigger.focus();
+                        }
+                    });
+                });
+            }
+
+            trigger.addEventListener('click', () => opened === instance ? close(instance) : open(instance));
+            select.addEventListener('focus', () => trigger.focus());
+            trigger.addEventListener('keydown', function (event) {
+                if (['ArrowDown', 'ArrowUp', 'Enter', ' '].includes(event.key)) {
+                    event.preventDefault();
+                    open(instance, true);
+                }
+            });
+            menu.addEventListener('keydown', function (event) {
+                const options = Array.from(menu.querySelectorAll('.bc-select-option:not(:disabled)'));
+                const current = options.indexOf(document.activeElement);
+                if (event.key === 'Escape' || event.key === 'Tab') return close(instance, event.key === 'Escape');
+                if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+                    event.preventDefault();
+                    const direction = event.key === 'ArrowDown' ? 1 : -1;
+                    options[(current + direction + options.length) % options.length]?.focus();
+                }
+                if (event.key === 'Home' || event.key === 'End') {
+                    event.preventDefault();
+                    options[event.key === 'Home' ? 0 : options.length - 1]?.focus();
+                }
+            });
+            select.addEventListener('change', () => sync(instance));
+            select.addEventListener('invalid', function (event) {
+                event.preventDefault();
+                trigger.focus();
+                open(instance, true);
+            });
+            select.form?.addEventListener('reset', () => window.setTimeout(() => sync(instance), 0));
+
+            new MutationObserver(() => sync(instance, true)).observe(select, { childList: true, subtree: true, attributes: true, attributeFilter: ['disabled', 'selected'] });
+        }
+
+        document.querySelectorAll('select').forEach(enhance);
+        new MutationObserver(function (mutations) {
+            mutations.forEach(function (mutation) {
+                mutation.addedNodes.forEach(function (node) {
+                    if (!(node instanceof Element)) return;
+                    if (node.matches('select')) enhance(node);
+                    node.querySelectorAll('select').forEach(enhance);
+                });
+            });
+        }).observe(document.body, { childList: true, subtree: true });
+        document.addEventListener('pointerdown', function (event) {
+            if (opened && !opened.wrapper.contains(event.target) && !opened.menu.contains(event.target)) close(opened);
+        });
+        window.addEventListener('resize', () => opened && position(opened));
+        window.addEventListener('scroll', () => close(opened), true);
+    })();
+
+    (function () {
+        const tooltip = document.getElementById('barberTooltip');
+        if (!tooltip || !window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+
+        let activeTarget = null;
+        let showTimer = null;
+
+        function enhance(element) {
+            if (!(element instanceof Element) || !element.hasAttribute('title')) return;
+            const text = element.getAttribute('title')?.trim();
+            if (text) {
+                element.dataset.tooltip = text;
+                if (!element.hasAttribute('aria-label') && !element.textContent.trim()) {
+                    element.setAttribute('aria-label', text);
+                }
+            }
+            element.removeAttribute('title');
+        }
+
+        function enhanceTree(root) {
+            if (!(root instanceof Element || root instanceof Document)) return;
+            if (root instanceof Element) enhance(root);
+            root.querySelectorAll('[title]').forEach(enhance);
+        }
+
+        function hideTooltip() {
+            window.clearTimeout(showTimer);
+            activeTarget = null;
+            tooltip.classList.remove('visible');
+            tooltip.setAttribute('aria-hidden', 'true');
+        }
+
+        function positionTooltip(target) {
+            const targetRect = target.getBoundingClientRect();
+            const tooltipRect = tooltip.getBoundingClientRect();
+            const margin = 9;
+            const gap = 9;
+            let placement = 'top';
+            let left = targetRect.left + (targetRect.width - tooltipRect.width) / 2;
+            let top = targetRect.top - tooltipRect.height - gap;
+
+            if (target.closest('.sidebar') && document.body.classList.contains('sidebar-collapsed')) {
+                placement = 'right';
+                left = targetRect.right + gap;
+                top = targetRect.top + (targetRect.height - tooltipRect.height) / 2;
+            } else if (top < margin) {
+                placement = 'bottom';
+                top = targetRect.bottom + gap;
+            }
+
+            left = Math.min(Math.max(margin, left), window.innerWidth - tooltipRect.width - margin);
+            top = Math.min(Math.max(margin, top), window.innerHeight - tooltipRect.height - margin);
+            tooltip.dataset.placement = placement;
+            tooltip.style.left = `${left}px`;
+            tooltip.style.top = `${top}px`;
+        }
+
+        function scheduleTooltip(target, immediate = false) {
+            const text = target?.dataset.tooltip?.trim();
+            if (!text) return;
+            window.clearTimeout(showTimer);
+            activeTarget = target;
+            showTimer = window.setTimeout(function () {
+                if (activeTarget !== target || !target.isConnected) return;
+                tooltip.textContent = text;
+                tooltip.classList.add('visible');
+                tooltip.setAttribute('aria-hidden', 'false');
+                positionTooltip(target);
+            }, immediate ? 0 : 260);
+        }
+
+        enhanceTree(document);
+
+        document.addEventListener('pointerover', function (event) {
+            const target = event.target.closest?.('[data-tooltip]');
+            if (target && !target.contains(event.relatedTarget)) scheduleTooltip(target);
+        });
+        document.addEventListener('pointerout', function (event) {
+            const target = event.target.closest?.('[data-tooltip]');
+            if (target && !target.contains(event.relatedTarget)) hideTooltip();
+        });
+        document.addEventListener('focusin', function (event) {
+            const target = event.target.closest?.('[data-tooltip]');
+            if (target) scheduleTooltip(target, true);
+        });
+        document.addEventListener('focusout', hideTooltip);
+        document.addEventListener('contextmenu', hideTooltip);
+        window.addEventListener('scroll', hideTooltip, true);
+        window.addEventListener('resize', hideTooltip);
+
+        new MutationObserver(function (mutations) {
+            mutations.forEach(function (mutation) {
+                if (mutation.type === 'attributes') enhance(mutation.target);
+                mutation.addedNodes.forEach((node) => enhanceTree(node));
+            });
+        }).observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['title'] });
+    })();
+
     (function () {
         const menu = document.getElementById('quickContextMenu');
         if (!menu || !window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;

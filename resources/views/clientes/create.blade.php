@@ -71,13 +71,11 @@
             @endif
 
             <div class="form-group">
-                <label for="ultima_visita">Última visita</label>
-                <input 
-                    type="date" 
-                    name="ultima_visita" 
-                    id="ultima_visita" 
-                    value="{{ old('ultima_visita') }}"
-                >
+                <label>Última visita</label>
+                <div class="system-data-field">
+                    <span class="system-data-icon"><x-icon name="calendar" size="18" /></span>
+                    <span><strong>Sin visitas completadas</strong><small>El sistema la registrará automáticamente.</small></span>
+                </div>
             </div>
 
             <div class="form-group full">
