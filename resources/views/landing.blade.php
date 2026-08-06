@@ -9,7 +9,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <title>{{ $barberia?->nombre ?? 'BarberCore Studio' }} | Barbería profesional</title>
     <link rel="icon" type="image/png" href="{{ asset('images/branding/icon_192_Barbercore.png') }}">
-    <link rel="apple-touch-icon" href="/icons/icon-192.png">
+    <link rel="apple-touch-icon" href="/icons/icon-192.png?v=2">
     <link rel="manifest" href="/manifest.json">
     <script>document.documentElement.classList.add('js');</script>
     <link rel="stylesheet" href="{{ asset('css/barbercore-landing.css') }}">
