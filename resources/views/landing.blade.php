@@ -18,7 +18,7 @@
     @php
         $nombreBarberia = $barberia?->nombre ?? 'BarberCore Studio';
         $logoGuardado = $barberia?->logo;
-        $logoExiste = $logoGuardado && file_exists(public_path('storage/' . $logoGuardado));
+        $logoExiste = $logoGuardado && \Illuminate\Support\Facades\Storage::disk('public')->exists($logoGuardado);
         $logoBarberia = $logoExiste
             ? asset('storage/' . $logoGuardado)
             : asset('images/branding/icon_512_Barbaercore.png');

@@ -1,19 +1,24 @@
 <?php
 
-use App\Http\Controllers\Web\LandingController;
-use App\Http\Controllers\Web\UsuarioController;
-use App\Http\Controllers\Web\ConfiguracionController;
-use App\Http\Controllers\Web\VentaProductoController;
-use App\Http\Controllers\Web\EstadisticaController;
-use App\Http\Controllers\Web\RecompensaController;
-use App\Http\Controllers\Web\ProductoController;
+use App\Http\Controllers\PublicStorageController;
 use App\Http\Controllers\Web\AgendaController;
-use App\Http\Controllers\Web\CitaController;
-use App\Http\Controllers\Web\ServicioController;
 use App\Http\Controllers\Web\AuthController;
-use App\Http\Controllers\Web\DashboardController;
+use App\Http\Controllers\Web\CitaController;
 use App\Http\Controllers\Web\ClienteController;
+use App\Http\Controllers\Web\ConfiguracionController;
+use App\Http\Controllers\Web\DashboardController;
+use App\Http\Controllers\Web\EstadisticaController;
+use App\Http\Controllers\Web\LandingController;
+use App\Http\Controllers\Web\ProductoController;
+use App\Http\Controllers\Web\RecompensaController;
+use App\Http\Controllers\Web\ServicioController;
+use App\Http\Controllers\Web\UsuarioController;
+use App\Http\Controllers\Web\VentaProductoController;
 use Illuminate\Support\Facades\Route;
+
+Route::get('/storage/{path}', PublicStorageController::class)
+    ->where('path', '.*')
+    ->name('public-storage.show');
 
 Route::get('/', [LandingController::class, 'index'])->name('landing');
 Route::get('/recompensas/consultar', [LandingController::class, 'consultarRecompensas'])->middleware('throttle:5,1')->name('landing.recompensas.consultar');

@@ -7,7 +7,7 @@
 
 @php
     $horariosAnteriores = old('horarios');
-    $tieneLogo = filled($barberia?->logo) && file_exists(public_path('storage/' . $barberia->logo));
+    $tieneLogo = filled($barberia?->logo) && \Illuminate\Support\Facades\Storage::disk('public')->exists($barberia->logo);
 @endphp
 @push('styles')
 <link rel="stylesheet" href="{{ asset('css/modules/configuration.css') }}">
