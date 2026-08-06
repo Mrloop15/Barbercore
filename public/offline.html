@@ -3,17 +3,17 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <meta name="theme-color" content="#1c1c1c" />
+        <meta name="theme-color" content="#171717" />
         <title>Sin conexi&oacute;n - BarberCore</title>
 
         <style>
             :root {
                 --gold: #c9a227;
-                --gold-dark: #927015;
+                --gold-dark: #8b6a12;
                 --ink: #1c1c1c;
                 --paper: #faf8f2;
                 --white: #ffffff;
-                --muted: #6b6b6b;
+                --muted: #68645d;
                 --border: #e5e0d6;
             }
 
@@ -26,80 +26,157 @@
                 min-height: 100dvh;
                 display: grid;
                 place-items: center;
-                padding: 24px;
-                background:
-                    linear-gradient(rgba(201, 162, 39, 0.055) 1px, transparent 1px),
-                    linear-gradient(90deg, rgba(201, 162, 39, 0.055) 1px, transparent 1px),
-                    var(--paper);
-                background-size: 38px 38px;
+                padding: 28px;
+                background: var(--paper);
                 color: var(--ink);
                 font-family: Arial, Helvetica, sans-serif;
             }
 
-            .offline-shell {
-                width: min(100%, 560px);
+            body::before {
+                content: "";
+                position: fixed;
+                inset: 0 auto 0 0;
+                width: 9px;
+                background: var(--gold);
+            }
+
+            .offline-layout {
+                width: min(100%, 880px);
+                min-height: 500px;
+                display: grid;
+                grid-template-columns: minmax(280px, 0.78fr) minmax(360px, 1.22fr);
                 overflow: hidden;
                 border: 1px solid var(--border);
                 border-radius: 8px;
-                background: rgba(255, 255, 255, 0.96);
-                box-shadow: 0 24px 64px rgba(28, 28, 28, 0.12);
+                background: var(--white);
+                box-shadow: 0 28px 72px rgba(28, 28, 28, 0.13);
             }
 
-            .brand-bar {
-                min-height: 78px;
+            .brand-panel {
+                position: relative;
                 display: flex;
-                align-items: center;
-                gap: 13px;
-                padding: 14px 20px;
-                background: var(--ink);
+                flex-direction: column;
+                justify-content: space-between;
+                overflow: hidden;
+                padding: 34px;
+                background: #171717;
                 color: var(--white);
             }
 
-            .brand-bar img {
-                width: 48px;
-                height: 48px;
+            .brand-panel::after {
+                content: "";
+                position: absolute;
+                right: -48px;
+                bottom: 82px;
+                width: 150px;
+                height: 150px;
+                border: 34px solid rgba(201, 162, 39, 0.12);
+                border-radius: 50%;
+            }
+
+            .brand {
+                position: relative;
+                z-index: 1;
+                display: flex;
+                align-items: center;
+                gap: 13px;
+            }
+
+            .brand img {
+                width: 50px;
+                height: 50px;
                 padding: 4px;
-                border: 1px solid rgba(255, 255, 255, 0.16);
                 border-radius: 8px;
                 background: var(--white);
                 object-fit: contain;
             }
 
-            .brand-copy strong {
+            .brand strong {
                 display: block;
-                font-size: 19px;
+                font-size: 20px;
             }
 
-            .brand-copy span {
+            .brand span {
                 display: block;
                 margin-top: 3px;
-                color: rgba(255, 255, 255, 0.58);
+                color: rgba(255, 255, 255, 0.55);
                 font-size: 10px;
                 font-weight: 700;
-                letter-spacing: 1.4px;
+                letter-spacing: 1.3px;
                 text-transform: uppercase;
             }
 
-            .offline-content {
-                padding: 38px 42px 42px;
-                text-align: left;
-            }
-
-            .status-mark {
-                width: 52px;
-                height: 52px;
+            .brand-symbol {
+                position: relative;
+                z-index: 1;
+                width: 112px;
+                height: 112px;
                 display: grid;
                 place-items: center;
-                margin-bottom: 24px;
-                border: 1px solid rgba(201, 162, 39, 0.3);
+                border: 1px solid rgba(255, 255, 255, 0.12);
                 border-radius: 50%;
-                background: rgba(201, 162, 39, 0.1);
+                color: var(--gold);
+            }
+
+            .brand-symbol::before,
+            .brand-symbol::after {
+                content: "";
+                position: absolute;
+                width: 14px;
+                height: 14px;
+                border: 2px solid var(--gold);
+                border-radius: 50%;
+            }
+
+            .brand-symbol::before { left: -7px; top: 14px; }
+            .brand-symbol::after { right: 3px; bottom: -5px; }
+
+            .brand-symbol svg {
+                width: 48px;
+                height: 48px;
+            }
+
+            .brand-foot {
+                position: relative;
+                z-index: 1;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                color: rgba(255, 255, 255, 0.48);
+                font-size: 11px;
+            }
+
+            .brand-foot svg {
+                width: 15px;
+                height: 15px;
+                color: var(--gold);
+            }
+
+            .content-panel {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                padding: 54px 58px;
+            }
+
+            .connection-icon {
+                width: 58px;
+                height: 58px;
+                display: grid;
+                place-items: center;
+                margin-bottom: 26px;
+                border: 1px solid rgba(201, 162, 39, 0.32);
+                border-radius: 8px;
+                background: #fffaf0;
                 color: var(--gold-dark);
             }
 
-            .status-mark svg {
-                width: 25px;
-                height: 25px;
+            .connection-icon svg {
+                width: 29px;
+                height: 29px;
+            }
+
+            svg {
                 fill: none;
                 stroke: currentColor;
                 stroke-linecap: round;
@@ -108,36 +185,53 @@
             }
 
             .eyebrow {
-                display: block;
                 margin-bottom: 9px;
                 color: var(--gold-dark);
                 font-size: 10px;
                 font-weight: 800;
-                letter-spacing: 1.6px;
+                letter-spacing: 1.5px;
                 text-transform: uppercase;
             }
 
             h1 {
                 margin: 0;
-                font-size: 34px;
-                line-height: 1.12;
+                font-size: 38px;
+                line-height: 1.08;
             }
 
-            p {
+            .message {
                 max-width: 430px;
-                margin: 14px 0 28px;
+                margin: 15px 0 25px;
                 color: var(--muted);
                 font-size: 15px;
                 line-height: 1.65;
             }
 
+            .connection-hint {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                margin-bottom: 30px;
+                color: #4d4943;
+                font-size: 13px;
+                font-weight: 700;
+            }
+
+            .connection-hint svg {
+                width: 18px;
+                height: 18px;
+                flex: 0 0 18px;
+                color: var(--gold-dark);
+            }
+
             button {
-                min-height: 50px;
+                width: fit-content;
+                min-height: 52px;
                 display: inline-flex;
                 align-items: center;
                 justify-content: center;
                 gap: 10px;
-                padding: 0 20px;
+                padding: 0 21px;
                 border: 0;
                 border-radius: 8px;
                 background: var(--ink);
@@ -146,14 +240,21 @@
                 font-size: 14px;
                 font-weight: 800;
                 cursor: pointer;
-                box-shadow: 0 12px 24px rgba(28, 28, 28, 0.16);
+                box-shadow: 0 12px 24px rgba(28, 28, 28, 0.17);
                 transition: background 0.2s, box-shadow 0.2s, transform 0.2s;
+            }
+
+            button svg {
+                width: 18px;
+                height: 18px;
+                color: var(--gold);
+                stroke-width: 2;
             }
 
             button:hover {
                 transform: translateY(-2px);
-                background: #2b2b2b;
-                box-shadow: 0 16px 28px rgba(28, 28, 28, 0.2);
+                background: #303030;
+                box-shadow: 0 16px 30px rgba(28, 28, 28, 0.22);
             }
 
             button:focus-visible {
@@ -161,23 +262,35 @@
                 outline-offset: 3px;
             }
 
-            button svg {
-                width: 17px;
-                height: 17px;
-                fill: none;
-                stroke: var(--gold);
-                stroke-linecap: round;
-                stroke-linejoin: round;
-                stroke-width: 2;
+            @media (max-width: 720px) {
+                body { padding: 18px; }
+                .offline-layout {
+                    width: calc(100vw - 36px);
+                    min-height: 0;
+                    grid-template-columns: 1fr;
+                }
+                .brand-panel {
+                    min-height: 92px;
+                    display: flex;
+                    flex-direction: row;
+                    align-items: center;
+                    padding: 18px 22px;
+                }
+                .brand-symbol, .brand-foot, .brand-panel::after { display: none; }
+                .content-panel { padding: 38px 34px 42px; }
+                h1 { font-size: 33px; }
             }
 
-            @media (max-width: 520px) {
-                body { padding: 14px; }
-                .offline-shell { width: calc(100vw - 28px); }
-                .brand-bar { padding: 13px 16px; }
-                .brand-bar img { width: 44px; height: 44px; }
-                .offline-content { padding: 30px 24px 32px; }
+            @media (max-width: 440px) {
+                body { padding: 12px; }
+                body::before { width: 5px; }
+                .offline-layout { width: calc(100vw - 24px); }
+                .brand-panel { padding: 15px 18px; }
+                .brand img { width: 44px; height: 44px; }
+                .content-panel { padding: 30px 24px 32px; }
+                .connection-icon { margin-bottom: 22px; }
                 h1 { font-size: 29px; }
+                .message { margin-bottom: 21px; }
                 button { width: 100%; }
             }
 
@@ -187,17 +300,36 @@
         </style>
     </head>
     <body>
-        <main class="offline-shell">
-            <header class="brand-bar">
-                <img src="/icons/icon-192.png" alt="" />
-                <div class="brand-copy">
-                    <strong>BarberCore</strong>
-                    <span>Gesti&oacute;n para barber&iacute;as</span>
+        <main class="offline-layout">
+            <aside class="brand-panel" aria-label="BarberCore">
+                <div class="brand">
+                    <img src="/icons/icon-192.png" alt="" />
+                    <div>
+                        <strong>BarberCore</strong>
+                        <span>Gesti&oacute;n para barber&iacute;as</span>
+                    </div>
                 </div>
-            </header>
 
-            <section class="offline-content" aria-labelledby="offline-title">
-                <div class="status-mark" aria-hidden="true">
+                <div class="brand-symbol" aria-hidden="true">
+                    <svg viewBox="0 0 24 24">
+                        <circle cx="6" cy="7" r="3" />
+                        <path d="m8.7 8.4 10.8 6.1" />
+                        <circle cx="6" cy="17" r="3" />
+                        <path d="m8.7 15.6 10.8-6.1" />
+                    </svg>
+                </div>
+
+                <div class="brand-foot">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M20 13c0 5-3.5 7.5-8 9-4.5-1.5-8-4-8-9V5l8-3 8 3Z" />
+                        <path d="m9 12 2 2 4-4" />
+                    </svg>
+                    Tu sesi&oacute;n permanece protegida
+                </div>
+            </aside>
+
+            <section class="content-panel" aria-labelledby="offline-title">
+                <div class="connection-icon" aria-hidden="true">
                     <svg viewBox="0 0 24 24">
                         <path d="M12 20h.01" />
                         <path d="M8.5 16.4a5 5 0 0 1 5.8-.6" />
@@ -206,12 +338,25 @@
                         <path d="m3 3 18 18" />
                     </svg>
                 </div>
-                <span class="eyebrow">Estado de conexi&oacute;n</span>
-                <h1 id="offline-title">Est&aacute;s sin conexi&oacute;n</h1>
-                <p>
-                    BarberCore no puede conectarse en este momento. Revisa tu
-                    conexi&oacute;n a internet y vuelve a intentarlo.
+
+                <span class="eyebrow">Conexi&oacute;n interrumpida</span>
+                <h1 id="offline-title">Volvamos a conectarte</h1>
+                <p class="message">
+                    No pudimos comunicarnos con BarberCore. Cuando recuperes
+                    internet, podr&aacute;s continuar desde donde estabas.
                 </p>
+
+                <div class="connection-hint">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M4 17v3" />
+                        <path d="M8 13v7" />
+                        <path d="M12 9v11" />
+                        <path d="M16 5v15" />
+                        <path d="M20 2v18" />
+                    </svg>
+                    Revisa tu Wi-Fi o tus datos m&oacute;viles
+                </div>
+
                 <button type="button" onclick="window.location.reload()">
                     <svg viewBox="0 0 24 24" aria-hidden="true">
                         <path d="M21 12a9 9 0 0 1-15.3 6.4L3 16" />
@@ -219,7 +364,7 @@
                         <path d="M3 12A9 9 0 0 1 18.3 5.6L21 8" />
                         <path d="M21 3v5h-5" />
                     </svg>
-                    Reintentar conexi&oacute;n
+                    Intentar de nuevo
                 </button>
             </section>
         </main>
