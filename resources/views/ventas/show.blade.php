@@ -50,6 +50,7 @@
 <div class="content-card content-card-spaced">
     <h3 class="card-title-flush">Productos de la venta</h3>
 
+    <div class="table-responsive" tabindex="0" role="region" aria-label="Productos de la venta">
     <table>
         <thead>
             <tr>
@@ -71,6 +72,7 @@
             @endforeach
         </tbody>
     </table>
+    </div>
 </div>
 
 @endsection

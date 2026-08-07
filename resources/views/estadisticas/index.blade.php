@@ -31,10 +31,12 @@
 
 <div class="content-card report-preview">
     <div class="page-actions"><div><h3 class="preview-heading">Vista previa</h3><p class="preview-subtitle">{{ $desde->format('d/m/Y') }} – {{ $hasta->format('d/m/Y') }}</p></div><span class="badge badge-pendiente">{{ $totalCitas }} registros</span></div>
+    <div class="table-responsive" tabindex="0" role="region" aria-label="Vista previa del reporte">
     <table><thead><tr><th>Fecha</th><th>Horario</th><th>Cliente</th><th>Servicio</th><th>Barbero</th><th>Estado</th><th>Importe</th></tr></thead><tbody>
         @forelse ($citas as $cita)
             <tr><td>{{ \Carbon\Carbon::parse($cita->fecha)->format('d/m/Y') }}</td><td>{{ \Carbon\Carbon::parse($cita->hora_inicio)->format('H:i') }}</td><td>{{ $cita->cliente->nombre ?? 'Sin cliente' }} {{ $cita->cliente->apellido ?? '' }}</td><td>{{ $cita->servicio->nombre ?? 'Sin servicio' }}</td><td>{{ $cita->barbero->nombre ?? 'Sin asignar' }}</td><td><span class="badge badge-{{ $cita->estado }}">{{ ucfirst($cita->estado) }}</span></td><td>${{ number_format($cita->precio, 2) }}</td></tr>
         @empty <tr><td colspan="7">No hay datos para los filtros seleccionados.</td></tr> @endforelse
     </tbody></table>
+    </div>
 </div>
 @endsection

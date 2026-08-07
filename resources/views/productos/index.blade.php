@@ -40,10 +40,10 @@
         </div>
     </div>
 
-    <table>
+    <div class="table-responsive product-table-scroll" tabindex="0" role="region" aria-label="Inventario de productos">
+    <table class="product-table">
         <thead>
             <tr>
-                <th>Imagen</th>
                 <th>Producto</th>
                 <th>Precio compra</th>
                 <th>Precio venta</th>
@@ -63,26 +63,26 @@
                 @endphp
 
                 <tr>
-                    <td>
-                        @if ($producto->imagen)
-                            <img 
-                                src="{{ asset('storage/' . $producto->imagen) }}" 
-                                alt="{{ $producto->nombre }}"
-                                class="client-photo"
-                            >
-                        @else
-                            <span class="table-image-placeholder" role="img" aria-label="Imagen de producto no disponible" title="Imagen no disponible">
-                                <x-icon name="image" />
+                    <td class="product-identity-cell">
+                        <div class="product-identity">
+                            @if ($producto->imagen)
+                                <img
+                                    src="{{ asset('storage/' . $producto->imagen) }}"
+                                    alt="{{ $producto->nombre }}"
+                                    class="product-table-image"
+                                >
+                            @else
+                                <span class="product-table-image product-table-placeholder" role="img" aria-label="Imagen de producto no disponible" title="Imagen no disponible">
+                                    <x-icon name="image" />
+                                </span>
+                            @endif
+                            <span class="product-identity-copy">
+                                <strong>{{ $producto->nombre }}</strong>
+                                <span class="product-description" title="{{ $producto->descripcion ?? 'Sin descripción' }}">
+                                    {{ $producto->descripcion ?? 'Sin descripción' }}
+                                </span>
                             </span>
-                        @endif
-                    </td>
-
-                    <td>
-                        <strong>{{ $producto->nombre }}</strong>
-                        <br>
-                        <span class="muted-value-sm">
-                            {{ $producto->descripcion ?? 'Sin descripción' }}
-                        </span>
+                        </div>
                     </td>
 
                     <td>${{ number_format($producto->precio_compra, 2) }}</td>
@@ -134,11 +134,12 @@
                 </tr>
             @empty
                 <tr>
-                    <td colspan="9">No hay productos registrados.</td>
+                    <td colspan="8">No hay productos registrados.</td>
                 </tr>
             @endforelse
         </tbody>
     </table>
+    </div>
 
     <div class="pagination">
         {{ $productos->links() }}

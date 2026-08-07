@@ -59,6 +59,7 @@
 <div class="content-card">
     <h3 class="card-title-flush">Próximas citas</h3>
 
+    <div class="table-responsive" tabindex="0" role="region" aria-label="Citas recientes">
     <table>
         <thead>
             <tr>
@@ -92,6 +93,7 @@
             @endforelse
         </tbody>
     </table>
+    </div>
 </div>
 
 <div class="stats-two-columns stats-section">

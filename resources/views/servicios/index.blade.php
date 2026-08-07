@@ -24,6 +24,7 @@
         </div>
     </div>
 
+    <div class="table-responsive" tabindex="0" role="region" aria-label="Listado de servicios">
     <table>
         <thead>
             <tr>
@@ -90,6 +91,7 @@
             @endforelse
         </tbody>
     </table>
+    </div>
 
     <div class="pagination">{{ $servicios->links() }}</div>
 </div>

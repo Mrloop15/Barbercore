@@ -39,6 +39,7 @@
         </div>
     </div>
 
+    <div class="table-responsive" tabindex="0" role="region" aria-label="Ventas registradas">
     <table>
         <thead>
             <tr>
@@ -84,6 +85,7 @@
             @endforelse
         </tbody>
     </table>
+    </div>
 
     <div class="pagination">
         {{ $ventas->links() }}

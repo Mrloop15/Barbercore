@@ -381,15 +381,17 @@
             overflow-y: hidden;
             overscroll-behavior-x: contain;
             -webkit-overflow-scrolling: touch;
-            scrollbar-width: none;
-            -ms-overflow-style: none;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(201,162,39,.65) rgba(229,224,214,.45);
         }
 
         .table-responsive::-webkit-scrollbar {
-            width: 0;
-            height: 0;
-            display: none;
+            height: 8px;
         }
+
+        .table-responsive::-webkit-scrollbar-track { background: rgba(229,224,214,.45); }
+        .table-responsive::-webkit-scrollbar-thumb { border-radius: 999px; background: rgba(201,162,39,.65); }
+        .table-responsive:focus-visible { outline: 2px solid rgba(201,162,39,.45); outline-offset: 3px; }
 
         th {
             text-align: left;
@@ -817,6 +819,17 @@
             border: 1px solid var(--borde);
             background: var(--fondo);
         }
+
+        .product-table { min-width: 980px; }
+        .product-table th:not(:first-child), .product-table td:not(:first-child) { white-space: nowrap; }
+        .table-responsive .product-identity-cell { width: 38%; min-width: 360px; max-width: 430px; }
+        .product-identity { display: grid; grid-template-columns: 92px minmax(0,1fr); align-items: center; gap: 16px; min-width: 0; }
+        .product-table-image { width: 92px; aspect-ratio: 1; display: block; border: 1px solid var(--borde); border-radius: 8px; background: var(--fondo); object-fit: cover; }
+        .product-table-placeholder { display: grid; place-items: center; color: var(--dorado); }
+        .product-table-placeholder svg { width: 25px; height: 25px; }
+        .product-identity-copy { display: grid; min-width: 0; gap: 6px; }
+        .product-identity-copy strong { font-size: 14px; line-height: 1.35; }
+        .product-description { display: -webkit-box; overflow: hidden; color: var(--gris); font-size: 12px; line-height: 1.5; white-space: normal; overflow-wrap: anywhere; -webkit-box-orient: vertical; -webkit-line-clamp: 3; }
 
         .client-edit-photo, .client-edit-photo-placeholder {
             width: 160px;
@@ -1256,14 +1269,12 @@
                 overflow-y: hidden;
                 overscroll-behavior-x: contain;
                 -webkit-overflow-scrolling: touch;
-                scrollbar-width: none;
-                -ms-overflow-style: none;
+                scrollbar-width: thin;
+                scrollbar-color: rgba(201,162,39,.65) rgba(229,224,214,.45);
             }
 
             .table-responsive::-webkit-scrollbar {
-                width: 0;
-                height: 0;
-                display: none;
+                height: 8px;
             }
 
             .table-responsive table {
@@ -1846,7 +1857,7 @@
         @media (max-width: 600px) { .search-form .custom-date-picker, .agenda-filter .custom-date-picker, .month-filter .custom-date-picker { width: 100%; flex-basis: auto; } }
         @media (max-width: 420px) { .custom-calendar, .custom-time-panel { position: fixed; left: 12px; right: 12px; top: 50%; width: auto; transform: translateY(-50%); } .custom-calendar.open, .custom-time-panel.open { animation: none; } .custom-time-panel { max-height: 80vh; } }
         @media (max-width: 900px) { .sidebar, body.sidebar-collapsed .sidebar { width: 278px; padding: 28px 20px 22px; z-index: 1001; overflow-x: hidden; overflow-y: auto; } .mobile-overlay { z-index: 1000; } .main, body.sidebar-collapsed .main { margin-left: 0; width: 100%; padding: 22px; } .sidebar-collapse-btn, body.sidebar-collapsed .menu-group-toggle { display: none; } .menu-group-items, body.sidebar-collapsed .menu-group-items { display: contents; position: static; } body.sidebar-collapsed .brand-text, body.sidebar-collapsed .menu-text { display: block; } body.sidebar-collapsed .menu-label { display: block; } body.sidebar-collapsed .sidebar-header { display: flex; min-height: 0; justify-content: space-between; flex-wrap: nowrap; } body.sidebar-collapsed .brand { padding: 0 8px; margin-bottom: 26px; justify-content: flex-start; } body.sidebar-collapsed .menu a, body.sidebar-collapsed .logout-button { justify-content: flex-start; padding: 11px 13px; gap: 12px; } }
-        @media (max-width: 600px) { .main { padding: 18px 14px 30px; } .topbar { align-items: center; } .topbar-info { display: none; } .content-card { padding: 18px; overflow-x: auto; } .content-card > table { margin-left: -18px; margin-right: -18px; width: calc(100% + 36px); } .content-card > table th:first-child, .content-card > table td:first-child { padding-left: 18px; } .content-card > table th:last-child, .content-card > table td:last-child { padding-right: 18px; } .stat-card { padding: 18px; } .dashboard-intro { align-items: stretch; flex-direction: column; } }
+        @media (max-width: 600px) { .main { padding: 18px 14px 30px; } .topbar { align-items: center; } .topbar-info { display: none; } .content-card { padding: 18px; overflow: visible; } .content-card > .table-responsive { width: calc(100% + 36px); max-width: none; margin-right: -18px; margin-left: -18px; padding-bottom: 5px; } .content-card > .table-responsive table th:first-child, .content-card > .table-responsive table td:first-child { padding-left: 18px; } .content-card > .table-responsive table th:last-child, .content-card > .table-responsive table td:last-child { padding-right: 18px; } .table-responsive .product-identity-cell { min-width: 310px; } .product-identity { grid-template-columns: 78px minmax(0,1fr); gap: 13px; } .product-table-image { width: 78px; } .stat-card { padding: 18px; } .dashboard-intro { align-items: stretch; flex-direction: column; } }
         @media (max-width: 600px) { .topbar-actions { width: 100%; align-items: stretch; flex-direction: column-reverse; } .topbar-info { display: grid; width: 100%; min-width: 0; } .pwa-install-btn { width: 100%; } }
         .idle-timer { position: fixed; right: 22px; bottom: 20px; z-index: 1300; display: flex; align-items: center; gap: 9px; padding: 10px 14px; border: 1px solid rgba(201,162,39,.4); border-radius: 999px; background: rgba(28,28,28,.94); color: var(--blanco); box-shadow: 0 10px 25px rgba(28,28,28,.18); font-size: 12px; font-weight: 700; opacity: 0; visibility: hidden; transform: translateY(8px); transition: .25s ease; pointer-events: none; }
         .idle-timer.visible { opacity: 1; visibility: visible; transform: translateY(0); }

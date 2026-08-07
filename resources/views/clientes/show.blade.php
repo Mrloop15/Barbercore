@@ -59,6 +59,7 @@
 <div class="content-card content-card-spaced">
     <h3 class="card-title-flush">Historial de citas</h3>
 
+    <div class="table-responsive" tabindex="0" role="region" aria-label="Historial del cliente">
     <table>
         <thead>
             <tr>
@@ -90,6 +91,7 @@
             @endforelse
         </tbody>
     </table>
+    </div>
 </div>
 
 @endsection

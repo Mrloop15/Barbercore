@@ -35,6 +35,7 @@
         </nav>
     </div>
 
+    <div class="table-responsive" tabindex="0" role="region" aria-label="Clientes inactivos">
     <table>
         <thead>
             <tr>
@@ -139,6 +140,7 @@
             @endforelse
         </tbody>
     </table>
+    </div>
 </div>
 
 @endsection

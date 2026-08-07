@@ -97,6 +97,7 @@
 <div class="content-card content-card-spaced">
     <h3 class="card-title-flush">Últimos canjes</h3>
 
+    <div class="table-responsive" tabindex="0" role="region" aria-label="Historial de canjes">
     <table>
         <thead>
             <tr>
@@ -132,6 +133,7 @@
             @endforelse
         </tbody>
     </table>
+    </div>
 </div>
 
 <script>
