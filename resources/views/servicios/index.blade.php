@@ -25,12 +25,10 @@
     </div>
 
     <div class="table-responsive" tabindex="0" role="region" aria-label="Listado de servicios">
-    <table>
+    <table class="service-table">
         <thead>
             <tr>
-                <th>Imagen</th>
                 <th>Servicio</th>
-                <th>Descripción</th>
                 <th>Precio</th>
                 <th>Duración</th>
                 <th>Estado</th>
@@ -41,17 +39,23 @@
         <tbody>
             @forelse ($servicios as $servicio)
                 <tr>
-                    <td>
-                        @if ($servicio->imagen)
-                            <img class="client-photo" src="{{ asset('storage/' . $servicio->imagen) }}" alt="{{ $servicio->nombre }}">
-                        @else
-                            <span class="table-image-placeholder" role="img" aria-label="Imagen no disponible" title="Imagen no disponible">
-                                <x-icon name="image" />
+                    <td class="service-identity-cell">
+                        <div class="service-identity">
+                            @if ($servicio->imagen)
+                                <img class="service-table-image" src="{{ asset('storage/' . $servicio->imagen) }}" alt="{{ $servicio->nombre }}">
+                            @else
+                                <span class="service-table-image service-table-placeholder" role="img" aria-label="Imagen no disponible" title="Imagen no disponible">
+                                    <x-icon name="image" />
+                                </span>
+                            @endif
+                            <span class="service-identity-copy">
+                                <strong>{{ $servicio->nombre }}</strong>
+                                <span class="service-description" title="{{ $servicio->descripcion ?? 'Sin descripción' }}">
+                                    {{ $servicio->descripcion ?? 'Sin descripción' }}
+                                </span>
                             </span>
-                        @endif
+                        </div>
                     </td>
-                    <td><strong>{{ $servicio->nombre }}</strong></td>
-                    <td>{{ $servicio->descripcion ?? 'Sin descripción' }}</td>
                     <td>${{ number_format($servicio->precio, 2) }}</td>
                     <td>{{ $servicio->duracion_minutos }} min</td>
                     <td><span class="badge badge-completada">Activo</span></td>
@@ -87,7 +91,7 @@
                     </td>
                 </tr>
             @empty
-                <tr><td colspan="7">No hay servicios registrados.</td></tr>
+                <tr><td colspan="5">No hay servicios registrados.</td></tr>
             @endforelse
         </tbody>
     </table>

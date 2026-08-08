@@ -39,4 +39,25 @@ class ResponsiveTablesTest extends TestCase
         $this->assertStringContainsString('class="product-description"', $markup);
         $this->assertStringNotContainsString('<th>Imagen</th>', $markup);
     }
+
+    public function test_descriptive_modules_group_related_identity_data(): void
+    {
+        $expectations = [
+            'servicios/index.blade.php' => ['service-table-image', 'service-description', '<th>Imagen</th>', '<th>Descripción</th>'],
+            'clientes/index.blade.php' => ['client-table-image', 'client-identity-copy', '<th>Foto</th>', '<th>Nombre</th>'],
+            'usuarios/index.blade.php' => ['user-avatar', 'user-identity-copy', '<th>Nombre</th>', '<th>Correo</th>'],
+        ];
+
+        foreach ($expectations as $view => [$visual, $copy, $oldVisualColumn, $oldCopyColumn]) {
+            $markup = file_get_contents(resource_path("views/{$view}"));
+
+            $this->assertStringContainsString($visual, $markup);
+            $this->assertStringContainsString($copy, $markup);
+            $this->assertStringNotContainsString($oldVisualColumn, $markup);
+            $this->assertStringNotContainsString($oldCopyColumn, $markup);
+        }
+
+        $rewards = file_get_contents(resource_path('views/recompensas/index.blade.php'));
+        $this->assertStringContainsString('reward-description', $rewards);
+    }
 }

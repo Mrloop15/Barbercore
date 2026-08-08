@@ -34,11 +34,10 @@
     </div>
 
     <div class="table-responsive" tabindex="0" role="region" aria-label="Listado de clientes">
-    <table>
+    <table class="client-table">
         <thead>
             <tr>
-                <th>Foto</th>
-                <th>Nombre</th>
+                <th>Cliente</th>
                 <th>Teléfono</th>
                 <th>Puntos</th>
                 <th>Última visita</th>
@@ -49,23 +48,20 @@
         <tbody>
             @forelse ($clientes as $cliente)
                 <tr>
-                    <td>
-                        @if ($cliente->foto)
-                            <img src="{{ asset('storage/' . $cliente->foto) }}" alt="Foto cliente" class="client-photo">
-                        @else
-                            <span class="table-image-placeholder" role="img" aria-label="Foto de cliente no disponible" title="Foto no disponible">
-                                <x-icon name="image" />
+                    <td class="client-identity-cell">
+                        <div class="client-identity">
+                            @if ($cliente->foto)
+                                <img src="{{ asset('storage/' . $cliente->foto) }}" alt="Foto de {{ $cliente->nombre }} {{ $cliente->apellido }}" class="client-table-image">
+                            @else
+                                <span class="client-table-image client-table-placeholder" role="img" aria-label="Foto de cliente no disponible" title="Foto no disponible">
+                                    <x-icon name="user" />
+                                </span>
+                            @endif
+                            <span class="client-identity-copy">
+                                <strong>{{ $cliente->nombre }} {{ $cliente->apellido }}</strong>
+                                <span>Cumpleaños: {{ $cliente->cumpleanos ? \Carbon\Carbon::parse($cliente->cumpleanos)->format('d/m/Y') : 'No registrado' }}</span>
                             </span>
-                        @endif
-                    </td>
-
-                    <td>
-                        <strong>{{ $cliente->nombre }} {{ $cliente->apellido }}</strong>
-                        <br>
-                        <span class="muted-value-sm">
-                            Cumpleaños: 
-                            {{ $cliente->cumpleanos ? \Carbon\Carbon::parse($cliente->cumpleanos)->format('d/m/Y') : 'No registrado' }}
-                        </span>
+                        </div>
                     </td>
 
                     <td>{{ $cliente->telefono ?? 'No registrado' }}</td>
@@ -99,7 +95,7 @@
                 </tr>
             @empty
                 <tr>
-                    <td colspan="6">No hay clientes registrados.</td>
+                    <td colspan="5">No hay clientes registrados.</td>
                 </tr>
             @endforelse
         </tbody>

@@ -831,6 +831,44 @@
         .product-identity-copy strong { font-size: 14px; line-height: 1.35; }
         .product-description { display: -webkit-box; overflow: hidden; color: var(--gris); font-size: 12px; line-height: 1.5; white-space: normal; overflow-wrap: anywhere; -webkit-box-orient: vertical; -webkit-line-clamp: 3; }
 
+        .service-table { min-width: 820px; }
+        .service-table th:not(:first-child), .service-table td:not(:first-child) { white-space: nowrap; }
+        .table-responsive .service-identity-cell { width: 46%; min-width: 380px; max-width: 480px; }
+        .service-identity { display: grid; grid-template-columns: 92px minmax(0,1fr); align-items: center; gap: 16px; min-width: 0; }
+        .service-table-image { width: 92px; aspect-ratio: 1; display: block; border: 1px solid var(--borde); border-radius: 8px; background: var(--fondo); object-fit: cover; }
+        .service-table-placeholder { display: grid; place-items: center; color: var(--dorado); }
+        .service-table-placeholder svg { width: 25px; height: 25px; }
+        .service-identity-copy { display: grid; min-width: 0; gap: 6px; }
+        .service-identity-copy strong { font-size: 14px; line-height: 1.35; }
+        .service-description { display: -webkit-box; overflow: hidden; color: var(--gris); font-size: 12px; line-height: 1.5; white-space: normal; overflow-wrap: anywhere; -webkit-box-orient: vertical; -webkit-line-clamp: 3; }
+
+        .client-table { min-width: 760px; }
+        .client-table th:not(:first-child), .client-table td:not(:first-child) { white-space: nowrap; }
+        .table-responsive .client-identity-cell { min-width: 290px; max-width: 360px; }
+        .client-identity { display: grid; grid-template-columns: 64px minmax(0,1fr); align-items: center; gap: 14px; min-width: 0; }
+        .client-table-image { width: 64px; aspect-ratio: 1; display: block; border: 1px solid var(--borde); border-radius: 50%; background: var(--fondo); object-fit: cover; }
+        .client-table-placeholder { display: grid; place-items: center; color: var(--dorado); }
+        .client-table-placeholder svg { width: 22px; height: 22px; }
+        .client-identity-copy { display: grid; min-width: 0; gap: 5px; }
+        .client-identity-copy strong { line-height: 1.35; white-space: normal; overflow-wrap: anywhere; }
+        .client-identity-copy > span { color: var(--gris); font-size: 11px; line-height: 1.4; white-space: normal; }
+
+        .user-table { min-width: 640px; }
+        .table-responsive .user-identity-cell { min-width: 280px; max-width: 360px; }
+        .user-identity { display: grid; grid-template-columns: 42px minmax(0,1fr); align-items: center; gap: 12px; min-width: 0; }
+        .user-avatar { width: 42px; height: 42px; display: grid; place-items: center; border-radius: 50%; background: rgba(201,162,39,.12); color: var(--dorado); }
+        .user-avatar svg { width: 19px; height: 19px; }
+        .user-identity-copy { display: grid; min-width: 0; gap: 4px; }
+        .user-identity-copy strong { line-height: 1.35; }
+        .user-identity-copy span { overflow-wrap: anywhere; color: var(--gris); font-size: 11px; line-height: 1.4; }
+
+        .reward-table { min-width: 760px; }
+        .reward-table th:not(:first-child), .reward-table td:not(:first-child) { white-space: nowrap; }
+        .table-responsive .reward-identity-cell { min-width: 320px; max-width: 420px; }
+        .reward-identity-copy { display: grid; min-width: 0; gap: 6px; }
+        .reward-identity-copy strong { line-height: 1.35; }
+        .reward-description { display: -webkit-box; overflow: hidden; color: var(--gris); font-size: 12px; line-height: 1.5; white-space: normal; overflow-wrap: anywhere; -webkit-box-orient: vertical; -webkit-line-clamp: 3; }
+
         .client-edit-photo, .client-edit-photo-placeholder {
             width: 160px;
             height: 160px;
@@ -1857,7 +1895,7 @@
         @media (max-width: 600px) { .search-form .custom-date-picker, .agenda-filter .custom-date-picker, .month-filter .custom-date-picker { width: 100%; flex-basis: auto; } }
         @media (max-width: 420px) { .custom-calendar, .custom-time-panel { position: fixed; left: 12px; right: 12px; top: 50%; width: auto; transform: translateY(-50%); } .custom-calendar.open, .custom-time-panel.open { animation: none; } .custom-time-panel { max-height: 80vh; } }
         @media (max-width: 900px) { .sidebar, body.sidebar-collapsed .sidebar { width: 278px; padding: 28px 20px 22px; z-index: 1001; overflow-x: hidden; overflow-y: auto; } .mobile-overlay { z-index: 1000; } .main, body.sidebar-collapsed .main { margin-left: 0; width: 100%; padding: 22px; } .sidebar-collapse-btn, body.sidebar-collapsed .menu-group-toggle { display: none; } .menu-group-items, body.sidebar-collapsed .menu-group-items { display: contents; position: static; } body.sidebar-collapsed .brand-text, body.sidebar-collapsed .menu-text { display: block; } body.sidebar-collapsed .menu-label { display: block; } body.sidebar-collapsed .sidebar-header { display: flex; min-height: 0; justify-content: space-between; flex-wrap: nowrap; } body.sidebar-collapsed .brand { padding: 0 8px; margin-bottom: 26px; justify-content: flex-start; } body.sidebar-collapsed .menu a, body.sidebar-collapsed .logout-button { justify-content: flex-start; padding: 11px 13px; gap: 12px; } }
-        @media (max-width: 600px) { .main { padding: 18px 14px 30px; } .topbar { align-items: center; } .topbar-info { display: none; } .content-card { padding: 18px; overflow: visible; } .content-card > .table-responsive { width: calc(100% + 36px); max-width: none; margin-right: -18px; margin-left: -18px; padding-bottom: 5px; } .content-card > .table-responsive table th:first-child, .content-card > .table-responsive table td:first-child { padding-left: 18px; } .content-card > .table-responsive table th:last-child, .content-card > .table-responsive table td:last-child { padding-right: 18px; } .table-responsive .product-identity-cell { min-width: 310px; } .product-identity { grid-template-columns: 78px minmax(0,1fr); gap: 13px; } .product-table-image { width: 78px; } .stat-card { padding: 18px; } .dashboard-intro { align-items: stretch; flex-direction: column; } }
+        @media (max-width: 600px) { .main { padding: 18px 14px 30px; } .topbar { align-items: center; } .topbar-info { display: none; } .content-card { padding: 18px; overflow: visible; } .content-card > .table-responsive { width: calc(100% + 36px); max-width: none; margin-right: -18px; margin-left: -18px; padding-bottom: 5px; } .content-card > .table-responsive table th:first-child, .content-card > .table-responsive table td:first-child { padding-left: 18px; } .content-card > .table-responsive table th:last-child, .content-card > .table-responsive table td:last-child { padding-right: 18px; } .table-responsive .product-identity-cell, .table-responsive .service-identity-cell { min-width: 310px; } .product-identity, .service-identity { grid-template-columns: 78px minmax(0,1fr); gap: 13px; } .product-table-image, .service-table-image { width: 78px; } .table-responsive .client-identity-cell { min-width: 260px; } .client-identity { grid-template-columns: 56px minmax(0,1fr); gap: 12px; } .client-table-image { width: 56px; } .table-responsive .user-identity-cell { min-width: 250px; } .table-responsive .reward-identity-cell { min-width: 290px; } .stat-card { padding: 18px; } .dashboard-intro { align-items: stretch; flex-direction: column; } }
         @media (max-width: 600px) { .topbar-actions { width: 100%; align-items: stretch; flex-direction: column-reverse; } .topbar-info { display: grid; width: 100%; min-width: 0; } .pwa-install-btn { width: 100%; } }
         .idle-timer { position: fixed; right: 22px; bottom: 20px; z-index: 1300; display: flex; align-items: center; gap: 9px; padding: 10px 14px; border: 1px solid rgba(201,162,39,.4); border-radius: 999px; background: rgba(28,28,28,.94); color: var(--blanco); box-shadow: 0 10px 25px rgba(28,28,28,.18); font-size: 12px; font-weight: 700; opacity: 0; visibility: hidden; transform: translateY(8px); transition: .25s ease; pointer-events: none; }
         .idle-timer.visible { opacity: 1; visibility: visible; transform: translateY(0); }

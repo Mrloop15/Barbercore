@@ -45,11 +45,10 @@
     </div>
 
     <div class="table-responsive" tabindex="0" role="region" aria-label="Listado de usuarios">
-    <table>
+    <table class="user-table">
         <thead>
             <tr>
-                <th>Nombre</th>
-                <th>Correo</th>
+                <th>Usuario</th>
                 <th>Rol</th>
                 <th>Estado</th>
                 <th>Acciones</th>
@@ -59,8 +58,12 @@
         <tbody>
             @forelse ($usuarios as $usuario)
                 <tr>
-                    <td>{{ $usuario->nombre }}</td>
-                    <td>{{ $usuario->correo }}</td>
+                    <td class="user-identity-cell">
+                        <span class="user-identity">
+                            <span class="user-avatar" aria-hidden="true"><x-icon name="user" /></span>
+                            <span class="user-identity-copy"><strong>{{ $usuario->nombre }}</strong><span>{{ $usuario->correo }}</span></span>
+                        </span>
+                    </td>
                     <td>
                         <span class="badge badge-pendiente">
                             {{ ucfirst($usuario->rol) }}
@@ -92,7 +95,7 @@
                 </tr>
             @empty
                 <tr>
-                    <td colspan="5">No hay usuarios registrados.</td>
+                    <td colspan="4">No hay usuarios registrados.</td>
                 </tr>
             @endforelse
         </tbody>

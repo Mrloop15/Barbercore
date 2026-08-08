@@ -43,7 +43,7 @@
     </div>
 
     <div class="table-responsive" tabindex="0" role="region" aria-label="Listado de recompensas">
-    <table>
+    <table class="reward-table">
         <thead>
             <tr>
                 <th>Recompensa</th>
@@ -58,11 +58,12 @@
         <tbody>
             @forelse ($recompensas as $recompensa)
                 <tr>
-                    <td>
-                        <strong>{{ $recompensa->nombre }}</strong>
-                        <br>
-                        <span class="muted-value-sm">
-                            {{ $recompensa->descripcion ?? 'Sin descripción' }}
+                    <td class="reward-identity-cell">
+                        <span class="reward-identity-copy">
+                            <strong>{{ $recompensa->nombre }}</strong>
+                            <span class="reward-description" title="{{ $recompensa->descripcion ?? 'Sin descripción' }}">
+                                {{ $recompensa->descripcion ?? 'Sin descripción' }}
+                            </span>
                         </span>
                     </td>
 
