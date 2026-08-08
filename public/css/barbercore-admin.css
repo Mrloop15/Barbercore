@@ -846,7 +846,7 @@
         .client-table th:not(:first-child), .client-table td:not(:first-child) { white-space: nowrap; }
         .table-responsive .client-identity-cell { min-width: 290px; max-width: 360px; }
         .client-identity { display: grid; grid-template-columns: 64px minmax(0,1fr); align-items: center; gap: 14px; min-width: 0; }
-        .client-table-image { width: 64px; aspect-ratio: 1; display: block; border: 1px solid var(--borde); border-radius: 50%; background: var(--fondo); object-fit: cover; }
+        .client-table-image { width: 64px; aspect-ratio: 1; display: block; border: 1px solid var(--borde); border-radius: 8px; background: var(--fondo); object-fit: cover; }
         .client-table-placeholder { display: grid; place-items: center; color: var(--dorado); }
         .client-table-placeholder svg { width: 22px; height: 22px; }
         .client-identity-copy { display: grid; min-width: 0; gap: 5px; }
