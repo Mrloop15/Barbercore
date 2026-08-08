@@ -6,6 +6,17 @@ use Tests\TestCase;
 
 class ResponsiveTablesTest extends TestCase
 {
+    public function test_table_scroll_is_isolated_from_the_page_viewport(): void
+    {
+        $styles = file_get_contents(public_path('css/barbercore-admin.css'));
+
+        $this->assertMatchesRegularExpression(
+            '/\.table-responsive\s*\{[^}]*overflow-x:\s*auto;[^}]*contain:\s*paint;/s',
+            $styles,
+        );
+        $this->assertStringContainsString('overscroll-behavior-x: contain;', $styles);
+    }
+
     public function test_panel_tables_have_a_dedicated_scroll_region(): void
     {
         $views = [
