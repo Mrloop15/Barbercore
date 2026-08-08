@@ -27,6 +27,7 @@ class ResponsiveTablesTest extends TestCase
             'servicios/index.blade.php',
             'productos/index.blade.php',
             'usuarios/index.blade.php',
+            'citas/index.blade.php',
             'ventas/index.blade.php',
             'ventas/show.blade.php',
             'recompensas/index.blade.php',
@@ -39,6 +40,8 @@ class ResponsiveTablesTest extends TestCase
 
             $this->assertStringContainsString('class="table-responsive', $markup, "{$view} no contiene una región responsive.");
             $this->assertStringContainsString('tabindex="0"', $markup, "{$view} no permite desplazamiento con teclado.");
+            $this->assertStringContainsString('role="region"', $markup, "{$view} no identifica la región desplazable.");
+            $this->assertStringContainsString('aria-label=', $markup, "{$view} no describe la tabla responsive.");
         }
     }
 

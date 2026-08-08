@@ -34,7 +34,7 @@
         <strong>{{ $desde->format('d/m/Y') }}{{ $periodo === 'rango' ? ' – ' . $hasta->format('d/m/Y') : '' }}</strong>
     </div>
 
-    <div class="appointment-table-scroll">
+    <div class="table-responsive appointment-table-scroll" tabindex="0" role="region" aria-label="Listado de citas">
     <table>
         <thead>
             <tr>

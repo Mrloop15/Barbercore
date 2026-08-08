@@ -1087,9 +1087,18 @@
                 calendar.closest('.custom-date-picker')?.querySelector('.custom-date-trigger')?.setAttribute('aria-expanded', 'false');
             });
         }
-        window.addEventListener('resize', closeOpenCalendars);
+
+        function calendarHasFocus() {
+            return document.activeElement instanceof Element
+                && document.activeElement.closest('.custom-calendar.open');
+        }
+
+        window.addEventListener('resize', function () {
+            if (calendarHasFocus()) return;
+            closeOpenCalendars();
+        });
         window.addEventListener('scroll', function (event) {
-            if (event.target instanceof Element && event.target.closest('.custom-calendar')) return;
+            if ((event.target instanceof Element && event.target.closest('.custom-calendar')) || calendarHasFocus()) return;
             closeOpenCalendars();
         }, true);
     })();
