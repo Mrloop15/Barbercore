@@ -2,7 +2,7 @@
     .service-image-empty {
         width: 150px;
         height: 105px;
-        border: 1px solid var(--border-color, #e5e7eb);
+        border: 1px solid var(--borde, #e5e0d6);
         border-radius: 10px;
     }
 
@@ -43,7 +43,7 @@
         justify-content: space-between;
         gap: 20px;
         padding: 16px;
-        border: 1px solid var(--border-color, #e5e7eb);
+        border: 1px solid var(--borde, #e5e0d6);
         border-radius: 10px;
         cursor: pointer;
     }
@@ -85,6 +85,11 @@
 
     .landing-switch-button { display: inline-flex; border: 0; padding: 4px; border-radius: 999px; background: transparent; cursor: pointer; }
     .landing-switch-button:hover .switch-track { box-shadow: 0 0 0 4px rgba(201, 162, 39, .12); }
+
+    html[data-theme="dark"] .service-image-empty { color: var(--gris); background: var(--crema); }
+    html[data-theme="dark"] .service-landing-option small { color: var(--gris); }
+    html[data-theme="dark"] .switch-track { background: #55594F; }
+    html[data-theme="dark"] .switch-track::after { background: #F4F1E8; }
 
     @media (max-width: 900px) {
         .service-form-layout { grid-template-columns: 1fr; }

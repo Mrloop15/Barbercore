@@ -21,6 +21,8 @@
         @case('plus') <path d="M12 5v14M5 12h14"/> @break
         @case('image') <rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m3 16 4.5-4.5 4 4 2.5-2.5 7 7"/> @break
         @case('user') <circle cx="12" cy="8" r="4"/><path d="M5 21v-2a7 7 0 0 1 14 0v2"/> @break
+        @case('sun') <circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.66 6.34l1.41-1.41"/> @break
+        @case('moon') <path d="M20.7 13.1A8 8 0 1 1 10.9 3.3 6.2 6.2 0 0 0 20.7 13.1Z"/> @break
         @default <circle cx="12" cy="12" r="9"/>
     @endswitch
 </svg>

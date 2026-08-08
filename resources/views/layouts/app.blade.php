@@ -14,6 +14,22 @@
     <meta charset="UTF-8">
     <title>@yield('title', 'BarberCore')</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script>
+        (() => {
+            const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            let theme = systemTheme;
+
+            try {
+                const savedTheme = localStorage.getItem('barbercore-theme');
+                if (savedTheme === 'dark' || savedTheme === 'light') theme = savedTheme;
+            } catch (error) {
+                // The system preference remains active when storage is unavailable.
+            }
+
+            document.documentElement.dataset.theme = theme;
+            document.querySelector('meta[name="theme-color"]').content = theme === 'dark' ? '#171815' : '#C9A227';
+        })();
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
@@ -135,6 +151,11 @@
             </div>
 
             <div class="topbar-actions">
+                <button id="themeToggle" class="theme-toggle" type="button" aria-label="Cambiar tema" aria-pressed="false" title="Cambiar tema">
+                    <span class="theme-toggle-halo" aria-hidden="true"></span>
+                    <x-icon name="sun" class="theme-toggle-icon theme-toggle-sun" />
+                    <x-icon name="moon" class="theme-toggle-icon theme-toggle-moon" />
+                </button>
                 <button id="installPwaBtn" class="pwa-install-btn is-initially-hidden" type="button">
                     <x-icon name="download" size="16" />
                     <span>Instalar BarberCore</span>
@@ -1272,6 +1293,7 @@
 <script src="/js/pwa-install.js"></script>
 <script src="/js/pwa-status.js"></script>
 <script src="/js/barber-dialog.js"></script>
+<script src="/js/theme-toggle.js"></script>
 
 </body>
 </html>
