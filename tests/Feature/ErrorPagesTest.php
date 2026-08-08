@@ -31,4 +31,17 @@ class ErrorPagesTest extends TestCase
                 ->assertSee($action);
         }
     }
+
+    public function test_google_material_symbols_are_self_hosted_and_cached_for_offline_use(): void
+    {
+        $layout = file_get_contents(resource_path('views/errors/layout.blade.php'));
+        $offline = file_get_contents(public_path('offline.html'));
+        $serviceWorker = file_get_contents(public_path('sw.js'));
+
+        $this->assertFileExists(public_path('fonts/material-symbols-barbercore.woff2'));
+        $this->assertStringContainsString('Material Symbols Outlined', $layout);
+        $this->assertStringContainsString('Material Symbols Outlined', $offline);
+        $this->assertStringContainsString('/fonts/material-symbols-barbercore.woff2?v=1', $serviceWorker);
+        $this->assertStringContainsString('wifi_off', $offline);
+    }
 }

@@ -8,6 +8,14 @@
     <title>@yield('code') | @yield('title') - BarberCore</title>
     <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png?v=2">
     <style>
+        @font-face {
+            font-family: "Material Symbols Outlined";
+            font-style: normal;
+            font-weight: 400;
+            font-display: block;
+            src: url("/fonts/material-symbols-barbercore.woff2?v=1") format("woff2");
+        }
+
         :root {
             --gold: #c9a227;
             --gold-dark: #8b6a12;
@@ -19,6 +27,21 @@
         }
 
         * { box-sizing: border-box; }
+
+        .material-symbol {
+            display: inline-block;
+            font-family: "Material Symbols Outlined";
+            font-weight: normal;
+            font-style: normal;
+            line-height: 1;
+            letter-spacing: normal;
+            text-transform: none;
+            white-space: nowrap;
+            direction: ltr;
+            font-feature-settings: "liga";
+            -webkit-font-feature-settings: "liga";
+            -webkit-font-smoothing: antialiased;
+        }
 
         body {
             margin: 0;
@@ -122,7 +145,7 @@
             font-size: 11px;
         }
 
-        .status-label svg { width: 15px; height: 15px; color: var(--gold); }
+        .status-label .material-symbol { color: var(--gold); font-size: 15px; }
 
         .content-panel {
             display: flex;
@@ -143,14 +166,7 @@
             color: var(--gold-dark);
         }
 
-        .error-icon svg { width: 29px; height: 29px; }
-        svg {
-            fill: none;
-            stroke: currentColor;
-            stroke-linecap: round;
-            stroke-linejoin: round;
-            stroke-width: 1.8;
-        }
+        .error-icon .material-symbol { font-size: 29px; }
 
         .eyebrow {
             margin-bottom: 9px;
@@ -201,8 +217,8 @@
         .action:hover { transform: translateY(-2px); box-shadow: 0 16px 28px rgba(28, 28, 28, .2); }
         .action.secondary:hover { background: var(--paper); box-shadow: none; }
         .action:focus-visible { outline: 3px solid rgba(201, 162, 39, .35); outline-offset: 3px; }
-        .action svg { width: 17px; height: 17px; color: var(--gold); stroke-width: 2; }
-        .action.secondary svg { color: var(--gold-dark); }
+        .action .material-symbol { color: var(--gold); font-size: 18px; }
+        .action.secondary .material-symbol { color: var(--gold-dark); }
 
         @media (max-width: 720px) {
             body { padding: 18px; }
@@ -245,7 +261,7 @@
             </div>
             <div class="status-code" aria-hidden="true">@yield('code')</div>
             <div class="status-label">
-                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-8 9-4.5-1.5-8-4-8-9V5l8-3 8 3Z"/><path d="m9 12 2 2 4-4"/></svg>
+                <span class="material-symbol" aria-hidden="true">security</span>
                 Respuesta segura de BarberCore
             </div>
         </aside>
