@@ -185,7 +185,7 @@
         body.booking-open { overflow: hidden; }
         .booking-modal { position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; padding: 22px; background: rgba(17,17,17,.72); opacity: 0; visibility: hidden; transition: opacity .2s ease, visibility .2s ease; }
         .booking-modal.is-open { opacity: 1; visibility: visible; }
-        .booking-dialog { width: min(640px, 100%); max-height: calc(100vh - 44px); overflow-y: auto; border: 1px solid var(--borde); background: var(--blanco); box-shadow: 0 28px 80px rgba(0,0,0,.3); transform: translateY(12px); transition: transform .2s ease; }
+        .booking-dialog { width: min(640px, 100%); min-width: 0; max-width: 100%; max-height: calc(100vh - 44px); overflow-x: hidden; overflow-y: auto; border: 1px solid var(--borde); background: var(--blanco); box-shadow: 0 28px 80px rgba(0,0,0,.3); transform: translateY(12px); transition: transform .2s ease; }
         .booking-modal.is-open .booking-dialog { transform: none; }
         .booking-head { display: grid; grid-template-columns: 1fr 42px; gap: 20px; align-items: start; padding: 26px 28px; background: var(--oscuro); color: var(--blanco); }
         .booking-head .kicker { margin-bottom: 8px; }
@@ -232,21 +232,22 @@
         .booking-time-slot:hover { border-color: var(--dorado); background: rgba(201,162,39,.08); color: var(--dorado); }
         .booking-time-slot.selected { border-color: var(--dorado); background: var(--dorado); color: var(--blanco); box-shadow: 0 5px 12px rgba(201,162,39,.22); }
         .booking-time-empty { grid-column: 1 / -1; padding: 16px 8px; color: var(--gris); font-size: 11px; line-height: 1.5; text-align: center; }
-        .booking-note { margin: 18px 0; padding: 13px 14px; border-left: 3px solid var(--dorado); background: var(--fondo); color: var(--gris); font-size: 11px; line-height: 1.6; }
+        .booking-note { margin: 18px 0; padding: 13px 14px; border-left: 3px solid var(--dorado); background: var(--fondo); color: var(--gris); font-size: 11px; line-height: 1.6; overflow-wrap: anywhere; }
         .booking-submit { width: 100%; border: 0; background: var(--verde); color: var(--blanco); cursor: pointer; }
 
         .rewards-submit { width: 100%; margin-top: 6px; }
-        .rewards-result { margin-top: 22px; }
-        .rewards-client { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 16px 18px; border: 1px solid var(--borde); background: var(--fondo); margin-bottom: 16px; }
-        .rewards-client strong { font-family: Georgia, serif; font-size: 16px; }
-        .rewards-points { color: var(--dorado); font-size: 21px; font-weight: 900; white-space: nowrap; }
-        .reward-item { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 13px 16px; border: 1px solid var(--borde); margin-bottom: 8px; }
+        .rewards-result { min-width: 0; max-width: 100%; margin-top: 22px; }
+        .rewards-client { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 7px 12px; min-width: 0; padding: 16px 18px; border: 1px solid var(--borde); background: var(--fondo); margin-bottom: 16px; }
+        .rewards-client strong { min-width: 0; font-family: Georgia, serif; font-size: 16px; overflow-wrap: anywhere; }
+        .rewards-summary { max-width: 100%; color: var(--dorado); font-size: 12px; font-weight: 900; line-height: 1.35; text-align: right; overflow-wrap: anywhere; }
+        .reward-item { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px 14px; min-width: 0; padding: 13px 16px; border: 1px solid var(--borde); margin-bottom: 8px; }
         .reward-item.is-available { border-color: var(--dorado); background: rgba(201, 162, 39, .06); }
-        .reward-item-name { font-weight: 800; font-size: 13px; }
-        .reward-item-desc { margin-top: 3px; color: var(--gris); font-size: 11px; line-height: 1.5; }
-        .reward-item-points { color: var(--gris); font-size: 11px; font-weight: 800; text-align: right; white-space: nowrap; }
+        .reward-item-copy { flex: 1 1 180px; min-width: 0; }
+        .reward-item-name { font-weight: 800; font-size: 13px; overflow-wrap: anywhere; }
+        .reward-item-desc { margin-top: 3px; color: var(--gris); font-size: 11px; line-height: 1.5; overflow-wrap: anywhere; }
+        .reward-item-points { flex: 0 1 auto; max-width: 100%; color: var(--gris); font-size: 11px; font-weight: 800; text-align: right; white-space: normal; overflow-wrap: anywhere; }
         .reward-item.is-available .reward-item-points { color: var(--dorado); }
-        .rewards-empty, .rewards-error { padding: 18px; border: 1px dashed var(--borde); color: var(--gris); font-size: 13px; text-align: center; }
+        .rewards-empty, .rewards-error { padding: 18px; border: 1px dashed var(--borde); color: var(--gris); font-size: 13px; text-align: center; overflow-wrap: anywhere; }
         .rewards-error { border-color: #c0392b; color: #c0392b; }
 
         .footer { padding: 55px 0 25px; background: var(--oscuro); color: var(--blanco); }
@@ -347,6 +348,10 @@
 
         @media (max-width: 500px) {
             .brand-name small { display: none; }
+            .header-inner { grid-template-columns: minmax(0, 1fr) auto; gap: 12px; }
+            .brand { min-width: 0; }
+            .brand-name { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+            .nav-right { gap: 8px; }
             .hero-actions { display: grid; }
             .hero-actions .btn { width: 100%; }
             .hero-signature { display: none; }
@@ -369,7 +374,12 @@
             .booking-head, .booking-body { padding: 21px; }
             .booking-grid { grid-template-columns: 1fr; }
             .booking-field.full { grid-column: auto; }
+            .booking-field input, .booking-field select, .booking-field textarea { font-size: 16px; }
             .booking-calendar, .booking-time-panel { width: min(330px, calc(100vw - 24px)); }
+            .rewards-client { align-items: flex-start; padding: 14px; }
+            .rewards-summary { text-align: left; }
+            .reward-item { align-items: flex-start; padding: 13px 14px; }
+            .reward-item-points { text-align: left; }
         }
 
         @media (prefers-reduced-motion: reduce) {

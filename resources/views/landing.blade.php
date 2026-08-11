@@ -675,10 +675,12 @@
                     return;
                 }
 
+                const availableRewards = data.recompensas.filter((recompensa) => recompensa.disponible).length;
+                const availableLabel = `${availableRewards} ${availableRewards === 1 ? 'disponible' : 'disponibles'}`;
                 const rewardsHtml = data.recompensas.length
                     ? data.recompensas.map((recompensa) => `
                         <div class="reward-item ${recompensa.disponible ? 'is-available' : ''}">
-                            <div>
+                            <div class="reward-item-copy">
                                 <div class="reward-item-name">${escapeHtml(recompensa.nombre)}</div>
                                 ${recompensa.descripcion ? `<div class="reward-item-desc">${escapeHtml(recompensa.descripcion)}</div>` : ''}
                             </div>
@@ -688,7 +690,7 @@
                     : '<div class="rewards-empty">Aún no hay recompensas configuradas.</div>';
 
                 rewardsResult.innerHTML = `
-                    <div class="rewards-client"><strong>Cliente verificado</strong><span class="rewards-points">Disponibilidad protegida</span></div>
+                    <div class="rewards-client"><strong>Beneficios para ti</strong><span class="rewards-summary">${availableLabel}</span></div>
                     ${rewardsHtml}
                 `;
             };
