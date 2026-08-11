@@ -391,7 +391,10 @@
             if (opened && !opened.wrapper.contains(event.target) && !opened.menu.contains(event.target)) close(opened);
         });
         window.addEventListener('resize', () => opened && position(opened));
-        window.addEventListener('scroll', () => close(opened), true);
+        window.addEventListener('scroll', function (event) {
+            if (!opened || (event.target instanceof Node && opened.menu.contains(event.target))) return;
+            close(opened);
+        }, true);
     })();
 
     (function () {
