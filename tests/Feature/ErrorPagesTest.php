@@ -41,7 +41,7 @@ class ErrorPagesTest extends TestCase
         $this->assertFileExists(public_path('fonts/material-symbols-barbercore.woff2'));
         $this->assertStringContainsString('Material Symbols Outlined', $layout);
         $this->assertStringContainsString('Material Symbols Outlined', $offline);
-        $this->assertStringContainsString('/fonts/material-symbols-barbercore.woff2?v=1', $serviceWorker);
+        $this->assertStringContainsString('/fonts/material-symbols-barbercore.woff2?v=3', $serviceWorker);
         $this->assertStringContainsString('wifi_off', $offline);
     }
 }

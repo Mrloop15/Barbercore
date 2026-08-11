@@ -48,8 +48,8 @@
     <div class="topbar">
         <div class="container topbar-inner">
             <div class="topbar-group">
-                <span class="topbar-item"><svg class="icon" viewBox="0 0 24 24"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></svg>{{ $barberia?->direccion ?? 'Ubicación disponible por WhatsApp' }}</span>
-                <span class="topbar-item"><svg class="icon" viewBox="0 0 24 24"><path d="M22 16.9v3a2 2 0 0 1-2.2 2A19.8 19.8 0 0 1 3.1 5.2 2 2 0 0 1 5.1 3h3a2 2 0 0 1 2 1.7c.1.9.3 1.8.7 2.6a2 2 0 0 1-.5 2.1L9 10.7a16 16 0 0 0 4.3 4.3l1.3-1.3a2 2 0 0 1 2.1-.5c.8.4 1.7.6 2.6.7a2 2 0 0 1 1.7 2Z"/></svg>{{ $barberia?->telefono ?? 'Atención directa' }}</span>
+                <span class="topbar-item"><span class="material-symbol" aria-hidden="true">location_on</span>{{ $barberia?->direccion ?? 'Ubicación disponible por WhatsApp' }}</span>
+                <span class="topbar-item"><span class="material-symbol" aria-hidden="true">call</span>{{ $barberia?->telefono ?? 'Atención directa' }}</span>
             </div>
             <div class="topbar-group topbar-group-status">
                 <span class="topbar-status {{ $negocioAbierto ? 'is-open' : 'is-closed' }}"><span class="topbar-status-dot" aria-hidden="true"></span>{{ $negocioAbierto ? 'Abierto ahora' : 'Cerrado ahora' }}</span>
@@ -74,8 +74,8 @@
 
             <nav class="nav-list nav-right" aria-label="Acciones">
                 <a class="nav-link" href="#contacto">Contacto</a>
-                <button class="btn btn-map" type="button" data-rewards-open><svg class="icon" viewBox="0 0 24 24"><path d="M12 2 3 7v6c0 5 4 9 9 9s9-4 9-9V7l-9-5Z"/><path d="m9 12 2 2 4-5"/></svg><span>Mis recompensas</span></button>
-                <a class="btn btn-dark" href="{{ route('login') }}"><svg class="icon" viewBox="0 0 24 24"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M15 12H3"/></svg><span>Acceso</span></a>
+                <button class="btn btn-map" type="button" data-rewards-open><span class="material-symbol" aria-hidden="true">verified_user</span><span>Mis recompensas</span></button>
+                <a class="btn btn-dark" href="{{ route('login') }}"><span class="material-symbol" aria-hidden="true">login</span><span>Acceso</span></a>
             </nav>
         </div>
     </header>
@@ -88,7 +88,7 @@
                     <h1>Tu imagen,<br><em>en buenas manos.</em></h1>
                     <p class="hero-copy">Una experiencia de cuidado masculino basada en técnica, atención y detalle. Porque un buen servicio se reconoce desde el primer momento.</p>
                     <div class="hero-actions">
-                        <button class="btn btn-gold" type="button" data-booking-open><svg class="icon" viewBox="0 0 24 24"><path d="M8 2v3M16 2v3M3.5 9h17M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z"/><path d="m9 16 2 2 4-5"/></svg>Reservar una cita</button>
+                        <button class="btn btn-gold" type="button" data-booking-open><span class="material-symbol" aria-hidden="true">event_available</span>Reservar una cita</button>
                         <a class="btn btn-light" href="#servicios">Conocer servicios</a>
                     </div>
                     <div class="hero-signature">El estilo correcto habla antes que tú.</div>
@@ -98,9 +98,9 @@
 
         <div class="trust-wrap">
             <div class="container trust-bar">
-                <div class="trust-item" data-reveal><span class="trust-icon"><svg class="icon" viewBox="0 0 24 24"><path d="m20 6-11 11-5-5"/></svg></span><div><strong>Atención personalizada</strong><span>Escuchamos lo que buscas antes de empezar.</span></div></div>
-                <div class="trust-item reveal-delay-70" data-reveal><span class="trust-icon"><svg class="icon" viewBox="0 0 24 24"><path d="M3 12h18M5 7h14M7 17h10"/><path d="M8 3h8M9 21h6"/></svg></span><div><strong>Precisión profesional</strong><span>Técnica y cuidado en cada acabado.</span></div></div>
-                <div class="trust-item reveal-delay-140" data-reveal><span class="trust-icon"><svg class="icon" viewBox="0 0 24 24"><path d="M8 2v3M16 2v3M3.5 9h17M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z"/></svg></span><div><strong>Reserva directa</strong><span>Agenda fácilmente desde WhatsApp.</span></div></div>
+                <div class="trust-item" data-reveal><span class="trust-icon"><span class="material-symbol" aria-hidden="true">check</span></span><div><strong>Atención personalizada</strong><span>Escuchamos lo que buscas antes de empezar.</span></div></div>
+                <div class="trust-item reveal-delay-70" data-reveal><span class="trust-icon"><span class="material-symbol" aria-hidden="true">tune</span></span><div><strong>Precisión profesional</strong><span>Técnica y cuidado en cada acabado.</span></div></div>
+                <div class="trust-item reveal-delay-140" data-reveal><span class="trust-icon"><span class="material-symbol" aria-hidden="true">calendar_month</span></span><div><strong>Reserva directa</strong><span>Agenda fácilmente desde WhatsApp.</span></div></div>
             </div>
         </div>
 
@@ -120,10 +120,10 @@
                         </div>
                         <div class="carousel-buttons">
                             <button class="carousel-button" type="button" data-carousel-prev aria-label="Ver servicios anteriores">
-                                <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>
+                                <span class="material-symbol" aria-hidden="true">chevron_left</span>
                             </button>
                             <button class="carousel-button" type="button" data-carousel-next aria-label="Ver más servicios">
-                                <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+                                <span class="material-symbol" aria-hidden="true">chevron_right</span>
                             </button>
                         </div>
                     </div>
@@ -132,27 +132,32 @@
                 <div class="services-carousel {{ $usarCarrusel ? 'is-active' : '' }}" @if($usarCarrusel) data-services-carousel @endif>
                 <div class="services" @if($usarCarrusel) data-carousel-track tabindex="0" aria-label="Servicios disponibles" @endif>
                     @forelse($servicios as $servicio)
+                        @php
+                            $nombreServicioNormalizado = \Illuminate\Support\Str::lower(
+                                \Illuminate\Support\Str::ascii($servicio->nombre),
+                            );
+                            $iconoServicio = match (true) {
+                                \Illuminate\Support\Str::contains($nombreServicioNormalizado, ['barba', 'afeitad', 'rasur']) => 'face_retouching_natural',
+                                \Illuminate\Support\Str::contains($nombreServicioNormalizado, ['tratamiento', 'hidrat', 'facial', 'masaje', 'spa']) => 'spa',
+                                \Illuminate\Support\Str::contains($nombreServicioNormalizado, ['corte', 'cabello', 'peinad']) => 'content_cut',
+                                default => 'health_and_beauty',
+                            };
+                        @endphp
                         <article class="service" data-reveal style="--reveal-delay: {{ min($loop->index * 55, 220) }}ms">
                             <div class="service-media">
                                 @if($servicio->imagen)
                                     <img src="{{ asset('storage/' . $servicio->imagen) }}" alt="{{ $servicio->nombre }} en {{ $nombreBarberia }}" loading="lazy">
                                 @else
                                     <div class="service-media-empty" role="img" aria-label="Imagen no disponible para {{ $servicio->nombre }}">
-                                        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m3 16 4.5-4.5 4 4 2.5-2.5 7 7"/></svg>
-                                        <span>Imagen no disponible</span>
+                                        <span class="material-symbol" aria-hidden="true">image</span>
+                                        <span class="service-media-label">Imagen no disponible</span>
                                     </div>
                                 @endif
                             </div>
                             <div class="service-body">
                                 <div class="service-top">
-                                    <span class="service-icon">
-                                        @if($loop->iteration % 3 === 1)
-                                            <svg class="icon" viewBox="0 0 24 24"><circle cx="6" cy="7" r="3"/><circle cx="6" cy="17" r="3"/><path d="m8.6 8.5 11.4 7M8.6 15.5 20 8M14.5 12 20 20"/></svg>
-                                        @elseif($loop->iteration % 3 === 2)
-                                            <svg class="icon" viewBox="0 0 24 24"><path d="M4 17h13l3-7H7l-3 7Z"/><path d="m7 10 2-3h10l1 3M7 17l-2 4M16 17l2 4"/></svg>
-                                        @else
-                                            <svg class="icon" viewBox="0 0 24 24"><path d="M6 3h12l2 4-8 14L4 7l2-4Z"/><path d="M4 7h16M9 3l3 18 3-18"/></svg>
-                                        @endif
+                                    <span class="service-icon" aria-hidden="true">
+                                        <span class="material-symbol">{{ $iconoServicio }}</span>
                                     </span>
                                     <span class="service-index">{{ str_pad($loop->iteration, 2, '0', STR_PAD_LEFT) }}</span>
                                 </div>
@@ -160,7 +165,7 @@
                                 <p>{{ $servicio->descripcion ?: 'Servicio profesional realizado con atención y cuidado en cada detalle.' }}</p>
                                 <div class="service-footer">
                                     <span class="price">${{ number_format($servicio->precio, 2) }}</span>
-                                    @if($servicio->duracion_minutos)<span class="duration"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>{{ $servicio->duracion_minutos }} min</span>@endif
+                                    @if($servicio->duracion_minutos)<span class="duration"><span class="material-symbol" aria-hidden="true">schedule</span>{{ $servicio->duracion_minutos }} min</span>@endif
                                 </div>
                             </div>
                         </article>
@@ -197,14 +202,14 @@
                     <p class="copy">Consulta nuestros horarios y encuentra la barbería fácilmente.</p>
                     <div class="contact-actions">
                         @if($googleMapsUrl)
-                            <a class="btn btn-map" href="{{ $googleMapsUrl }}" target="_blank" rel="noopener noreferrer"><svg class="icon" viewBox="0 0 24 24"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></svg>Ver en Google Maps</a>
+                            <a class="btn btn-map" href="{{ $googleMapsUrl }}" target="_blank" rel="noopener noreferrer"><span class="material-symbol" aria-hidden="true">location_on</span>Ver en Google Maps</a>
                         @endif
                     </div>
                 </div>
                 <div class="contact-details">
-                    <div class="detail"><span class="detail-icon"><svg class="icon" viewBox="0 0 24 24"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></svg></span><div><small>Dirección</small><strong>{{ $barberia?->direccion ?? 'Solicita la ubicación por WhatsApp' }}</strong></div></div>
-                    <div class="detail"><span class="detail-icon"><svg class="icon" viewBox="0 0 24 24"><path d="M22 16.9v3a2 2 0 0 1-2.2 2A19.8 19.8 0 0 1 3.1 5.2 2 2 0 0 1 5.1 3h3a2 2 0 0 1 2 1.7c.1.9.3 1.8.7 2.6a2 2 0 0 1-.5 2.1L9 10.7a16 16 0 0 0 4.3 4.3l1.3-1.3a2 2 0 0 1 2.1-.5c.8.4 1.7.6 2.6.7a2 2 0 0 1 1.7 2Z"/></svg></span><div><small>Teléfono</small><strong>{{ $barberia?->telefono ?? 'Disponible por WhatsApp' }}</strong></div></div>
-                    <div class="detail"><span class="detail-icon"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span><div><small>Horarios de atención</small><div class="hours-summary">
+                    <div class="detail"><span class="detail-icon"><span class="material-symbol" aria-hidden="true">location_on</span></span><div><small>Dirección</small><strong>{{ $barberia?->direccion ?? 'Solicita la ubicación por WhatsApp' }}</strong></div></div>
+                    <div class="detail"><span class="detail-icon"><span class="material-symbol" aria-hidden="true">call</span></span><div><small>Teléfono</small><strong>{{ $barberia?->telefono ?? 'Disponible por WhatsApp' }}</strong></div></div>
+                    <div class="detail"><span class="detail-icon"><span class="material-symbol" aria-hidden="true">schedule</span></span><div><small>Horarios de atención</small><div class="hours-summary">
                         @forelse($horarios as $horario)
                             <span class="hours-line"><b>{{ $diasSemana[$horario->dia_semana] }}</b><span>{{ $horario->abierto ? substr($horario->hora_apertura, 0, 5) . ' – ' . substr($horario->hora_cierre, 0, 5) : 'Cerrado' }}</span></span>
                         @empty
@@ -222,7 +227,7 @@
                     <div class="faq-list">
                         @foreach($preguntasFrecuentes as $faq)
                             <details class="faq-item" data-reveal style="--reveal-delay: {{ min($loop->index * 55, 220) }}ms" @if($loop->first) open @endif>
-                                <summary>{{ $faq->pregunta }}</summary>
+                                <summary><span>{{ $faq->pregunta }}</span><span class="faq-toggle material-symbol" aria-hidden="true">add</span></summary>
                                 <div class="faq-answer"><div class="faq-answer-inner">{{ $faq->respuesta }}</div></div>
                             </details>
                         @endforeach
@@ -232,7 +237,7 @@
         @endif
 
         <section class="cta">
-            <div class="container cta-inner" data-reveal><div><h2>Haz espacio para verte mejor.</h2><p>Completa tus datos y envía tu solicitud directamente por WhatsApp.</p></div><button class="btn btn-dark" type="button" data-booking-open><svg class="icon" viewBox="0 0 24 24"><path d="M8 2v3M16 2v3M3.5 9h17M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z"/></svg>Reservar ahora</button></div>
+            <div class="container cta-inner" data-reveal><div><h2>Haz espacio para verte mejor.</h2><p>Completa tus datos y envía tu solicitud directamente por WhatsApp.</p></div><button class="btn btn-dark" type="button" data-booking-open><span class="material-symbol" aria-hidden="true">calendar_month</span>Reservar ahora</button></div>
         </section>
     </main>
 
@@ -265,7 +270,7 @@
         <div class="booking-dialog">
             <div class="booking-head">
                 <div><span class="kicker">Solicitud por WhatsApp</span><h2 id="booking-title">Cuéntanos cuándo quieres venir</h2></div>
-                <button class="booking-close" type="button" data-booking-close aria-label="Cerrar formulario"><svg class="icon" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></svg></button>
+                <button class="booking-close" type="button" data-booking-close aria-label="Cerrar formulario"><span class="material-symbol" aria-hidden="true">close</span></button>
             </div>
             <form class="booking-body" id="booking-form">
                 <div class="booking-grid">
@@ -276,7 +281,7 @@
                     <div class="booking-field full"><label for="booking-notes">Comentario opcional</label><textarea id="booking-notes" name="comentarios" maxlength="400" placeholder="Ej. Prefiero un corte con acabado natural."></textarea></div>
                 </div>
                 <p class="booking-note">Esta solicitud no crea ni confirma una cita automáticamente. Se abrirá WhatsApp y nuestro equipo confirmará contigo la disponibilidad.</p>
-                <button class="btn booking-submit" type="submit"><svg class="icon" viewBox="0 0 24 24"><path d="M22 2 11 13"/><path d="m22 2-7 20-4-9-9-4Z"/></svg>Enviar solicitud por WhatsApp</button>
+                <button class="btn booking-submit" type="submit"><span class="material-symbol" aria-hidden="true">send</span>Enviar solicitud por WhatsApp</button>
             </form>
         </div>
     </div>
@@ -285,7 +290,7 @@
         <div class="booking-dialog">
             <div class="booking-head">
                 <div><span class="kicker">Programa de lealtad</span><h2 id="rewards-title">Consulta tus recompensas</h2></div>
-                <button class="booking-close" type="button" data-rewards-close aria-label="Cerrar formulario"><svg class="icon" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></svg></button>
+                <button class="booking-close" type="button" data-rewards-close aria-label="Cerrar formulario"><span class="material-symbol" aria-hidden="true">close</span></button>
             </div>
             <div class="booking-body">
                 <form id="rewards-form">
@@ -296,7 +301,7 @@
                         </div>
                     </div>
                     <p class="booking-note">Busca tus puntos acumulados y las recompensas disponibles con el número registrado en {{ $nombreBarberia }}.</p>
-                    <button class="btn btn-gold rewards-submit" type="submit"><svg class="icon" viewBox="0 0 24 24"><path d="M12 2 3 7v6c0 5 4 9 9 9s9-4 9-9V7l-9-5Z"/><path d="m9 12 2 2 4-5"/></svg>Consultar recompensas</button>
+                    <button class="btn btn-gold rewards-submit" type="submit"><span class="material-symbol" aria-hidden="true">verified_user</span>Consultar recompensas</button>
                 </form>
                 <div class="rewards-result" id="rewards-result" hidden></div>
             </div>
@@ -314,7 +319,7 @@
                     <span>En línea · WhatsApp</span>
                 </div>
                 <button class="chat-close" type="button" aria-label="Cerrar chat">
-                    <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg>
+                    <span class="material-symbol" aria-hidden="true">close</span>
                 </button>
             </div>
 
@@ -329,7 +334,7 @@
                     <label class="chat-label" for="whatsapp-message">Escribe tu mensaje</label>
                     <textarea class="chat-message" id="whatsapp-message" name="text" placeholder="Ej. Hola, quiero agendar un corte..." required maxlength="500"></textarea>
                     <button class="chat-action" type="submit">
-                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 3.5A11.7 11.7 0 0 0 12.1 0C5.6 0 .3 5.3.3 11.8c0 2.1.5 4.1 1.6 5.9L.2 24l6.5-1.7a11.8 11.8 0 0 0 5.4 1.4c6.5 0 11.8-5.3 11.8-11.8 0-3.2-1.2-6.1-3.4-8.4Zm-8.4 18.2c-1.7 0-3.5-.5-5-1.4l-.4-.2-3.8 1 1-3.7-.2-.4a9.8 9.8 0 1 1 8.4 4.7Zm5.4-7.3c-.3-.1-1.7-.8-2-1-.3-.1-.5-.1-.7.2-.2.3-.8 1-.9 1.2-.2.2-.3.2-.6.1-1.7-.8-2.8-1.5-3.9-3.4-.3-.5.3-.5.8-1.6.1-.2 0-.4 0-.6l-.9-2.1c-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.6.1-.9.4-.3.3-1.2 1.2-1.2 2.9s1.2 3.3 1.4 3.5c.1.2 2.4 3.7 5.9 5.2 2.2.9 3.1 1 4.2.8.7-.1 1.7-.7 1.9-1.3.2-.7.2-1.2.2-1.3-.1-.1-.3-.2-.6-.3Z"/></svg>
+                        <x-icon name="whatsapp" class="whatsapp-icon" />
                         Enviar por WhatsApp
                     </button>
                 </form>
@@ -339,7 +344,7 @@
 
         <button class="whatsapp-toggle" type="button" aria-label="Abrir chat de WhatsApp" aria-controls="whatsapp-panel" aria-expanded="false">
             <span class="whatsapp-badge" aria-hidden="true">1</span>
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 3.5A11.7 11.7 0 0 0 12.1 0C5.6 0 .3 5.3.3 11.8c0 2.1.5 4.1 1.6 5.9L.2 24l6.5-1.7a11.8 11.8 0 0 0 5.4 1.4c6.5 0 11.8-5.3 11.8-11.8 0-3.2-1.2-6.1-3.4-8.4Zm-8.4 18.2c-1.7 0-3.5-.5-5-1.4l-.4-.2-3.8 1 1-3.7-.2-.4a9.8 9.8 0 1 1 8.4 4.7Zm5.4-7.3c-.3-.1-1.7-.8-2-1-.3-.1-.5-.1-.7.2-.2.3-.8 1-.9 1.2-.2.2-.3.2-.6.1-1.7-.8-2.8-1.5-3.9-3.4-.3-.5.3-.5.8-1.6.1-.2 0-.4 0-.6l-.9-2.1c-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.6.1-.9.4-.3.3-1.2 1.2-1.2 2.9s1.2 3.3 1.4 3.5c.1.2 2.4 3.7 5.9 5.2 2.2.9 3.1 1 4.2.8.7-.1 1.7-.7 1.9-1.3.2-.7.2-1.2.2-1.3-.1-.1-.3-.2-.6-.3Z"/></svg>
+            <x-icon name="whatsapp" class="whatsapp-icon" />
         </button>
     </div>
 
@@ -421,9 +426,9 @@
             const datePicker = document.createElement('div');
             datePicker.className = 'booking-picker';
             datePicker.innerHTML = `
-                <button type="button" class="booking-picker-trigger" aria-expanded="false"><span></span><svg class="icon" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/></svg></button>
+                <button type="button" class="booking-picker-trigger" aria-expanded="false"><span></span><span class="material-symbol" aria-hidden="true">calendar_month</span></button>
                 <div class="booking-calendar" role="dialog" aria-label="Seleccionar fecha">
-                    <div class="booking-calendar-head"><button type="button" class="booking-calendar-nav prev" aria-label="Mes anterior">‹</button><strong></strong><button type="button" class="booking-calendar-nav next" aria-label="Mes siguiente">›</button></div>
+                    <div class="booking-calendar-head"><button type="button" class="booking-calendar-nav prev" aria-label="Mes anterior"><span class="material-symbol" aria-hidden="true">chevron_left</span></button><strong></strong><button type="button" class="booking-calendar-nav next" aria-label="Mes siguiente"><span class="material-symbol" aria-hidden="true">chevron_right</span></button></div>
                     <div class="booking-calendar-week">${weekdays.map((day) => `<span>${day}</span>`).join('')}</div>
                     <div class="booking-calendar-days"></div>
                     <div class="booking-calendar-footer"><button type="button">Ir a hoy</button><span>Selecciona un día</span></div>
@@ -498,7 +503,7 @@
             const timePicker = document.createElement('div');
             timePicker.className = 'booking-picker';
             timePicker.innerHTML = `
-                <button type="button" class="booking-picker-trigger" aria-expanded="false"><span></span><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></button>
+                <button type="button" class="booking-picker-trigger" aria-expanded="false"><span></span><span class="material-symbol" aria-hidden="true">schedule</span></button>
                 <div class="booking-time-panel" role="dialog" aria-label="Seleccionar hora">
                     <div class="booking-time-head"><strong>Selecciona un horario</strong><span>Intervalos de 15 min</span></div>
                     <div class="booking-time-period morning"><div class="booking-time-label">Mañana</div><div class="booking-time-slots"></div></div>
