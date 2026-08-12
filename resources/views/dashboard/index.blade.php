@@ -59,14 +59,14 @@
 @endphp
 
 <div class="dashboard-charts stats-section">
-    <div class="content-card status-chart-card">
+    <div class="content-card status-chart-card dashboard-chart-reveal" data-chart-reveal>
         <div><span class="agenda-eyebrow">Rendimiento mensual</span><h3>Estado de las citas</h3></div>
         <div class="donut-layout">
             <div class="status-donut" style="--completed: {{ $porcentajeCompletadas }}%; --pending: {{ $porcentajeCompletadas + $porcentajePendientes }}%;"><div><strong>{{ $tasaFinalizacion }}%</strong><span>finalizadas</span></div></div>
             <div class="chart-legend-list"><span><i class="completed"></i>Completadas <strong>{{ $citasCompletadas }}</strong></span><span><i class="pending"></i>Pendientes <strong>{{ $citasPendientes }}</strong></span><span><i class="cancelled"></i>Canceladas <strong>{{ $citasCanceladas }}</strong></span></div>
         </div>
     </div>
-    <div class="content-card income-chart-card">
+    <div class="content-card income-chart-card dashboard-chart-reveal" data-chart-reveal>
         <div><span class="agenda-eyebrow">Flujo reciente</span><h3>Ingresos de los últimos 7 días</h3></div>
         <div class="income-area-chart">
             <div class="income-area-plot" role="img" aria-label="Ingresos de los últimos siete días">
@@ -88,7 +88,7 @@
                 @foreach ($puntosIngreso as $punto)
                     <span
                         class="income-area-point"
-                        style="--point-x: {{ $punto['x'] }}%; --point-y: {{ $punto['y'] }}%;"
+                        style="--point-x: {{ $punto['x'] }}%; --point-y: {{ $punto['y'] }}%; --reveal-delay: {{ 700 + ($loop->index * 280) }}ms;"
                         title="{{ $punto['label'] }}: ${{ number_format($punto['total'], 2) }}"
                         aria-hidden="true"
                     ></span>
@@ -149,12 +149,12 @@
 </div>
 
 <div class="stats-two-columns stats-section">
-    <div class="content-card"><h3 class="card-title-flush">Servicios más vendidos</h3><div class="chart-list">
+    <div class="content-card dashboard-chart-reveal" data-chart-reveal><h3 class="card-title-flush">Servicios más vendidos</h3><div class="chart-list">
         @forelse ($serviciosMasVendidos as $servicio)
-            <div class="chart-item"><div class="chart-label">{{ $servicio->nombre }}</div><div class="chart-bar-bg"><div class="chart-bar" style="width: {{ ($servicio->total / $maxServicios) * 100 }}%;"></div></div><div class="chart-value">{{ $servicio->total }}</div></div>
+            <div class="chart-item"><div class="chart-label">{{ $servicio->nombre }}</div><div class="chart-bar-bg"><div class="chart-bar" style="width: {{ ($servicio->total / $maxServicios) * 100 }}%; --reveal-delay: {{ $loop->index * 170 }}ms;"></div></div><div class="chart-value">{{ $servicio->total }}</div></div>
         @empty <p class="no-action">Sin servicios completados en este periodo.</p> @endforelse
     </div></div>
-    <div class="content-card frequent-clients-panel">
+    <div class="content-card frequent-clients-panel dashboard-chart-reveal" data-chart-reveal>
         <div class="client-cards-heading">
             <h3 class="card-title-flush">Clientes más frecuentes</h3>
             <span>Este mes</span>
@@ -176,7 +176,7 @@
                                 mb_substr(trim((string) $cliente->apellido), 0, 1)
                             );
                         @endphp
-                        <li class="client-rank-card client-rank-card--{{ $loop->iteration }}">
+                        <li class="client-rank-card client-rank-card--{{ $loop->iteration }}" style="--reveal-delay: {{ $loop->index * 170 }}ms;">
                             <span class="client-rank-avatar" aria-hidden="true">{{ $inicialesCliente ?: 'BC' }}</span>
                             <strong class="client-rank-name">{{ $nombreCliente }}</strong>
                             <div class="client-rank-visits">
@@ -193,13 +193,17 @@
     </div>
 </div>
 
-<div class="content-card stats-section">
+<div class="content-card stats-section dashboard-chart-reveal" data-chart-reveal>
     <h3 class="card-title-flush">Productos más vendidos</h3>
     <div class="chart-list">
         @forelse ($productosVendidos as $producto)
-            <div class="chart-item"><div class="chart-label">{{ $producto->nombre }}</div><div class="chart-bar-bg"><div class="chart-bar product-sales-bar" style="width: {{ ($producto->total_vendido / $maxProductos) * 100 }}%;"></div></div><div class="chart-value">{{ $producto->total_vendido }}</div></div>
+            <div class="chart-item"><div class="chart-label">{{ $producto->nombre }}</div><div class="chart-bar-bg"><div class="chart-bar product-sales-bar" style="width: {{ ($producto->total_vendido / $maxProductos) * 100 }}%; --reveal-delay: {{ $loop->index * 170 }}ms;"></div></div><div class="chart-value">{{ $producto->total_vendido }}</div></div>
         @empty <p class="no-action">Sin ventas de productos en este periodo.</p> @endforelse
     </div>
 </div>
 
 @endsection
+
+@push('scripts')
+<script src="{{ asset('js/dashboard-charts.js') }}?v=1"></script>
+@endpush

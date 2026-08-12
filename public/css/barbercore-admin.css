@@ -39,6 +39,12 @@
             --chart-product-stripe: #282C30;
         }
 
+        @property --donut-reveal {
+            syntax: "<percentage>";
+            inherits: true;
+            initial-value: 100%;
+        }
+
         * {
             box-sizing: border-box;
             font-family: Arial, sans-serif;
@@ -1500,6 +1506,116 @@
             color: var(--gris);
             font-size: 11px;
             font-weight: 700;
+        }
+
+        .status-donut {
+            --donut-reveal: 100%;
+        }
+
+        .status-donut::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            z-index: 1;
+            border-radius: 50%;
+            background: conic-gradient(
+                transparent 0 var(--donut-reveal),
+                var(--blanco) var(--donut-reveal) 100%
+            );
+            pointer-events: none;
+        }
+
+        .status-donut::after { z-index: 2; }
+        .status-donut > div { z-index: 3; }
+
+        .chart-bar {
+            transform: scaleX(1);
+            transform-origin: left center;
+        }
+
+        .dashboard-motion-ready .dashboard-chart-reveal:not(.is-visible) .status-donut {
+            --donut-reveal: 0%;
+        }
+
+        .dashboard-motion-ready .dashboard-chart-reveal.is-visible .status-donut {
+            --donut-reveal: 100%;
+            transition: --donut-reveal 2.4s cubic-bezier(.4,0,.6,1);
+        }
+
+        .dashboard-motion-ready .dashboard-chart-reveal:not(.is-visible) .chart-legend-list {
+            opacity: 0;
+            transform: translateY(7px);
+        }
+
+        .dashboard-motion-ready .dashboard-chart-reveal.is-visible .chart-legend-list {
+            opacity: 1;
+            transform: translateY(0);
+            transition: opacity .65s ease .85s, transform .65s ease .85s;
+        }
+
+        .dashboard-motion-ready .dashboard-chart-reveal:not(.is-visible) .income-area-fill {
+            clip-path: inset(0 100% 0 0);
+        }
+
+        .dashboard-motion-ready .dashboard-chart-reveal.is-visible .income-area-fill {
+            clip-path: inset(0);
+            transition: clip-path 2.2s cubic-bezier(.4,0,.6,1) .08s;
+        }
+
+        .dashboard-motion-ready .dashboard-chart-reveal:not(.is-visible) .income-area-line {
+            clip-path: inset(0 100% 0 0);
+        }
+
+        .dashboard-motion-ready .dashboard-chart-reveal.is-visible .income-area-line {
+            clip-path: inset(0);
+            transition: clip-path 2.4s cubic-bezier(.4,0,.6,1) .12s;
+        }
+
+        .dashboard-motion-ready .dashboard-chart-reveal:not(.is-visible) .income-area-point {
+            opacity: 0;
+            transform: translate(-50%, -50%) scale(.35);
+        }
+
+        .dashboard-motion-ready .dashboard-chart-reveal.is-visible .income-area-point {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+            transition:
+                opacity .38s ease var(--reveal-delay),
+                transform .5s cubic-bezier(.2,.72,.22,1) var(--reveal-delay);
+        }
+
+        .dashboard-motion-ready .dashboard-chart-reveal:not(.is-visible) .chart-bar {
+            transform: scaleX(0);
+        }
+
+        .dashboard-motion-ready .dashboard-chart-reveal.is-visible .chart-bar {
+            transform: scaleX(1);
+            transition: transform 1.35s cubic-bezier(.2,.72,.22,1) var(--reveal-delay, 0ms);
+        }
+
+        .dashboard-motion-ready .dashboard-chart-reveal:not(.is-visible) .client-rank-card {
+            opacity: 0;
+            transform: translateY(9px) scale(.97);
+        }
+
+        .dashboard-motion-ready .dashboard-chart-reveal.is-visible .client-rank-card {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            transition:
+                opacity .72s ease var(--reveal-delay),
+                transform .95s cubic-bezier(.2,.72,.22,1) var(--reveal-delay);
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .dashboard-chart-reveal .status-donut,
+            .dashboard-chart-reveal .chart-legend-list,
+            .dashboard-chart-reveal .income-area-fill,
+            .dashboard-chart-reveal .income-area-line,
+            .dashboard-chart-reveal .income-area-point,
+            .dashboard-chart-reveal .chart-bar,
+            .dashboard-chart-reveal .client-rank-card {
+                transition: none !important;
+            }
         }
 
         .month-filter {

@@ -1,4 +1,4 @@
-const CACHE_NAME = "barbercore-web-v15";
+const CACHE_NAME = "barbercore-web-v16";
 const STATIC_ASSETS = [
     "/offline.html",
     "/manifest.json",
@@ -6,6 +6,7 @@ const STATIC_ASSETS = [
     "/icons/icon-512.png?v=2",
     "/fonts/material-symbols-barbercore.woff2?v=3",
     "/js/theme-toggle.js",
+    "/js/dashboard-charts.js?v=1",
 ];
 
 self.addEventListener("install", (event) => {

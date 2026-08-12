@@ -41,7 +41,7 @@ class LandingVisualAssetsTest extends TestCase
         $this->assertStringContainsString('aria-label="Instagram"', $landing);
         $this->assertStringContainsString('aria-label="TikTok"', $landing);
         $this->assertStringNotContainsString('fonts.googleapis.com', $landing);
-        $this->assertStringContainsString('barbercore-web-v15', $serviceWorker);
+        $this->assertStringContainsString('barbercore-web-v16', $serviceWorker);
 
         foreach ([$styles, $offline, $errorLayout, $serviceWorker] as $asset) {
             $this->assertStringContainsString('/fonts/material-symbols-barbercore.woff2?v=3', $asset);

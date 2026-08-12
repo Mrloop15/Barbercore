@@ -1306,6 +1306,7 @@
 <script src="/js/pwa-status.js"></script>
 <script src="/js/barber-dialog.js"></script>
 <script src="/js/theme-toggle.js"></script>
+@stack('scripts')
 
 </body>
 </html>
