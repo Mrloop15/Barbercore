@@ -152,27 +152,80 @@ class EstadisticaApiController extends Controller
 
         [$inicio, $fin] = $this->rangoFechas($request);
 
-        $clientesFrecuentes = HistorialServicio::query()
+        $interaccionesServicios = HistorialServicio::query()
             ->join('clientes', 'historial_servicios.id_cliente', '=', 'clientes.id_cliente')
             ->where('historial_servicios.id_barberia', $idBarberia)
+            ->where('clientes.id_barberia', $idBarberia)
             ->whereBetween('historial_servicios.fecha_servicio', [$inicio, $fin])
             ->select(
                 'clientes.id_cliente',
                 'clientes.nombre',
                 'clientes.apellido',
-                'clientes.telefono'
+                'clientes.telefono',
+                'clientes.foto'
             )
-            ->selectRaw('COUNT(*) as total_visitas')
+            ->selectRaw('COUNT(*) as total_interacciones')
             ->selectRaw('SUM(historial_servicios.precio) as total_gastado_servicios')
             ->groupBy(
                 'clientes.id_cliente',
                 'clientes.nombre',
                 'clientes.apellido',
-                'clientes.telefono'
+                'clientes.telefono',
+                'clientes.foto'
             )
-            ->orderByDesc('total_visitas')
-            ->limit(10)
             ->get();
+
+        $interaccionesVentas = VentaProducto::query()
+            ->join('clientes', 'ventas_productos.id_cliente', '=', 'clientes.id_cliente')
+            ->where('ventas_productos.id_barberia', $idBarberia)
+            ->where('clientes.id_barberia', $idBarberia)
+            ->whereBetween('ventas_productos.fecha_venta', [Carbon::parse($inicio)->startOfDay(), Carbon::parse($fin)->endOfDay()])
+            ->whereNotExists(function ($query) {
+                $query->selectRaw('1')
+                    ->from('citas as citas_completadas')
+                    ->whereColumn('citas_completadas.id_barberia', 'ventas_productos.id_barberia')
+                    ->whereColumn('citas_completadas.id_cliente', 'ventas_productos.id_cliente')
+                    ->where('citas_completadas.estado', 'completada')
+                    ->whereRaw('citas_completadas.fecha = DATE(ventas_productos.fecha_venta)');
+            })
+            ->select(
+                'clientes.id_cliente',
+                'clientes.nombre',
+                'clientes.apellido',
+                'clientes.telefono',
+                'clientes.foto'
+            )
+            ->selectRaw('COUNT(*) as total_interacciones')
+            ->selectRaw('SUM(ventas_productos.total) as total_gastado_productos')
+            ->groupBy(
+                'clientes.id_cliente',
+                'clientes.nombre',
+                'clientes.apellido',
+                'clientes.telefono',
+                'clientes.foto'
+            )
+            ->get();
+
+        $clientesFrecuentes = $interaccionesServicios->concat($interaccionesVentas)
+            ->groupBy('id_cliente')
+            ->map(function ($interacciones) {
+                $cliente = $interacciones->first();
+
+                return (object) [
+                    'id_cliente' => $cliente->id_cliente,
+                    'nombre' => $cliente->nombre,
+                    'apellido' => $cliente->apellido,
+                    'telefono' => $cliente->telefono,
+                    'foto' => $cliente->foto,
+                    'total_interacciones' => (int) $interacciones->sum('total_interacciones'),
+                    'total_visitas' => (int) $interacciones->sum('total_interacciones'),
+                    'total_gastado_servicios' => (float) $interacciones->sum('total_gastado_servicios'),
+                    'total_gastado_productos' => (float) $interacciones->sum('total_gastado_productos'),
+                ];
+            })
+            ->sortByDesc('total_interacciones')
+            ->take(10)
+            ->values();
 
         $clientesInactivos = Cliente::where('id_barberia', $idBarberia)
             ->where('activo', 1)
@@ -223,6 +276,7 @@ class EstadisticaApiController extends Controller
             ->join('ventas_productos', 'detalle_venta_productos.id_venta', '=', 'ventas_productos.id_venta')
             ->join('productos', 'detalle_venta_productos.id_producto', '=', 'productos.id_producto')
             ->where('ventas_productos.id_barberia', $idBarberia)
+            ->where('productos.id_barberia', $idBarberia)
             ->whereDate('ventas_productos.fecha_venta', '>=', $inicio)
             ->whereDate('ventas_productos.fecha_venta', '<=', $fin)
             ->select(

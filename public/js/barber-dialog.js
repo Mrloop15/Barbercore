@@ -113,7 +113,7 @@
             title: form.dataset.confirmTitle,
             message: form.dataset.confirm,
             confirmText: form.dataset.confirmText,
-            cancelText: form.dataset.cancelText,
+            cancelText: form.dataset.confirmCancelText || form.dataset.cancelText,
             tone: form.dataset.confirmTone,
         }).then(confirmed => {
             if (!confirmed) return;

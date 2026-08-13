@@ -13,10 +13,10 @@ class DashboardClientCardsTest extends TestCase
         $this->assertStringContainsString('class="client-card-scroll"', $view);
         $this->assertStringContainsString('tabindex="0"', $view);
         $this->assertStringContainsString('role="region"', $view);
-        $this->assertStringContainsString('aria-label="Clientes con más visitas este mes"', $view);
         $this->assertStringContainsString('$clientesFrecuentes->take(5)', $view);
         $this->assertStringContainsString('client-rank-avatar', $view);
-        $this->assertStringContainsString("? 'visita' : 'visitas'", $view);
+        $this->assertStringContainsString("Storage::disk('public')->exists(\$cliente->foto)", $view);
+        $this->assertStringContainsString("asset('storage/' . \$cliente->foto)", $view);
     }
 
     public function test_client_card_scroll_is_isolated_from_the_page(): void
@@ -34,6 +34,10 @@ class DashboardClientCardsTest extends TestCase
         );
         $this->assertMatchesRegularExpression(
             '/\.client-rank-card\s*\{[^}]*flex:\s*0 0 132px;[^}]*scroll-snap-align:\s*start;/s',
+            $styles,
+        );
+        $this->assertMatchesRegularExpression(
+            '/\.client-rank-avatar img\s*\{[^}]*width:\s*100%;[^}]*height:\s*100%;[^}]*object-fit:\s*cover;/s',
             $styles,
         );
     }

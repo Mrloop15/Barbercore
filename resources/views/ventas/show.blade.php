@@ -44,6 +44,11 @@
             <span>Fecha de venta</span>
             <strong>{{ \Carbon\Carbon::parse($venta->fecha_venta)->format('d/m/Y H:i') }}</strong>
         </div>
+
+        <div class="detail-item">
+            <span>Registrada por</span>
+            <strong>{{ $venta->vendedor_nombre }}</strong>
+        </div>
     </div>
 </div>
 

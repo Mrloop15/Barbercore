@@ -157,7 +157,7 @@
     <div class="content-card frequent-clients-panel dashboard-chart-reveal" data-chart-reveal>
         <div class="client-cards-heading">
             <h3 class="card-title-flush">Clientes más frecuentes</h3>
-            <span>Este mes</span>
+            <span>Visitas del mes</span>
         </div>
 
         @if ($clientesFrecuentes->isNotEmpty())
@@ -177,7 +177,13 @@
                             );
                         @endphp
                         <li class="client-rank-card client-rank-card--{{ $loop->iteration }}" style="--reveal-delay: {{ $loop->index * 170 }}ms;">
-                            <span class="client-rank-avatar" aria-hidden="true">{{ $inicialesCliente ?: 'BC' }}</span>
+                            <span class="client-rank-avatar" aria-hidden="true">
+                                @if ($cliente->foto && \Illuminate\Support\Facades\Storage::disk('public')->exists($cliente->foto))
+                                    <img src="{{ asset('storage/' . $cliente->foto) }}" alt="">
+                                @else
+                                    {{ $inicialesCliente ?: 'BC' }}
+                                @endif
+                            </span>
                             <strong class="client-rank-name">{{ $nombreCliente }}</strong>
                             <div class="client-rank-visits">
                                 <strong>{{ $cliente->total }}</strong>

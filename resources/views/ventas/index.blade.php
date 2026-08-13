@@ -45,6 +45,7 @@
             <tr>
                 <th>Fecha</th>
                 <th>Cliente</th>
+                <th>Registrada por</th>
                 <th>Productos</th>
                 <th>Total</th>
                 <th>Detalle</th>
@@ -64,6 +65,8 @@
                         @endif
                     </td>
 
+                    <td>{{ $venta->vendedor_nombre }}</td>
+
                     <td>
                         {{ $venta->detalles->sum('cantidad') }} producto(s)
                     </td>
@@ -80,7 +83,7 @@
                 </tr>
             @empty
                 <tr>
-                    <td colspan="5">No hay ventas registradas para esta fecha.</td>
+                    <td colspan="6">No hay ventas registradas para esta fecha.</td>
                 </tr>
             @endforelse
         </tbody>

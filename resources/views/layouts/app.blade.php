@@ -124,7 +124,15 @@
             </div>
             @endif
 
-            <form method="POST" action="{{ route('logout') }}" id="logoutForm">
+            <form
+                method="POST"
+                action="{{ route('logout') }}"
+                id="logoutForm"
+                data-confirm-title="¿Cerrar sesión?"
+                data-confirm="Tu sesión se cerrará en este dispositivo."
+                data-confirm-text="Cerrar sesión"
+                data-confirm-cancel-text="Continuar aquí"
+            >
                 @csrf
                 <button type="submit" class="logout-button">
                     <span class="menu-icon"><svg><use href="#i-logout"/></svg></span><span class="menu-text">Cerrar sesión</span>

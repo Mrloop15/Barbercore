@@ -36,6 +36,6 @@ class DashboardChartAnimationTest extends TestCase
         $this->assertStringContainsString('requestAnimationFrame', $script);
         $this->assertStringContainsString('observer.unobserve(entry.target)', $script);
         $this->assertStringContainsString('"/js/dashboard-charts.js?v=1"', $worker);
-        $this->assertStringContainsString('barbercore-web-v16', $worker);
+        $this->assertStringContainsString('barbercore-web-v17', $worker);
     }
 }

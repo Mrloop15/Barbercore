@@ -19,6 +19,7 @@ class VentaProductoApiController extends Controller
         $idBarberia = $usuario->id_barberia ?? 1;
 
         $ventas = VentaProducto::with(['cliente', 'detalles.producto'])
+            ->withVendedor()
             ->where('id_barberia', $idBarberia)
             ->orderByDesc('fecha_venta')
             ->paginate(10);
@@ -35,6 +36,7 @@ class VentaProductoApiController extends Controller
         $idBarberia = $usuario->id_barberia ?? 1;
 
         $venta = VentaProducto::with(['cliente', 'detalles.producto'])
+            ->withVendedor()
             ->where('id_barberia', $idBarberia)
             ->where('id_venta', $id)
             ->firstOrFail();
@@ -57,7 +59,7 @@ class VentaProductoApiController extends Controller
             'productos.*.cantidad' => 'required|integer|min:1',
         ]);
 
-        $venta = DB::transaction(function () use ($datos, $idBarberia) {
+        $venta = DB::transaction(function () use ($datos, $idBarberia, $usuario) {
             $total = 0;
             $productosProcesados = [];
 
@@ -86,12 +88,18 @@ class VentaProductoApiController extends Controller
                 ];
             }
 
-            $venta = VentaProducto::create([
+            $datosVenta = [
                 'id_barberia' => $idBarberia,
                 'id_cliente' => $datos['id_cliente'] ?? null,
                 'total' => $total,
                 'fecha_venta' => now(),
-            ]);
+            ];
+
+            if (VentaProducto::supportsVendedor()) {
+                $datosVenta['id_usuario'] = $usuario->id_usuario;
+            }
+
+            $venta = VentaProducto::create($datosVenta);
 
             foreach ($productosProcesados as $item) {
                 DetalleVentaProducto::create([
@@ -125,7 +133,13 @@ class VentaProductoApiController extends Controller
                 }
             }
 
-            return $venta->load(['cliente', 'detalles.producto']);
+            $venta->load(['cliente', 'detalles.producto']);
+
+            if (VentaProducto::supportsVendedor()) {
+                $venta->load('vendedor');
+            }
+
+            return $venta;
         });
 
         return response()->json([

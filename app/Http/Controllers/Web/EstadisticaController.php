@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
 use App\Models\Cita;
+use App\Models\VentaProducto;
 use Carbon\Carbon;
 use Dompdf\Dompdf;
 use Dompdf\Options;
@@ -55,7 +56,7 @@ class EstadisticaController extends Controller
             $summarySheet = $writer->getCurrentSheet();
             $summarySheet->setName('Resumen');
             $summarySheet->setColumnWidth(25, 1);
-            $summarySheet->setColumnWidthForRange(20, 2, 5);
+            $summarySheet->setColumnWidthForRange(20, 2, 8);
 
             $writer->addRow(Row::fromValues(['Reporte BarberCore'], $titleStyle));
             $writer->addRow(Row::fromValues([$data['barberia']]));
@@ -63,11 +64,15 @@ class EstadisticaController extends Controller
             $writer->addRow(Row::fromValues(['Periodo', $data['desde']->format('d/m/Y') . ' al ' . $data['hasta']->format('d/m/Y')], $labelStyle));
             $writer->addRow(Row::fromValues(['Estado', ucfirst($data['estado'])], $labelStyle));
             $writer->addRow(Row::fromValues([]));
-            $writer->addRow(Row::fromValues(['Total de citas', 'Completadas', 'Pendientes', 'Canceladas', 'Ingresos confirmados'], $sectionStyle));
+            $writer->addRow(Row::fromValues([
+                'Total de citas', 'Completadas', 'Pendientes', 'Canceladas', 'Ventas de productos',
+                'Ingresos por servicios', 'Ingresos por productos', 'Ingresos totales',
+            ], $sectionStyle));
             $writer->addRow(Row::fromValuesWithStyles([
                 $data['totalCitas'], $data['completadas'], $data['pendientes'],
-                $data['canceladas'], (float) $data['ingresos'],
-            ], columnStyles: [4 => $moneyStyle]));
+                $data['canceladas'], $data['totalVentas'], (float) $data['ingresosServicios'],
+                (float) $data['ingresosProductos'], (float) $data['ingresos'],
+            ], columnStyles: [5 => $moneyStyle, 6 => $moneyStyle, 7 => $moneyStyle]));
 
             $detailSheet = $writer->addNewSheetAndMakeItCurrent();
             $detailSheet->setName('Detalle de citas');
@@ -98,6 +103,30 @@ class EstadisticaController extends Controller
                 ], columnStyles: [7 => $moneyStyle]));
             }
 
+            $salesSheet = $writer->addNewSheetAndMakeItCurrent();
+            $salesSheet->setName('Ventas de productos');
+            $salesSheet->setColumnWidth(13, 1);
+            $salesSheet->setColumnWidth(10, 2);
+            $salesSheet->setColumnWidth(28, 3);
+            $salesSheet->setColumnWidth(28, 4);
+            $salesSheet->setColumnWidth(42, 5);
+            $salesSheet->setColumnWidth(15, 6);
+
+            $writer->addRow(Row::fromValues([
+                'Fecha', 'Hora', 'Cliente', 'Registrada por', 'Productos', 'Importe',
+            ], $sectionStyle));
+
+            foreach ($data['ventas'] as $venta) {
+                $writer->addRow(Row::fromValuesWithStyles([
+                    Carbon::parse($venta->fecha_venta)->format('d/m/Y'),
+                    Carbon::parse($venta->fecha_venta)->format('H:i'),
+                    trim(($venta->cliente->nombre ?? 'Cliente general') . ' ' . ($venta->cliente->apellido ?? '')),
+                    $venta->vendedor_nombre,
+                    $venta->detalles->map(fn ($detalle) => ($detalle->producto->nombre ?? 'Producto eliminado') . ' x' . $detalle->cantidad)->implode(', '),
+                    (float) $venta->total,
+                ], columnStyles: [5 => $moneyStyle]));
+            }
+
             $writer->close();
         }, $filename, [
             'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
@@ -118,12 +147,21 @@ class EstadisticaController extends Controller
         $query = Cita::with(['cliente', 'servicio', 'barbero'])->where('id_barberia', $idBarberia)->whereBetween('fecha', [$desde->toDateString(), $hasta->toDateString()]);
         if ($estado !== 'todos') $query->where('estado', $estado);
         $citas = $query->orderBy('fecha')->orderBy('hora_inicio')->get();
+        $ventas = VentaProducto::with(['cliente', 'detalles.producto'])
+            ->withVendedor()
+            ->where('id_barberia', $idBarberia)
+            ->whereBetween('fecha_venta', [$desde, $hasta])
+            ->orderBy('fecha_venta')
+            ->get();
+        $ingresosServicios = $citas->where('estado', 'completada')->sum('precio');
+        $ingresosProductos = $ventas->sum('total');
 
         return [
-            'desde' => $desde, 'hasta' => $hasta, 'estado' => $estado, 'citas' => $citas,
+            'desde' => $desde, 'hasta' => $hasta, 'estado' => $estado, 'citas' => $citas, 'ventas' => $ventas,
             'totalCitas' => $citas->count(), 'completadas' => $citas->where('estado', 'completada')->count(),
             'canceladas' => $citas->where('estado', 'cancelada')->count(), 'pendientes' => $citas->where('estado', 'pendiente')->count(),
-            'ingresos' => $citas->where('estado', 'completada')->sum('precio'),
+            'totalVentas' => $ventas->count(), 'ingresosServicios' => $ingresosServicios,
+            'ingresosProductos' => $ingresosProductos, 'ingresos' => $ingresosServicios + $ingresosProductos,
             'barberia' => Auth::user()->barberia->nombre ?? 'BarberCore',
         ];
     }

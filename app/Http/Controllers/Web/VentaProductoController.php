@@ -23,6 +23,7 @@ class VentaProductoController extends Controller
         $fecha = $request->input('fecha', Carbon::today()->toDateString());
 
         $ventas = VentaProducto::with(['cliente', 'detalles.producto'])
+            ->withVendedor()
             ->where('id_barberia', $idBarberia)
             ->whereDate('fecha_venta', $fecha)
             ->orderByDesc('fecha_venta')
@@ -81,7 +82,7 @@ class VentaProductoController extends Controller
         ]);
 
         try {
-            DB::transaction(function () use ($request, $idBarberia) {
+            DB::transaction(function () use ($request, $idBarberia, $usuario) {
                 $total = 0;
                 $detallesPreparados = [];
 
@@ -111,12 +112,18 @@ class VentaProductoController extends Controller
                     ];
                 }
 
-                $venta = VentaProducto::create([
+                $datosVenta = [
                     'id_barberia' => $idBarberia,
                     'id_cliente' => $request->id_cliente,
                     'total' => $total,
                     'fecha_venta' => now(),
-                ]);
+                ];
+
+                if (VentaProducto::supportsVendedor()) {
+                    $datosVenta['id_usuario'] = $usuario->id_usuario;
+                }
+
+                $venta = VentaProducto::create($datosVenta);
 
                 foreach ($detallesPreparados as $detalle) {
                     DetalleVentaProducto::create([
@@ -173,6 +180,7 @@ class VentaProductoController extends Controller
         $idBarberia = $usuario->id_barberia ?? 1;
 
         $venta = VentaProducto::with(['cliente', 'detalles.producto'])
+            ->withVendedor()
             ->where('id_barberia', $idBarberia)
             ->where('id_venta', $id)
             ->firstOrFail();
