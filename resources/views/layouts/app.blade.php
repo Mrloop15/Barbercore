@@ -615,6 +615,7 @@
             try { localStorage.removeItem(STORAGE_KEY); } catch (error) {}
 
             if (logoutForm) {
+                logoutForm.dataset.confirmed = 'true';
                 logoutForm.requestSubmit();
             } else {
                 window.location.assign(@json(route('login')));

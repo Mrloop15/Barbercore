@@ -179,7 +179,14 @@
                         <li class="client-rank-card client-rank-card--{{ $loop->iteration }}" style="--reveal-delay: {{ $loop->index * 170 }}ms;">
                             <span class="client-rank-avatar" aria-hidden="true">
                                 @if ($cliente->foto && \Illuminate\Support\Facades\Storage::disk('public')->exists($cliente->foto))
-                                    <img src="{{ asset('storage/' . $cliente->foto) }}" alt="">
+                                    <img
+                                        src="{{ asset('storage/' . $cliente->foto) }}"
+                                        alt=""
+                                        width="48"
+                                        height="48"
+                                        loading="lazy"
+                                        decoding="async"
+                                    >
                                 @else
                                     {{ $inicialesCliente ?: 'BC' }}
                                 @endif

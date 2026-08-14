@@ -19,4 +19,14 @@ class LogoutConfirmationTest extends TestCase
         $this->assertStringContainsString('form.dataset.confirmCancelText || form.dataset.cancelText', $dialog);
         $this->assertStringContainsString('form.requestSubmit(submitter || undefined)', $dialog);
     }
+
+    public function test_idle_timeout_bypasses_the_manual_logout_confirmation(): void
+    {
+        $layout = file_get_contents(resource_path('views/layouts/app.blade.php'));
+
+        $this->assertMatchesRegularExpression(
+            "/function finishSession\(\)\s*\{.*?logoutForm\.dataset\.confirmed = 'true';\s*logoutForm\.requestSubmit\(\);/s",
+            $layout,
+        );
+    }
 }

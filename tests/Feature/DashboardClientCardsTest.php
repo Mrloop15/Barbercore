@@ -17,6 +17,9 @@ class DashboardClientCardsTest extends TestCase
         $this->assertStringContainsString('client-rank-avatar', $view);
         $this->assertStringContainsString("Storage::disk('public')->exists(\$cliente->foto)", $view);
         $this->assertStringContainsString("asset('storage/' . \$cliente->foto)", $view);
+        $this->assertStringContainsString('width="48"', $view);
+        $this->assertStringContainsString('height="48"', $view);
+        $this->assertStringContainsString('loading="lazy"', $view);
     }
 
     public function test_client_card_scroll_is_isolated_from_the_page(): void
@@ -29,6 +32,15 @@ class DashboardClientCardsTest extends TestCase
         );
         $this->assertStringContainsString('touch-action: pan-x;', $styles);
         $this->assertMatchesRegularExpression(
+            '/\.client-card-scroll::\-webkit-scrollbar\s*\{[^}]*display:\s*block;[^}]*height:\s*7px;/s',
+            $styles,
+        );
+        $this->assertMatchesRegularExpression(
+            '/\.client-card-scroll::\-webkit-scrollbar-track\s*\{[^}]*margin:\s*0 12px;[^}]*border-radius:\s*999px;[^}]*background:\s*rgba\(229,224,214,\.35\);/s',
+            $styles,
+        );
+        $this->assertStringContainsString('.client-card-scroll::-webkit-scrollbar-thumb:hover { background: var(--dorado); }', $styles);
+        $this->assertMatchesRegularExpression(
             '/\.client-card-track\s*\{[^}]*display:\s*flex;[^}]*width:\s*max-content;[^}]*min-width:\s*100%;/s',
             $styles,
         );
@@ -37,7 +49,11 @@ class DashboardClientCardsTest extends TestCase
             $styles,
         );
         $this->assertMatchesRegularExpression(
-            '/\.client-rank-avatar img\s*\{[^}]*width:\s*100%;[^}]*height:\s*100%;[^}]*object-fit:\s*cover;/s',
+            '/\.client-rank-avatar\s*\{[^}]*flex:\s*0 0 48px;[^}]*width:\s*48px;[^}]*height:\s*48px;[^}]*min-width:\s*48px;[^}]*max-width:\s*48px;[^}]*overflow:\s*hidden;/s',
+            $styles,
+        );
+        $this->assertMatchesRegularExpression(
+            '/\.client-rank-avatar img\s*\{[^}]*position:\s*absolute;[^}]*inset:\s*0;[^}]*width:\s*100%;[^}]*height:\s*100%;[^}]*max-width:\s*100%;[^}]*max-height:\s*100%;[^}]*object-fit:\s*cover;[^}]*object-position:\s*center;/s',
             $styles,
         );
     }
