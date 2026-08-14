@@ -35,6 +35,23 @@ function formatoMoneda(valor) {
     });
 }
 
+function formatoFechaGuadalajara(valor) {
+    if (!valor) return "Sin fecha";
+
+    const normalizado = /^\d{4}-\d{2}-\d{2}[ T]\d{2}:\d{2}:\d{2}$/.test(valor)
+        ? valor.replace(" ", "T") + "Z"
+        : valor;
+    const fecha = new Date(normalizado);
+
+    if (Number.isNaN(fecha.getTime())) return "Sin fecha";
+
+    return new Intl.DateTimeFormat("es-MX", {
+        timeZone: "America/Mexico_City",
+        dateStyle: "short",
+        timeStyle: "short",
+    }).format(fecha);
+}
+
 async function apiGet(url) {
     const response = await fetch(url, {
         headers: {
@@ -296,7 +313,7 @@ function pintarVentas(ventas) {
         card.innerHTML = `
             <h3>${cliente}</h3>
             <p><strong>Total:</strong> ${formatoMoneda(venta.total)}</p>
-            <p><strong>Fecha:</strong> ${venta.fecha_venta ?? venta.created_at ?? "Sin fecha"}</p>
+            <p><strong>Fecha:</strong> ${formatoFechaGuadalajara(venta.fecha_venta ?? venta.created_at)}</p>
             <p><strong>Productos:</strong> ${detalles}</p>
         `;
 

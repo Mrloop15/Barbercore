@@ -1,18 +1,18 @@
 <?php
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\AuthApiController;
-use App\Http\Controllers\Api\DashboardApiController;
-use App\Http\Controllers\Api\ClienteApiController;
-use App\Http\Controllers\Api\ServicioApiController;
-use App\Http\Controllers\Api\ProductoApiController;
-use App\Http\Controllers\Api\CitaApiController;
 use App\Http\Controllers\Api\AgendaApiController;
-use App\Http\Controllers\Api\VentaProductoApiController;
-use App\Http\Controllers\Api\RecompensaApiController;
+use App\Http\Controllers\Api\AuthApiController;
+use App\Http\Controllers\Api\CitaApiController;
+use App\Http\Controllers\Api\ClienteApiController;
+use App\Http\Controllers\Api\DashboardApiController;
 use App\Http\Controllers\Api\EstadisticaApiController;
+use App\Http\Controllers\Api\ProductoApiController;
+use App\Http\Controllers\Api\RecompensaApiController;
+use App\Http\Controllers\Api\ServicioApiController;
 use App\Http\Controllers\Api\UsuarioApiController;
+use App\Http\Controllers\Api\VentaProductoApiController;
+use App\Support\BusinessClock;
+use Illuminate\Support\Facades\Route;
 
 Route::post('/login', [AuthApiController::class, 'login'])->middleware('throttle:5,1');
 
@@ -21,7 +21,8 @@ Route::get('/status', function () {
         'ok' => true,
         'message' => 'API BarberCore funcionando correctamente.',
         'version' => '1.0.0',
-        'timestamp' => now(),
+        'timestamp' => now('UTC')->toIso8601String(),
+        'display_timezone' => BusinessClock::timezone(),
     ]);
 });
 
@@ -49,28 +50,28 @@ Route::middleware(['auth:sanctum', 'tenant', 'abilities:api:access'])->group(fun
         Route::put('/servicios/{id}', [ServicioApiController::class, 'update']);
         Route::delete('/servicios/{id}', [ServicioApiController::class, 'destroy']);
 
-    Route::get('/productos/bajo-stock', [ProductoApiController::class, 'bajoStock']);
-    Route::get('/productos', [ProductoApiController::class, 'index']);
-    Route::post('/productos', [ProductoApiController::class, 'store']);
-    Route::get('/productos/{id}', [ProductoApiController::class, 'show']);
-    Route::put('/productos/{id}', [ProductoApiController::class, 'update']);
-    Route::delete('/productos/{id}', [ProductoApiController::class, 'destroy']);
-    Route::patch('/productos/{id}/stock', [ProductoApiController::class, 'actualizarStock']);
+        Route::get('/productos/bajo-stock', [ProductoApiController::class, 'bajoStock']);
+        Route::get('/productos', [ProductoApiController::class, 'index']);
+        Route::post('/productos', [ProductoApiController::class, 'store']);
+        Route::get('/productos/{id}', [ProductoApiController::class, 'show']);
+        Route::put('/productos/{id}', [ProductoApiController::class, 'update']);
+        Route::delete('/productos/{id}', [ProductoApiController::class, 'destroy']);
+        Route::patch('/productos/{id}/stock', [ProductoApiController::class, 'actualizarStock']);
 
-    Route::get('/ventas-productos', [VentaProductoApiController::class, 'index']);
-    Route::post('/ventas-productos', [VentaProductoApiController::class, 'store']);
-    Route::get('/ventas-productos/{id}', [VentaProductoApiController::class, 'show']);
+        Route::get('/ventas-productos', [VentaProductoApiController::class, 'index']);
+        Route::post('/ventas-productos', [VentaProductoApiController::class, 'store']);
+        Route::get('/ventas-productos/{id}', [VentaProductoApiController::class, 'show']);
 
-    Route::get('/recompensas', [RecompensaApiController::class, 'index']);
-    Route::post('/recompensas', [RecompensaApiController::class, 'store']);
-    Route::post('/recompensas/canjear', [RecompensaApiController::class, 'canjear']);
-    Route::get('/recompensas/{id}', [RecompensaApiController::class, 'show']);
-    Route::put('/recompensas/{id}', [RecompensaApiController::class, 'update']);
-    Route::delete('/recompensas/{id}', [RecompensaApiController::class, 'destroy']);
+        Route::get('/recompensas', [RecompensaApiController::class, 'index']);
+        Route::post('/recompensas', [RecompensaApiController::class, 'store']);
+        Route::post('/recompensas/canjear', [RecompensaApiController::class, 'canjear']);
+        Route::get('/recompensas/{id}', [RecompensaApiController::class, 'show']);
+        Route::put('/recompensas/{id}', [RecompensaApiController::class, 'update']);
+        Route::delete('/recompensas/{id}', [RecompensaApiController::class, 'destroy']);
 
-    Route::get('/estadisticas/ingresos', [EstadisticaApiController::class, 'ingresos']);
-    Route::get('/estadisticas/servicios', [EstadisticaApiController::class, 'servicios']);
-    Route::get('/estadisticas/clientes', [EstadisticaApiController::class, 'clientes']);
+        Route::get('/estadisticas/ingresos', [EstadisticaApiController::class, 'ingresos']);
+        Route::get('/estadisticas/servicios', [EstadisticaApiController::class, 'servicios']);
+        Route::get('/estadisticas/clientes', [EstadisticaApiController::class, 'clientes']);
         Route::get('/estadisticas/productos', [EstadisticaApiController::class, 'productos']);
     });
 

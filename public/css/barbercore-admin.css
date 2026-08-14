@@ -2342,6 +2342,18 @@
         .custom-time-panel { display: none; position: absolute; z-index: 3000; top: calc(100% + 8px); left: 0; width: 330px; max-height: 390px; overflow-y: auto; scrollbar-width: none; padding: 16px; border: 1px solid var(--borde); border-radius: 18px; background: var(--blanco); box-shadow: 0 22px 55px rgba(28,28,28,.18); }
         .custom-time-panel::-webkit-scrollbar { display: none; }
         .custom-time-panel.open { display: block; animation: calendar-in .16s ease-out; }
+        .exact-time-panel { width: 300px; max-height: none; overflow: visible; }
+        .exact-time-fields { display: grid; grid-template-columns: minmax(0,1fr) 16px minmax(0,1fr); align-items: end; gap: 8px; margin-top: 15px; }
+        .exact-time-control { min-width: 0; margin: 0; }
+        .exact-time-control > span { display: block; margin-bottom: 6px; color: var(--gris); font-size: 9px; font-weight: 800; letter-spacing: .7px; text-transform: uppercase; }
+        .exact-time-control input { width: 100%; min-width: 0; height: 50px; padding: 9px 8px; border: 1px solid var(--borde); border-radius: 10px; background: var(--fondo); color: var(--texto); font-size: 19px; font-weight: 800; text-align: center; }
+        .exact-time-control input:focus { border-color: var(--dorado); box-shadow: 0 0 0 3px rgba(201,162,39,.12); outline: none; }
+        .exact-time-separator { align-self: end; padding-bottom: 13px; color: var(--dorado); font-size: 21px; font-weight: 900; text-align: center; }
+        .exact-time-error { display: block; min-height: 17px; margin-top: 7px; color: var(--rojo); font-size: 10px; line-height: 1.4; }
+        .exact-time-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 9px; }
+        .exact-time-actions button { min-height: 39px; border: 1px solid var(--borde); border-radius: 9px; background: var(--fondo); color: var(--texto); font-size: 11px; font-weight: 800; cursor: pointer; }
+        .exact-time-actions .exact-time-apply { border-color: var(--dorado); background: var(--dorado); color: #fff; }
+        .exact-time-actions button:hover { border-color: var(--dorado); }
         .time-panel-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
         .time-panel-head strong { font-family: 'Manrope', sans-serif; font-size: 14px; }
         .time-panel-head span { color: var(--gris); font-size: 10px; }

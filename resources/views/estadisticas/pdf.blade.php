@@ -22,7 +22,7 @@
 <body>
     <div class="brand">BarberCore - {{ $barberia }}</div>
     <h1>Reporte de operacion</h1>
-    <div class="meta">Periodo: {{ $desde->format('d/m/Y') }} al {{ $hasta->format('d/m/Y') }} - Estado de citas: {{ ucfirst($estado) }} - Generado: {{ now()->format('d/m/Y H:i') }}</div>
+    <div class="meta">Periodo: {{ $desde->format('d/m/Y') }} al {{ $hasta->format('d/m/Y') }} - Estado de citas: {{ ucfirst($estado) }} - Generado: {{ \App\Support\BusinessClock::now()->format('d/m/Y H:i') }}</div>
 
     <table class="summary"><tr>
         <td><span>Total citas</span><strong>{{ $totalCitas }}</strong></td>
@@ -47,7 +47,7 @@
     <h2>Ventas de productos</h2>
     <table class="data"><thead><tr><th>Fecha</th><th>Hora</th><th>Cliente</th><th>Registrada por</th><th>Productos</th><th>Importe</th></tr></thead><tbody>
     @forelse($ventas as $venta)
-        <tr><td>{{ \Carbon\Carbon::parse($venta->fecha_venta)->format('d/m/Y') }}</td><td>{{ \Carbon\Carbon::parse($venta->fecha_venta)->format('H:i') }}</td><td>{{ $venta->cliente->nombre ?? 'Cliente general' }} {{ $venta->cliente->apellido ?? '' }}</td><td>{{ $venta->vendedor_nombre }}</td><td>{{ $venta->detalles->map(fn ($detalle) => ($detalle->producto->nombre ?? 'Producto eliminado') . ' x' . $detalle->cantidad)->implode(', ') }}</td><td>${{ number_format($venta->total, 2) }}</td></tr>
+        <tr><td>{{ \App\Support\BusinessClock::formatUtc($venta->fecha_venta, 'd/m/Y') }}</td><td>{{ \App\Support\BusinessClock::formatUtc($venta->fecha_venta, 'H:i') }}</td><td>{{ $venta->cliente->nombre ?? 'Cliente general' }} {{ $venta->cliente->apellido ?? '' }}</td><td>{{ $venta->vendedor_nombre }}</td><td>{{ $venta->detalles->map(fn ($detalle) => ($detalle->producto->nombre ?? 'Producto eliminado') . ' x' . $detalle->cantidad)->implode(', ') }}</td><td>${{ number_format($venta->total, 2) }}</td></tr>
     @empty
         <tr><td colspan="6">Sin ventas de productos.</td></tr>
     @endforelse

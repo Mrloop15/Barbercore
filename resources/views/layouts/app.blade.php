@@ -2,6 +2,8 @@
 <html lang="es">
 <head>
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="business-timezone" content="{{ \App\Support\BusinessClock::timezone() }}">
+    <meta name="business-today" content="{{ \App\Support\BusinessClock::today()->toDateString() }}">
 
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#C9A227">
@@ -216,7 +218,7 @@
             <span class="quick-context-icon"><svg><use href="#i-calendar"/></svg></span>
             <span class="quick-context-copy"><strong>Nueva cita</strong><small>Registrar una cita rápidamente</small></span>
         </a>
-        <a class="quick-context-item" href="{{ route('agenda.index', ['vista' => 'dia', 'fecha' => now()->toDateString()]) }}">
+        <a class="quick-context-item" href="{{ route('agenda.index', ['vista' => 'dia', 'fecha' => \App\Support\BusinessClock::today()->toDateString()]) }}">
             <span class="quick-context-icon"><svg><use href="#i-clock"/></svg></span>
             <span class="quick-context-copy"><strong>Agenda de hoy</strong><small>Consultar horarios y disponibilidad</small></span>
         </a>
@@ -880,7 +882,9 @@
         const weekdays = ['L','M','M','J','V','S','D'];
         const pad = number => String(number).padStart(2, '0');
         const toValue = date => date.getFullYear() + '-' + pad(date.getMonth() + 1) + '-' + pad(date.getDate());
-        const fromValue = value => value ? new Date(value + 'T12:00:00') : new Date();
+        const businessTodayValue = document.querySelector('meta[name="business-today"]').content;
+        const businessToday = () => new Date(businessTodayValue + 'T12:00:00');
+        const fromValue = value => value ? new Date(value + 'T12:00:00') : businessToday();
         const formatLabel = value => value ? fromValue(value).toLocaleDateString('es-MX', { day: 'numeric', month: 'long', year: 'numeric' }) : 'Seleccionar fecha';
 
         document.querySelectorAll('input[type="date"]').forEach(function (input) {
@@ -1013,7 +1017,7 @@
                 const first = new Date(cursor.getFullYear(), cursor.getMonth(), 1);
                 const mondayOffset = (first.getDay() + 6) % 7;
                 const gridStart = new Date(cursor.getFullYear(), cursor.getMonth(), 1 - mondayOffset);
-                const today = toValue(new Date());
+                const today = businessTodayValue;
 
                 for (let index = 0; index < 42; index++) {
                     const date = new Date(gridStart);
@@ -1054,7 +1058,7 @@
             picker.querySelector('.prev').addEventListener('click', () => { cursor = new Date(cursor.getFullYear(), cursor.getMonth() - 1, 1); render(); });
             picker.querySelector('.next').addEventListener('click', () => { cursor = new Date(cursor.getFullYear(), cursor.getMonth() + 1, 1); render(); });
             picker.querySelector('.calendar-today').addEventListener('click', () => {
-                const today = new Date();
+                const today = businessToday();
                 const value = toValue(today);
                 const weekday = (today.getDay() + 6) % 7;
                 const isOpen = !restrictWeekdays || openWeekdays.includes(weekday);
@@ -1127,8 +1131,114 @@
             return date.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' });
         };
 
+        function enhanceExactTimeInput(input) {
+            input.dataset.customTimeReady = 'true';
+            input.classList.add('native-time-enhanced');
+
+            const picker = document.createElement('div');
+            picker.className = 'custom-time-picker exact-time-picker';
+            picker.innerHTML = `
+                <button type="button" class="custom-time-trigger" aria-expanded="false">
+                    <span></span>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+                </button>
+                <div class="custom-time-panel exact-time-panel" role="dialog" aria-label="Seleccionar hora exacta">
+                    <div class="time-panel-head"><strong>Selecciona un horario</strong><span>Minuto exacto</span></div>
+                    <div class="exact-time-fields">
+                        <label class="exact-time-control"><span>Hora</span><input type="number" min="0" max="23" step="1" inputmode="numeric" data-exact-hour aria-label="Hora, de cero a veintitrés"></label>
+                        <span class="exact-time-separator" aria-hidden="true">:</span>
+                        <label class="exact-time-control"><span>Minuto</span><input type="number" min="0" max="59" step="1" inputmode="numeric" data-exact-minute aria-label="Minuto, de cero a cincuenta y nueve"></label>
+                    </div>
+                    <span class="exact-time-error" role="status" aria-live="polite"></span>
+                    <div class="exact-time-actions">
+                        <button type="button" class="exact-time-cancel">Volver</button>
+                        <button type="button" class="exact-time-apply">Aplicar</button>
+                    </div>
+                </div>`;
+            input.insertAdjacentElement('afterend', picker);
+
+            const trigger = picker.querySelector('.custom-time-trigger');
+            const label = trigger.querySelector('span');
+            const panel = picker.querySelector('.custom-time-panel');
+            const hourInput = picker.querySelector('[data-exact-hour]');
+            const minuteInput = picker.querySelector('[data-exact-minute]');
+            const error = picker.querySelector('.exact-time-error');
+
+            function currentParts() {
+                const parts = (input.value || '09:00').slice(0, 5).split(':');
+                return [parseInt(parts[0], 10), parseInt(parts[1], 10)];
+            }
+
+            function sync() {
+                label.textContent = formatTime(input.value);
+                trigger.disabled = input.disabled;
+                if (input.disabled) {
+                    panel.classList.remove('open');
+                    trigger.setAttribute('aria-expanded', 'false');
+                }
+            }
+
+            function fillEditor() {
+                const [hour, minute] = currentParts();
+                hourInput.value = pad(hour);
+                minuteInput.value = pad(minute);
+                error.textContent = '';
+            }
+
+            function close() {
+                panel.classList.remove('open');
+                trigger.setAttribute('aria-expanded', 'false');
+            }
+
+            function apply() {
+                const hour = Number(hourInput.value);
+                const minute = Number(minuteInput.value);
+                if (!Number.isInteger(hour) || hour < 0 || hour > 23 || !Number.isInteger(minute) || minute < 0 || minute > 59) {
+                    error.textContent = 'Ingresa una hora entre 00:00 y 23:59.';
+                    return;
+                }
+
+                input.value = pad(hour) + ':' + pad(minute);
+                input.dispatchEvent(new Event('input', { bubbles: true }));
+                input.dispatchEvent(new Event('change', { bubbles: true }));
+                sync();
+                close();
+                trigger.focus();
+            }
+
+            trigger.addEventListener('click', function () {
+                document.querySelectorAll('.custom-time-panel.open').forEach(open => { if (open !== panel) open.classList.remove('open'); });
+                const opening = !panel.classList.contains('open');
+                panel.classList.toggle('open', opening);
+                trigger.setAttribute('aria-expanded', String(opening));
+                if (opening) {
+                    fillEditor();
+                    hourInput.focus();
+                    hourInput.select();
+                }
+            });
+            picker.querySelector('.exact-time-cancel').addEventListener('click', function () { close(); trigger.focus(); });
+            picker.querySelector('.exact-time-apply').addEventListener('click', apply);
+            [hourInput, minuteInput].forEach(function (control) {
+                control.addEventListener('input', function () { error.textContent = ''; });
+                control.addEventListener('keydown', function (event) {
+                    if (event.key === 'Enter') {
+                        event.preventDefault();
+                        apply();
+                    }
+                });
+            });
+            input.addEventListener('change', sync);
+            new MutationObserver(sync).observe(input, { attributes: true, attributeFilter: ['disabled'] });
+            sync();
+        }
+
         document.querySelectorAll('input[type="time"]').forEach(function (input) {
             if (input.dataset.customTimeReady) return;
+            if (input.hasAttribute('data-exact-time')) {
+                enhanceExactTimeInput(input);
+                return;
+            }
             input.dataset.customTimeReady = 'true';
             input.classList.add('native-time-enhanced');
 

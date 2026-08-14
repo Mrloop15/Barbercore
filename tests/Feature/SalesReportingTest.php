@@ -14,7 +14,9 @@ class SalesReportingTest extends TestCase
         $this->assertStringContainsString('$dailyProductIncome', $service);
         $this->assertStringContainsString("VentaProducto::where('id_barberia', \$idBarberia)", $service);
         $this->assertStringContainsString('$appointmentClients->concat($saleClients)', $service);
-        $this->assertStringContainsString('->whereNotExists(function ($query)', $service);
+        $this->assertStringContainsString('$completedClientDates', $service);
+        $this->assertStringContainsString('BusinessClock::fromUtc($venta->fecha_venta)->toDateString()', $service);
+        $this->assertStringContainsString('->reject(fn ($venta)', $service);
         $this->assertStringContainsString("'foto' => \$client->foto", $service);
         $this->assertStringContainsString("'ingresosMes'", $service);
     }
@@ -31,8 +33,8 @@ class SalesReportingTest extends TestCase
         $this->assertStringContainsString("Schema::hasColumn('ventas_productos', 'id_usuario')", $migration);
         $this->assertStringContainsString('function supportsVendedor()', $model);
         $this->assertStringContainsString('function scopeWithVendedor', $model);
-        $this->assertStringContainsString("if (VentaProducto::supportsVendedor())", $webController);
-        $this->assertStringContainsString("if (VentaProducto::supportsVendedor())", $apiController);
+        $this->assertStringContainsString('if (VentaProducto::supportsVendedor())', $webController);
+        $this->assertStringContainsString('if (VentaProducto::supportsVendedor())', $apiController);
         $this->assertStringContainsString('barbercore:ensure-sales-audit', $command);
     }
 

@@ -31,12 +31,14 @@
     .business-fields .full { grid-column: 1 / -1; }
     .field-note { display: block; margin-top: 6px; color: var(--gris); font-size: 11px; line-height: 1.45; }
     .hours-list { display: grid; gap: 9px; }
+    #horarios.content-card { overflow: visible; }
     .hours-row { display: grid; grid-template-columns: 125px 92px minmax(130px, 1fr) minmax(130px, 1fr); align-items: center; gap: 13px; padding: 12px 14px; border: 1px solid var(--borde); border-radius: 13px; background: var(--fondo); }
     .hours-day { font-weight: 800; font-size: 13px; }
     .hours-toggle { display: inline-flex; align-items: center; gap: 7px; margin: 0; font-size: 12px; cursor: pointer; }
     .hours-toggle input { width: 17px; height: 17px; accent-color: var(--dorado); }
-    .hours-field span { display: block; margin-bottom: 4px; color: var(--gris); font-size: 9px; font-weight: 800; letter-spacing: .7px; text-transform: uppercase; }
+    .hours-field > label { display: block; margin-bottom: 4px; color: var(--gris); font-size: 9px; font-weight: 800; letter-spacing: .7px; text-transform: uppercase; }
     .hours-field input { padding: 9px 11px; }
+    .hours-field:last-child .custom-time-panel { right: 0; left: auto; }
     .hours-row.is-closed .hours-field { opacity: .42; }
     .faq-list { display: grid; gap: 13px; }
     .faq-editor { padding: 17px; border: 1px solid var(--borde); border-radius: 15px; background: var(--fondo); }

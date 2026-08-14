@@ -9,7 +9,7 @@
     <div class="page-actions">
         <x-section-heading :title="'Venta #' . $venta->id_venta">
             <x-slot:subtitle>
-                Registrada el {{ \Carbon\Carbon::parse($venta->fecha_venta)->format('d/m/Y H:i') }}
+                Registrada el {{ \App\Support\BusinessClock::formatUtc($venta->fecha_venta, 'd/m/Y H:i') }}
             </x-slot:subtitle>
         </x-section-heading>
 
@@ -42,7 +42,7 @@
 
         <div class="detail-item">
             <span>Fecha de venta</span>
-            <strong>{{ \Carbon\Carbon::parse($venta->fecha_venta)->format('d/m/Y H:i') }}</strong>
+            <strong>{{ \App\Support\BusinessClock::formatUtc($venta->fecha_venta, 'd/m/Y H:i') }}</strong>
         </div>
 
         <div class="detail-item">

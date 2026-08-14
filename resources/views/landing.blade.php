@@ -7,6 +7,8 @@
     <meta name="theme-color" content="#C9A227">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="business-timezone" content="{{ \App\Support\BusinessClock::timezone() }}">
+    <meta name="business-today" content="{{ \App\Support\BusinessClock::today()->toDateString() }}">
     <title>{{ $barberia?->nombre ?? 'BarberCore Studio' }} | Barbería profesional</title>
     <link rel="icon" type="image/png" href="{{ asset('images/branding/icon_192_Barbercore.png') }}">
     <link rel="apple-touch-icon" href="/icons/icon-192.png?v=2">
@@ -35,7 +37,7 @@
             ],
         ])->all();
 
-        $ahoraNegocio = now('America/Mexico_City');
+        $ahoraNegocio = \App\Support\BusinessClock::now();
         $horarioHoy = $horarios->firstWhere('dia_semana', ($ahoraNegocio->dayOfWeekIso - 1));
         $negocioAbierto = $horarioHoy
             && $horarioHoy->abierto
@@ -276,7 +278,7 @@
                 <div class="booking-grid">
                     <div class="booking-field full"><label for="booking-name">Tu nombre *</label><input type="text" id="booking-name" name="nombre" maxlength="100" autocomplete="name" required></div>
                     <div class="booking-field full"><label for="booking-service">Servicio de interés *</label><select id="booking-service" name="servicio" required><option value="">Selecciona un servicio</option>@foreach($servicios as $servicio)<option value="{{ $servicio->nombre }}" data-duration="{{ $servicio->duracion_minutos }}">{{ $servicio->nombre }} · ${{ number_format($servicio->precio, 2) }}</option>@endforeach<option value="Por definir" data-duration="0">No estoy seguro todavía</option></select></div>
-                    <div class="booking-field"><label for="booking-date">Fecha deseada *</label><input type="date" id="booking-date" name="fecha" min="{{ now()->format('Y-m-d') }}" required></div>
+                    <div class="booking-field"><label for="booking-date">Fecha deseada *</label><input type="date" id="booking-date" name="fecha" min="{{ \App\Support\BusinessClock::today()->toDateString() }}" required></div>
                     <div class="booking-field"><label for="booking-time">Hora deseada *</label><input type="time" id="booking-time" name="hora" min="{{ $horaMinima }}" max="{{ $horaMaxima }}" step="900" required></div>
                     <div class="booking-field full"><label for="booking-notes">Comentario opcional</label><textarea id="booking-notes" name="comentarios" maxlength="400" placeholder="Ej. Prefiero un corte con acabado natural."></textarea></div>
                 </div>
@@ -389,7 +391,9 @@
 
             const pad = (number) => String(number).padStart(2, '0');
             const toDateValue = (date) => `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
-            const fromDateValue = (value) => value ? new Date(`${value}T12:00:00`) : new Date();
+            const businessTodayValue = document.querySelector('meta[name="business-today"]').content;
+            const businessToday = () => new Date(`${businessTodayValue}T12:00:00`);
+            const fromDateValue = (value) => value ? new Date(`${value}T12:00:00`) : businessToday();
             const dateLabel = (value) => value ? fromDateValue(value).toLocaleDateString('es-MX', { day: 'numeric', month: 'long', year: 'numeric' }) : 'Seleccionar fecha';
             const months = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
             const weekdays = ['L','M','M','J','V','S','D'];
@@ -449,7 +453,7 @@
                 const first = new Date(dateCursor.getFullYear(), dateCursor.getMonth(), 1);
                 const mondayOffset = (first.getDay() + 6) % 7;
                 const gridStart = new Date(dateCursor.getFullYear(), dateCursor.getMonth(), 1 - mondayOffset);
-                const today = toDateValue(new Date());
+                const today = businessTodayValue;
 
                 for (let index = 0; index < 42; index += 1) {
                     const date = new Date(gridStart);
@@ -484,7 +488,7 @@
             calendar.querySelector('.prev').addEventListener('click', () => { dateCursor = new Date(dateCursor.getFullYear(), dateCursor.getMonth() - 1, 1); renderCalendar(); });
             calendar.querySelector('.next').addEventListener('click', () => { dateCursor = new Date(dateCursor.getFullYear(), dateCursor.getMonth() + 1, 1); renderCalendar(); });
             calendar.querySelector('.booking-calendar-footer button').addEventListener('click', () => {
-                const today = new Date();
+                const today = businessToday();
                 const value = toDateValue(today);
                 if ((!dateInput.min || value >= dateInput.min) && scheduleForDate(value)) {
                     dateInput.value = value;

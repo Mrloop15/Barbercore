@@ -1,4 +1,4 @@
-const CACHE_NAME = "barbercore-web-v17";
+const CACHE_NAME = "barbercore-web-v20";
 const STATIC_ASSETS = [
     "/offline.html",
     "/manifest.json",
@@ -44,6 +44,12 @@ self.addEventListener("fetch", (event) => {
     // No guarda vistas autenticadas ni tokens CSRF de sesiones anteriores.
     if (request.mode === "navigate") {
         event.respondWith(fetch(request).catch(() => caches.match("/offline.html")));
+        return;
+    }
+
+    // Las consultas fetch (disponibilidad, recompensas, etc.) siempre deben ser actuales.
+    if (request.destination === "") {
+        event.respondWith(fetch(request));
         return;
     }
 

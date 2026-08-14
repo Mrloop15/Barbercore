@@ -34,7 +34,7 @@
             </div>
             <form method="GET" action="{{ route('ventas-productos.index') }}" class="filter-form">
                 <label class="filter-field filter-field-date"><span class="filter-label">Fecha de venta</span><input type="date" name="fecha" value="{{ $fecha }}"></label>
-                <div class="filter-actions"><button type="submit" class="btn btn-secondary"><x-icon name="search" /> Consultar</button>@if ($fecha !== \Carbon\Carbon::today()->toDateString())<a href="{{ route('ventas-productos.index') }}" class="btn filter-clear">Ver hoy</a>@endif</div>
+                <div class="filter-actions"><button type="submit" class="btn btn-secondary"><x-icon name="search" /> Consultar</button>@if ($fecha !== \App\Support\BusinessClock::today()->toDateString())<a href="{{ route('ventas-productos.index') }}" class="btn filter-clear">Ver hoy</a>@endif</div>
             </form>
         </div>
     </div>
@@ -55,7 +55,7 @@
         <tbody>
             @forelse ($ventas as $venta)
                 <tr>
-                    <td>{{ \Carbon\Carbon::parse($venta->fecha_venta)->format('d/m/Y H:i') }}</td>
+                    <td>{{ \App\Support\BusinessClock::formatUtc($venta->fecha_venta, 'd/m/Y H:i') }}</td>
 
                     <td>
                         @if ($venta->cliente)

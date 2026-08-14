@@ -28,7 +28,7 @@
         <label class="filter-field filter-field-date"><span class="filter-label">Fecha de referencia</span><input type="date" name="fecha" value="{{ $fechaBase->toDateString() }}"></label>
         <div class="filter-actions">
             <button type="submit" class="btn btn-secondary"><x-icon name="calendar" /> Ir a fecha</button>
-            @if (!$fechaBase->isToday())<a href="{{ route('agenda.index', ['vista' => $vista, 'fecha' => now()->toDateString()]) }}" class="btn filter-clear">Hoy</a>@endif
+            @if (!$fechaBase->isSameDay(\App\Support\BusinessClock::today()))<a href="{{ route('agenda.index', ['vista' => $vista, 'fecha' => \App\Support\BusinessClock::today()->toDateString()]) }}" class="btn filter-clear">Hoy</a>@endif
         </div>
     </form>
 </section>

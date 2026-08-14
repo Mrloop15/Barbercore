@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Cliente;
+use App\Support\BusinessClock;
 use Illuminate\Http\Request;
 
 class ClienteApiController extends Controller
@@ -131,7 +132,7 @@ class ClienteApiController extends Controller
         $clientes = Cliente::where('id_barberia', $idBarberia)
             ->where('activo', 1)
             ->whereNotNull('ultima_visita')
-            ->whereDate('ultima_visita', '<=', now()->subDays(20)->toDateString())
+            ->whereDate('ultima_visita', '<=', BusinessClock::today()->subDays(20)->toDateString())
             ->orderBy('ultima_visita')
             ->get();
 

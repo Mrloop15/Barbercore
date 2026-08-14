@@ -3,7 +3,7 @@
 namespace App\Providers;
 
 use App\Models\Cita;
-use Carbon\Carbon;
+use App\Support\BusinessClock;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\View;
@@ -34,8 +34,9 @@ class AppServiceProvider extends ServiceProvider
                 return;
             }
 
-            $hoy = now()->toDateString();
-            $horaActual = now()->format('H:i:s');
+            $ahoraLocal = BusinessClock::now();
+            $hoy = $ahoraLocal->toDateString();
+            $horaActual = $ahoraLocal->format('H:i:s');
             $proximaCitaBarbero = Cita::with(['cliente', 'servicio'])
                 ->where('id_barberia', $usuario->id_barberia)
                 ->where('id_barbero', $usuario->id_usuario)
@@ -52,7 +53,7 @@ class AppServiceProvider extends ServiceProvider
                 ->first();
 
             $proximaCitaInicio = $proximaCitaBarbero
-                ? Carbon::parse($proximaCitaBarbero->fecha . ' ' . $proximaCitaBarbero->hora_inicio)
+                ? BusinessClock::localDate($proximaCitaBarbero->fecha)->setTimeFromTimeString($proximaCitaBarbero->hora_inicio)
                 : null;
             $inicialesBarbero = collect(preg_split('/\s+/', trim($usuario->nombre ?? 'Usuario')))
                 ->filter()

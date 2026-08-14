@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Web;
 use App\Http\Controllers\Controller;
 use App\Models\Cita;
 use App\Models\VentaProducto;
+use App\Support\BusinessClock;
 use Carbon\Carbon;
 use Dompdf\Dompdf;
 use Dompdf\Options;
@@ -25,7 +26,7 @@ class EstadisticaController extends Controller
     public function download(Request $request)
     {
         $data = $this->reportData($request);
-        $options = new Options();
+        $options = new Options;
         $options->set('isRemoteEnabled', false);
         $dompdf = new Dompdf($options);
         $dompdf->loadHtml(view('estadisticas.pdf', $data)->render(), 'UTF-8');
@@ -34,24 +35,24 @@ class EstadisticaController extends Controller
 
         return response($dompdf->output(), 200, [
             'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'attachment; filename="reporte-barbercore-' . $data['desde']->format('Ymd') . '-' . $data['hasta']->format('Ymd') . '.pdf"',
+            'Content-Disposition' => 'attachment; filename="reporte-barbercore-'.$data['desde']->format('Ymd').'-'.$data['hasta']->format('Ymd').'.pdf"',
         ]);
     }
 
     public function downloadExcel(Request $request)
     {
         $data = $this->reportData($request);
-        $filename = 'reporte-barbercore-' . $data['desde']->format('Ymd') . '-' . $data['hasta']->format('Ymd') . '.xlsx';
+        $filename = 'reporte-barbercore-'.$data['desde']->format('Ymd').'-'.$data['hasta']->format('Ymd').'.xlsx';
 
         return response()->streamDownload(function () use ($data) {
-            $writer = new Writer();
+            $writer = new Writer;
             $writer->openToFile('php://output');
 
-            $titleStyle = (new Style())->setFontBold()->setFontSize(18)->setFontColor('C9A227');
-            $sectionStyle = (new Style())->setFontBold()->setFontSize(12)
+            $titleStyle = (new Style)->setFontBold()->setFontSize(18)->setFontColor('C9A227');
+            $sectionStyle = (new Style)->setFontBold()->setFontSize(12)
                 ->setFontColor(Color::WHITE)->setBackgroundColor('1C1C1C');
-            $labelStyle = (new Style())->setFontBold()->setBackgroundColor('FAF8F2');
-            $moneyStyle = (new Style())->setFormat('$#,##0.00');
+            $labelStyle = (new Style)->setFontBold()->setBackgroundColor('FAF8F2');
+            $moneyStyle = (new Style)->setFormat('$#,##0.00');
 
             $summarySheet = $writer->getCurrentSheet();
             $summarySheet->setName('Resumen');
@@ -61,7 +62,7 @@ class EstadisticaController extends Controller
             $writer->addRow(Row::fromValues(['Reporte BarberCore'], $titleStyle));
             $writer->addRow(Row::fromValues([$data['barberia']]));
             $writer->addRow(Row::fromValues([]));
-            $writer->addRow(Row::fromValues(['Periodo', $data['desde']->format('d/m/Y') . ' al ' . $data['hasta']->format('d/m/Y')], $labelStyle));
+            $writer->addRow(Row::fromValues(['Periodo', $data['desde']->format('d/m/Y').' al '.$data['hasta']->format('d/m/Y')], $labelStyle));
             $writer->addRow(Row::fromValues(['Estado', ucfirst($data['estado'])], $labelStyle));
             $writer->addRow(Row::fromValues([]));
             $writer->addRow(Row::fromValues([
@@ -94,7 +95,7 @@ class EstadisticaController extends Controller
                     Carbon::parse($cita->fecha)->format('d/m/Y'),
                     Carbon::parse($cita->hora_inicio)->format('H:i'),
                     Carbon::parse($cita->hora_fin)->format('H:i'),
-                    trim(($cita->cliente->nombre ?? 'Sin cliente') . ' ' . ($cita->cliente->apellido ?? '')),
+                    trim(($cita->cliente->nombre ?? 'Sin cliente').' '.($cita->cliente->apellido ?? '')),
                     $cita->servicio->nombre ?? 'Sin servicio',
                     $cita->barbero->nombre ?? 'Sin asignar',
                     ucfirst($cita->estado),
@@ -118,11 +119,11 @@ class EstadisticaController extends Controller
 
             foreach ($data['ventas'] as $venta) {
                 $writer->addRow(Row::fromValuesWithStyles([
-                    Carbon::parse($venta->fecha_venta)->format('d/m/Y'),
-                    Carbon::parse($venta->fecha_venta)->format('H:i'),
-                    trim(($venta->cliente->nombre ?? 'Cliente general') . ' ' . ($venta->cliente->apellido ?? '')),
+                    BusinessClock::formatUtc($venta->fecha_venta, 'd/m/Y'),
+                    BusinessClock::formatUtc($venta->fecha_venta, 'H:i'),
+                    trim(($venta->cliente->nombre ?? 'Cliente general').' '.($venta->cliente->apellido ?? '')),
                     $venta->vendedor_nombre,
-                    $venta->detalles->map(fn ($detalle) => ($detalle->producto->nombre ?? 'Producto eliminado') . ' x' . $detalle->cantidad)->implode(', '),
+                    $venta->detalles->map(fn ($detalle) => ($detalle->producto->nombre ?? 'Producto eliminado').' x'.$detalle->cantidad)->implode(', '),
                     (float) $venta->total,
                 ], columnStyles: [5 => $moneyStyle]));
             }
@@ -140,17 +141,21 @@ class EstadisticaController extends Controller
             'desde' => ['nullable', 'date'], 'hasta' => ['nullable', 'date', 'after_or_equal:desde'],
             'estado' => ['nullable', 'in:todos,pendiente,completada,cancelada'],
         ]);
-        $desde = Carbon::parse($validated['desde'] ?? now()->startOfMonth()->toDateString())->startOfDay();
-        $hasta = Carbon::parse($validated['hasta'] ?? now()->endOfMonth()->toDateString())->endOfDay();
+        $ahoraLocal = BusinessClock::now();
+        $desde = BusinessClock::localDate($validated['desde'] ?? $ahoraLocal->startOfMonth()->toDateString())->startOfDay();
+        $hasta = BusinessClock::localDate($validated['hasta'] ?? $ahoraLocal->endOfMonth()->toDateString())->endOfDay();
+        [$desdeUtc, $hastaUtc] = BusinessClock::utcRange($desde, $hasta);
         $estado = $validated['estado'] ?? 'todos';
         $idBarberia = Auth::user()->id_barberia ?? 1;
         $query = Cita::with(['cliente', 'servicio', 'barbero'])->where('id_barberia', $idBarberia)->whereBetween('fecha', [$desde->toDateString(), $hasta->toDateString()]);
-        if ($estado !== 'todos') $query->where('estado', $estado);
+        if ($estado !== 'todos') {
+            $query->where('estado', $estado);
+        }
         $citas = $query->orderBy('fecha')->orderBy('hora_inicio')->get();
         $ventas = VentaProducto::with(['cliente', 'detalles.producto'])
             ->withVendedor()
             ->where('id_barberia', $idBarberia)
-            ->whereBetween('fecha_venta', [$desde, $hasta])
+            ->whereBetween('fecha_venta', [$desdeUtc, $hastaUtc])
             ->orderBy('fecha_venta')
             ->get();
         $ingresosServicios = $citas->where('estado', 'completada')->sum('precio');

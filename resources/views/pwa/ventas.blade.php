@@ -292,7 +292,7 @@
         </section>
     </main>
 
-    <script src="/js/pwa-ventas.js"></script>
+    <script src="/js/pwa-ventas.js?v=2"></script>
 
     <script>
         if ('serviceWorker' in navigator) {

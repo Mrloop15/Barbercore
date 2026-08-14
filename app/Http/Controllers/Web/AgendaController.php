@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
 use App\Models\Cita;
+use App\Support\BusinessClock;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -17,31 +18,31 @@ class AgendaController extends Controller
 
         $vista = $request->input('vista', 'dia');
 
-        if (!in_array($vista, ['dia', 'semana', 'mes'])) {
+        if (! in_array($vista, ['dia', 'semana', 'mes'])) {
             $vista = 'dia';
         }
 
-        $fechaBase = Carbon::parse($request->input('fecha', Carbon::today()->toDateString()));
+        $fechaBase = BusinessClock::localDate($request->input('fecha', BusinessClock::today()->toDateString()));
 
         if ($vista === 'dia') {
             $inicio = $fechaBase->copy()->startOfDay();
             $fin = $fechaBase->copy()->endOfDay();
-            $tituloPeriodo = 'Agenda del día ' . $fechaBase->format('d/m/Y');
+            $tituloPeriodo = 'Agenda del día '.$fechaBase->format('d/m/Y');
         } elseif ($vista === 'semana') {
             $inicio = $fechaBase->copy()->startOfWeek(Carbon::MONDAY);
             $fin = $fechaBase->copy()->endOfWeek(Carbon::SUNDAY);
-            $tituloPeriodo = 'Agenda semanal del ' . $inicio->format('d/m/Y') . ' al ' . $fin->format('d/m/Y');
+            $tituloPeriodo = 'Agenda semanal del '.$inicio->format('d/m/Y').' al '.$fin->format('d/m/Y');
         } else {
             $inicio = $fechaBase->copy()->startOfMonth();
             $fin = $fechaBase->copy()->endOfMonth();
-            $tituloPeriodo = 'Agenda mensual de ' . $fechaBase->translatedFormat('F Y');
+            $tituloPeriodo = 'Agenda mensual de '.$fechaBase->translatedFormat('F Y');
         }
 
         $citas = Cita::with(['cliente', 'servicio', 'barbero'])
             ->where('id_barberia', $idBarberia)
             ->whereBetween('fecha', [
                 $inicio->toDateString(),
-                $fin->toDateString()
+                $fin->toDateString(),
             ])
             ->orderBy('fecha')
             ->orderBy('hora_inicio')
@@ -65,6 +66,7 @@ class AgendaController extends Controller
             $primeraHora = $citas->min(fn ($cita) => Carbon::parse($cita->hora_inicio)->hour);
             $ultimaHora = $citas->max(function ($cita) {
                 $finCita = Carbon::parse($cita->hora_fin);
+
                 return $finCita->minute > 0 ? $finCita->hour + 1 : $finCita->hour;
             });
 

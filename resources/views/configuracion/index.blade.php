@@ -110,8 +110,8 @@
                             <input type="checkbox" name="horarios[{{ $dia }}][abierto]" value="1" @checked($abierto) data-hours-toggle>
                             <span data-hours-state>{{ $abierto ? 'Abierto' : 'Cerrado' }}</span>
                         </label>
-                        <label class="hours-field"><span>Apertura</span><input type="time" name="horarios[{{ $dia }}][hora_apertura]" value="{{ $apertura }}" @disabled(!$abierto)></label>
-                        <label class="hours-field"><span>Cierre</span><input type="time" name="horarios[{{ $dia }}][hora_cierre]" value="{{ $cierre }}" @disabled(!$abierto)></label>
+                        <div class="hours-field"><label for="hora-apertura-{{ $dia }}">Apertura</label><input id="hora-apertura-{{ $dia }}" type="time" name="horarios[{{ $dia }}][hora_apertura]" value="{{ $apertura }}" step="60" data-exact-time @disabled(!$abierto)></div>
+                        <div class="hours-field"><label for="hora-cierre-{{ $dia }}">Cierre</label><input id="hora-cierre-{{ $dia }}" type="time" name="horarios[{{ $dia }}][hora_cierre]" value="{{ $cierre }}" step="60" data-exact-time @disabled(!$abierto)></div>
                     </div>
                 @endforeach
             </div>

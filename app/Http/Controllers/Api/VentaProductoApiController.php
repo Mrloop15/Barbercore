@@ -8,6 +8,7 @@ use App\Models\DetalleVentaProducto;
 use App\Models\MovimientoPunto;
 use App\Models\Producto;
 use App\Models\VentaProducto;
+use App\Support\BusinessClock;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -26,6 +27,8 @@ class VentaProductoApiController extends Controller
 
         return response()->json([
             'ok' => true,
+            'timestamps_timezone' => 'UTC',
+            'display_timezone' => BusinessClock::timezone(),
             'data' => $ventas,
         ]);
     }
@@ -43,6 +46,8 @@ class VentaProductoApiController extends Controller
 
         return response()->json([
             'ok' => true,
+            'timestamps_timezone' => 'UTC',
+            'display_timezone' => BusinessClock::timezone(),
             'data' => $venta,
         ]);
     }
@@ -73,7 +78,7 @@ class VentaProductoApiController extends Controller
                 if ($producto->stock < $item['cantidad']) {
                     abort(response()->json([
                         'ok' => false,
-                        'message' => 'Stock insuficiente para el producto: ' . $producto->nombre,
+                        'message' => 'Stock insuficiente para el producto: '.$producto->nombre,
                     ], 422));
                 }
 
@@ -92,7 +97,7 @@ class VentaProductoApiController extends Controller
                 'id_barberia' => $idBarberia,
                 'id_cliente' => $datos['id_cliente'] ?? null,
                 'total' => $total,
-                'fecha_venta' => now(),
+                'fecha_venta' => now('UTC'),
             ];
 
             if (VentaProducto::supportsVendedor()) {
@@ -113,7 +118,7 @@ class VentaProductoApiController extends Controller
                 $item['producto']->decrement('stock', $item['cantidad']);
             }
 
-            if (!empty($datos['id_cliente'])) {
+            if (! empty($datos['id_cliente'])) {
                 $puntosGanados = (int) floor($total / 10);
 
                 if ($puntosGanados > 0) {
@@ -127,7 +132,7 @@ class VentaProductoApiController extends Controller
                         'tipo' => 'suma',
                         'puntos' => $puntosGanados,
                         'motivo' => 'Puntos generados por compra de productos',
-                        'referencia' => 'venta:' . $venta->id_venta,
+                        'referencia' => 'venta:'.$venta->id_venta,
                         'created_at' => now(),
                     ]);
                 }
@@ -145,6 +150,8 @@ class VentaProductoApiController extends Controller
         return response()->json([
             'ok' => true,
             'message' => 'Venta registrada correctamente.',
+            'timestamps_timezone' => 'UTC',
+            'display_timezone' => BusinessClock::timezone(),
             'data' => $venta,
         ], 201);
     }

@@ -8,7 +8,7 @@ use App\Models\Cliente;
 use App\Models\HistorialServicio;
 use App\Models\Producto;
 use App\Models\VentaProducto;
-use Carbon\Carbon;
+use App\Support\BusinessClock;
 use Carbon\CarbonPeriod;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -18,12 +18,12 @@ class EstadisticaApiController extends Controller
     private function rangoFechas(Request $request): array
     {
         $inicio = $request->query('inicio')
-            ? Carbon::parse($request->query('inicio'))->toDateString()
-            : now()->startOfMonth()->toDateString();
+            ? BusinessClock::localDate($request->query('inicio'))->toDateString()
+            : BusinessClock::now()->startOfMonth()->toDateString();
 
         $fin = $request->query('fin')
-            ? Carbon::parse($request->query('fin'))->toDateString()
-            : now()->endOfMonth()->toDateString();
+            ? BusinessClock::localDate($request->query('fin'))->toDateString()
+            : BusinessClock::now()->endOfMonth()->toDateString();
 
         return [$inicio, $fin];
     }
@@ -35,18 +35,23 @@ class EstadisticaApiController extends Controller
 
         [$inicio, $fin] = $this->rangoFechas($request);
 
-        $hoy = now()->toDateString();
-        $inicioSemana = now()->startOfWeek()->toDateString();
-        $finSemana = now()->endOfWeek()->toDateString();
-        $inicioMes = now()->startOfMonth()->toDateString();
-        $finMes = now()->endOfMonth()->toDateString();
+        $ahoraLocal = BusinessClock::now();
+        $hoy = $ahoraLocal->toDateString();
+        $inicioSemana = $ahoraLocal->startOfWeek()->toDateString();
+        $finSemana = $ahoraLocal->endOfWeek()->toDateString();
+        $inicioMes = $ahoraLocal->startOfMonth()->toDateString();
+        $finMes = $ahoraLocal->endOfMonth()->toDateString();
+        [$inicioDiaUtc, $finDiaUtc] = BusinessClock::utcRange($hoy, $hoy);
+        [$inicioSemanaUtc, $finSemanaUtc] = BusinessClock::utcRange($inicioSemana, $finSemana);
+        [$inicioMesUtc, $finMesUtc] = BusinessClock::utcRange($inicioMes, $finMes);
+        [$inicioGraficaUtc, $finGraficaUtc] = BusinessClock::utcRange($inicio, $fin);
 
         $ingresosServiciosDia = HistorialServicio::where('id_barberia', $idBarberia)
             ->whereDate('fecha_servicio', $hoy)
             ->sum('precio');
 
         $ingresosProductosDia = VentaProducto::where('id_barberia', $idBarberia)
-            ->whereDate('fecha_venta', $hoy)
+            ->whereBetween('fecha_venta', [$inicioDiaUtc, $finDiaUtc])
             ->sum('total');
 
         $ingresosServiciosSemana = HistorialServicio::where('id_barberia', $idBarberia)
@@ -54,8 +59,7 @@ class EstadisticaApiController extends Controller
             ->sum('precio');
 
         $ingresosProductosSemana = VentaProducto::where('id_barberia', $idBarberia)
-            ->whereDate('fecha_venta', '>=', $inicioSemana)
-            ->whereDate('fecha_venta', '<=', $finSemana)
+            ->whereBetween('fecha_venta', [$inicioSemanaUtc, $finSemanaUtc])
             ->sum('total');
 
         $ingresosServiciosMes = HistorialServicio::where('id_barberia', $idBarberia)
@@ -63,8 +67,7 @@ class EstadisticaApiController extends Controller
             ->sum('precio');
 
         $ingresosProductosMes = VentaProducto::where('id_barberia', $idBarberia)
-            ->whereDate('fecha_venta', '>=', $inicioMes)
-            ->whereDate('fecha_venta', '<=', $finMes)
+            ->whereBetween('fecha_venta', [$inicioMesUtc, $finMesUtc])
             ->sum('total');
 
         $serviciosPorDia = HistorialServicio::selectRaw('DATE(fecha_servicio) as fecha, SUM(precio) as total')
@@ -73,12 +76,11 @@ class EstadisticaApiController extends Controller
             ->groupBy(DB::raw('DATE(fecha_servicio)'))
             ->pluck('total', 'fecha');
 
-        $productosPorDia = VentaProducto::selectRaw('DATE(fecha_venta) as fecha, SUM(total) as total')
-            ->where('id_barberia', $idBarberia)
-            ->whereDate('fecha_venta', '>=', $inicio)
-            ->whereDate('fecha_venta', '<=', $fin)
-            ->groupBy(DB::raw('DATE(fecha_venta)'))
-            ->pluck('total', 'fecha');
+        $productosPorDia = VentaProducto::where('id_barberia', $idBarberia)
+            ->whereBetween('fecha_venta', [$inicioGraficaUtc, $finGraficaUtc])
+            ->get(['fecha_venta', 'total'])
+            ->groupBy(fn (VentaProducto $venta) => BusinessClock::fromUtc($venta->fecha_venta)->toDateString())
+            ->map(fn ($ventas) => (float) $ventas->sum('total'));
 
         $grafica = [];
 
@@ -101,6 +103,7 @@ class EstadisticaApiController extends Controller
             'rango' => [
                 'inicio' => $inicio,
                 'fin' => $fin,
+                'timezone' => BusinessClock::timezone(),
             ],
             'resumen' => [
                 'ingresos_dia' => (float) ($ingresosServiciosDia + $ingresosProductosDia),
@@ -140,6 +143,7 @@ class EstadisticaApiController extends Controller
             'rango' => [
                 'inicio' => $inicio,
                 'fin' => $fin,
+                'timezone' => BusinessClock::timezone(),
             ],
             'data' => $servicios,
         ]);
@@ -175,36 +179,42 @@ class EstadisticaApiController extends Controller
             )
             ->get();
 
+        $fechasConServicio = Cita::where('id_barberia', $idBarberia)
+            ->where('estado', 'completada')
+            ->whereBetween('fecha', [$inicio, $fin])
+            ->get(['id_cliente', 'fecha'])
+            ->mapWithKeys(fn ($cita) => [$cita->id_cliente.'|'.$cita->fecha => true]);
+
         $interaccionesVentas = VentaProducto::query()
             ->join('clientes', 'ventas_productos.id_cliente', '=', 'clientes.id_cliente')
             ->where('ventas_productos.id_barberia', $idBarberia)
             ->where('clientes.id_barberia', $idBarberia)
-            ->whereBetween('ventas_productos.fecha_venta', [Carbon::parse($inicio)->startOfDay(), Carbon::parse($fin)->endOfDay()])
-            ->whereNotExists(function ($query) {
-                $query->selectRaw('1')
-                    ->from('citas as citas_completadas')
-                    ->whereColumn('citas_completadas.id_barberia', 'ventas_productos.id_barberia')
-                    ->whereColumn('citas_completadas.id_cliente', 'ventas_productos.id_cliente')
-                    ->where('citas_completadas.estado', 'completada')
-                    ->whereRaw('citas_completadas.fecha = DATE(ventas_productos.fecha_venta)');
-            })
+            ->whereBetween('ventas_productos.fecha_venta', BusinessClock::utcRange($inicio, $fin))
             ->select(
                 'clientes.id_cliente',
                 'clientes.nombre',
                 'clientes.apellido',
                 'clientes.telefono',
-                'clientes.foto'
+                'clientes.foto',
+                'ventas_productos.fecha_venta',
+                'ventas_productos.total'
             )
-            ->selectRaw('COUNT(*) as total_interacciones')
-            ->selectRaw('SUM(ventas_productos.total) as total_gastado_productos')
-            ->groupBy(
-                'clientes.id_cliente',
-                'clientes.nombre',
-                'clientes.apellido',
-                'clientes.telefono',
-                'clientes.foto'
-            )
-            ->get();
+            ->get()
+            ->reject(fn ($venta) => $fechasConServicio->has($venta->id_cliente.'|'.BusinessClock::fromUtc($venta->fecha_venta)->toDateString()))
+            ->groupBy('id_cliente')
+            ->map(function ($ventas) {
+                $cliente = $ventas->first();
+
+                return (object) [
+                    'id_cliente' => $cliente->id_cliente,
+                    'nombre' => $cliente->nombre,
+                    'apellido' => $cliente->apellido,
+                    'telefono' => $cliente->telefono,
+                    'foto' => $cliente->foto,
+                    'total_interacciones' => $ventas->count(),
+                    'total_gastado_productos' => $ventas->sum('total'),
+                ];
+            })->values();
 
         $clientesFrecuentes = $interaccionesServicios->concat($interaccionesVentas)
             ->groupBy('id_cliente')
@@ -230,7 +240,7 @@ class EstadisticaApiController extends Controller
         $clientesInactivos = Cliente::where('id_barberia', $idBarberia)
             ->where('activo', 1)
             ->whereNotNull('ultima_visita')
-            ->whereDate('ultima_visita', '<=', now()->subDays(20)->toDateString())
+            ->whereDate('ultima_visita', '<=', BusinessClock::today()->subDays(20)->toDateString())
             ->orderBy('ultima_visita')
             ->limit(10)
             ->get([
@@ -254,6 +264,7 @@ class EstadisticaApiController extends Controller
             'rango' => [
                 'inicio' => $inicio,
                 'fin' => $fin,
+                'timezone' => BusinessClock::timezone(),
             ],
             'clientes_frecuentes' => $clientesFrecuentes,
             'clientes_inactivos' => $clientesInactivos,
@@ -277,8 +288,7 @@ class EstadisticaApiController extends Controller
             ->join('productos', 'detalle_venta_productos.id_producto', '=', 'productos.id_producto')
             ->where('ventas_productos.id_barberia', $idBarberia)
             ->where('productos.id_barberia', $idBarberia)
-            ->whereDate('ventas_productos.fecha_venta', '>=', $inicio)
-            ->whereDate('ventas_productos.fecha_venta', '<=', $fin)
+            ->whereBetween('ventas_productos.fecha_venta', BusinessClock::utcRange($inicio, $fin))
             ->select(
                 'productos.id_producto',
                 'productos.nombre'
@@ -307,6 +317,7 @@ class EstadisticaApiController extends Controller
             'rango' => [
                 'inicio' => $inicio,
                 'fin' => $fin,
+                'timezone' => BusinessClock::timezone(),
             ],
             'productos_vendidos' => $productosVendidos,
             'productos_bajo_stock' => $productosBajoStock,

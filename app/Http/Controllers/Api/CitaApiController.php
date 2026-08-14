@@ -5,11 +5,12 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Cita;
 use App\Models\Cliente;
-use App\Models\Servicio;
-use Carbon\Carbon;
-use Illuminate\Http\Request;
 use App\Models\HistorialServicio;
 use App\Models\MovimientoPunto;
+use App\Models\Servicio;
+use App\Support\BusinessClock;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class CitaApiController extends Controller
@@ -32,6 +33,7 @@ class CitaApiController extends Controller
 
         return response()->json([
             'ok' => true,
+            'timezone' => BusinessClock::timezone(),
             'data' => $citas,
         ]);
     }
@@ -45,7 +47,7 @@ class CitaApiController extends Controller
             'id_cliente' => 'required|exists:clientes,id_cliente',
             'id_servicio' => 'required|exists:servicios,id_servicio',
             'fecha' => 'required|date',
-            'hora_inicio' => 'required',
+            'hora_inicio' => 'required|date_format:H:i',
         ]);
 
         $cliente = Cliente::where('id_barberia', $idBarberia)
@@ -60,6 +62,11 @@ class CitaApiController extends Controller
 
         $horaInicio = Carbon::createFromFormat('H:i', $request->hora_inicio);
         $horaFin = $horaInicio->copy()->addMinutes($servicio->duracion_minutos);
+        $inicioCita = BusinessClock::localDate($request->fecha)->setTimeFromTimeString($request->hora_inicio);
+
+        if ($inicioCita->lte(BusinessClock::now())) {
+            return response()->json(['ok' => false, 'message' => 'La cita debe programarse en una fecha y hora futuras.'], 422);
+        }
 
         $horaInicioSql = $horaInicio->format('H:i:s');
         $horaFinSql = $horaFin->format('H:i:s');
@@ -96,6 +103,7 @@ class CitaApiController extends Controller
         return response()->json([
             'ok' => true,
             'message' => 'Cita registrada correctamente.',
+            'timezone' => BusinessClock::timezone(),
             'data' => $cita,
         ], 201);
     }
@@ -127,59 +135,59 @@ class CitaApiController extends Controller
     }
 
     public function completar(Request $request, string $id)
-{
-    $usuario = $request->user();
-    $idBarberia = $usuario->id_barberia ?? 1;
+    {
+        $usuario = $request->user();
+        $idBarberia = $usuario->id_barberia ?? 1;
 
-    $cita = Cita::with(['cliente', 'servicio'])
-        ->where('id_barberia', $idBarberia)
-        ->where('id_cita', $id)
-        ->firstOrFail();
+        $cita = Cita::with(['cliente', 'servicio'])
+            ->where('id_barberia', $idBarberia)
+            ->where('id_cita', $id)
+            ->firstOrFail();
 
-    if ($cita->estado !== 'pendiente') {
+        if ($cita->estado !== 'pendiente') {
+            return response()->json([
+                'ok' => false,
+                'message' => 'Solo se pueden completar citas pendientes.',
+            ], 422);
+        }
+
+        DB::transaction(function () use ($cita, $idBarberia) {
+            $puntosGanados = 10;
+
+            $cita->update([
+                'estado' => 'completada',
+            ]);
+
+            $cita->cliente->update(['ultima_visita' => $cita->fecha]);
+            $cita->cliente->increment('puntos', $puntosGanados);
+
+            HistorialServicio::create([
+                'id_barberia' => $idBarberia,
+                'id_cliente' => $cita->id_cliente,
+                'id_cita' => $cita->id_cita,
+                'id_servicio' => $cita->id_servicio,
+                'precio' => $cita->precio,
+                'fecha_servicio' => $cita->fecha,
+                'observaciones' => $cita->observaciones,
+            ]);
+
+            MovimientoPunto::create([
+                'id_barberia' => $idBarberia,
+                'id_cliente' => $cita->id_cliente,
+                'tipo' => 'suma',
+                'puntos' => $puntosGanados,
+                'motivo' => 'Puntos generados por cita completada',
+                'referencia' => 'cita:'.$cita->id_cita,
+                'created_at' => now(),
+            ]);
+        });
+
+        $cita->refresh();
+
         return response()->json([
-            'ok' => false,
-            'message' => 'Solo se pueden completar citas pendientes.',
-        ], 422);
+            'ok' => true,
+            'message' => 'Cita completada correctamente. Se actualizó historial, última visita y puntos del cliente.',
+            'data' => $cita,
+        ]);
     }
-
-    DB::transaction(function () use ($cita, $idBarberia) {
-        $puntosGanados = 10;
-
-        $cita->update([
-            'estado' => 'completada',
-        ]);
-
-        $cita->cliente->update(['ultima_visita' => $cita->fecha]);
-        $cita->cliente->increment('puntos', $puntosGanados);
-
-        HistorialServicio::create([
-            'id_barberia' => $idBarberia,
-            'id_cliente' => $cita->id_cliente,
-            'id_cita' => $cita->id_cita,
-            'id_servicio' => $cita->id_servicio,
-            'precio' => $cita->precio,
-            'fecha_servicio' => $cita->fecha,
-            'observaciones' => $cita->observaciones,
-        ]);
-
-        MovimientoPunto::create([
-            'id_barberia' => $idBarberia,
-            'id_cliente' => $cita->id_cliente,
-            'tipo' => 'suma',
-            'puntos' => $puntosGanados,
-            'motivo' => 'Puntos generados por cita completada',
-            'referencia' => 'cita:' . $cita->id_cita,
-            'created_at' => now(),
-        ]);
-    });
-
-    $cita->refresh();
-
-    return response()->json([
-        'ok' => true,
-        'message' => 'Cita completada correctamente. Se actualizó historial, última visita y puntos del cliente.',
-        'data' => $cita,
-    ]);
-}
 }

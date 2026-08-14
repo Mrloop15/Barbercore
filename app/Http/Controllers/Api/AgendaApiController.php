@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Cita;
-use Carbon\Carbon;
+use App\Support\BusinessClock;
 use Illuminate\Http\Request;
 
 class AgendaApiController extends Controller
@@ -15,8 +15,8 @@ class AgendaApiController extends Controller
         $idBarberia = $usuario->id_barberia ?? 1;
 
         $fecha = $request->query('fecha')
-            ? Carbon::parse($request->query('fecha'))->toDateString()
-            : now()->toDateString();
+            ? BusinessClock::localDate($request->query('fecha'))->toDateString()
+            : BusinessClock::today()->toDateString();
 
         $citas = Cita::with(['cliente', 'servicio'])
             ->where('id_barberia', $idBarberia)
@@ -28,6 +28,7 @@ class AgendaApiController extends Controller
             'ok' => true,
             'tipo' => 'dia',
             'fecha' => $fecha,
+            'timezone' => BusinessClock::timezone(),
             'total' => $citas->count(),
             'data' => $citas,
         ]);
@@ -39,8 +40,8 @@ class AgendaApiController extends Controller
         $idBarberia = $usuario->id_barberia ?? 1;
 
         $fechaBase = $request->query('fecha')
-            ? Carbon::parse($request->query('fecha'))
-            : now();
+            ? BusinessClock::localDate($request->query('fecha'))
+            : BusinessClock::now();
 
         $inicioSemana = $fechaBase->copy()->startOfWeek()->toDateString();
         $finSemana = $fechaBase->copy()->endOfWeek()->toDateString();
@@ -57,6 +58,7 @@ class AgendaApiController extends Controller
             'tipo' => 'semana',
             'inicio' => $inicioSemana,
             'fin' => $finSemana,
+            'timezone' => BusinessClock::timezone(),
             'total' => $citas->count(),
             'data' => $citas,
         ]);
@@ -68,8 +70,8 @@ class AgendaApiController extends Controller
         $idBarberia = $usuario->id_barberia ?? 1;
 
         $fechaBase = $request->query('fecha')
-            ? Carbon::parse($request->query('fecha'))
-            : now();
+            ? BusinessClock::localDate($request->query('fecha'))
+            : BusinessClock::now();
 
         $inicioMes = $fechaBase->copy()->startOfMonth()->toDateString();
         $finMes = $fechaBase->copy()->endOfMonth()->toDateString();
@@ -86,6 +88,7 @@ class AgendaApiController extends Controller
             'tipo' => 'mes',
             'inicio' => $inicioMes,
             'fin' => $finMes,
+            'timezone' => BusinessClock::timezone(),
             'total' => $citas->count(),
             'data' => $citas,
         ]);

@@ -2,13 +2,14 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Schema;
 
 class VentaProducto extends Model
 {
     protected $table = 'ventas_productos';
+
     protected $primaryKey = 'id_venta';
 
     protected $fillable = [
@@ -20,6 +21,13 @@ class VentaProducto extends Model
     ];
 
     protected $appends = ['vendedor_nombre'];
+
+    protected function casts(): array
+    {
+        return [
+            'fecha_venta' => 'datetime',
+        ];
+    }
 
     public function cliente()
     {

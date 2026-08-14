@@ -61,9 +61,9 @@
             <div class="form-group appointment-date-group">
                 <label for="fecha">Fecha de la cita *</label>
                 <div class="date-shortcuts">
-                    <button type="button" class="date-shortcut" data-date="{{ now()->toDateString() }}">Hoy</button>
-                    <button type="button" class="date-shortcut" data-date="{{ now()->addDay()->toDateString() }}">Mañana</button>
-                    <button type="button" class="date-shortcut" data-date="{{ now()->next('saturday')->toDateString() }}">Sábado</button>
+                    <button type="button" class="date-shortcut" data-date="{{ \App\Support\BusinessClock::today()->toDateString() }}">Hoy</button>
+                    <button type="button" class="date-shortcut" data-date="{{ \App\Support\BusinessClock::today()->addDay()->toDateString() }}">Mañana</button>
+                    <button type="button" class="date-shortcut" data-date="{{ \App\Support\BusinessClock::today()->next('saturday')->toDateString() }}">Sábado</button>
                 </div>
                 <input 
                     type="date" 

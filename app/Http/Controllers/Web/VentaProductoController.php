@@ -8,7 +8,7 @@ use App\Models\DetalleVentaProducto;
 use App\Models\MovimientoPunto;
 use App\Models\Producto;
 use App\Models\VentaProducto;
-use Carbon\Carbon;
+use App\Support\BusinessClock;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -20,22 +20,25 @@ class VentaProductoController extends Controller
         $usuario = Auth::user();
         $idBarberia = $usuario->id_barberia ?? 1;
 
-        $fecha = $request->input('fecha', Carbon::today()->toDateString());
+        $request->validate(['fecha' => ['nullable', 'date_format:Y-m-d']]);
+
+        $fecha = $request->input('fecha', BusinessClock::today()->toDateString());
+        [$inicioUtc, $finUtc] = BusinessClock::utcRange($fecha, $fecha);
 
         $ventas = VentaProducto::with(['cliente', 'detalles.producto'])
             ->withVendedor()
             ->where('id_barberia', $idBarberia)
-            ->whereDate('fecha_venta', $fecha)
+            ->whereBetween('fecha_venta', [$inicioUtc, $finUtc])
             ->orderByDesc('fecha_venta')
             ->paginate(10)
             ->withQueryString();
 
         $totalVentasDia = VentaProducto::where('id_barberia', $idBarberia)
-            ->whereDate('fecha_venta', $fecha)
+            ->whereBetween('fecha_venta', [$inicioUtc, $finUtc])
             ->sum('total');
 
         $cantidadVentasDia = VentaProducto::where('id_barberia', $idBarberia)
-            ->whereDate('fecha_venta', $fecha)
+            ->whereBetween('fecha_venta', [$inicioUtc, $finUtc])
             ->count();
 
         return view('ventas.index', compact(
@@ -96,7 +99,7 @@ class VentaProductoController extends Controller
                         ->firstOrFail();
 
                     if ($producto->stock < $cantidad) {
-                        throw new \Exception('Stock insuficiente para el producto: ' . $producto->nombre);
+                        throw new \Exception('Stock insuficiente para el producto: '.$producto->nombre);
                     }
 
                     $precioUnitario = $producto->precio_venta;
@@ -116,7 +119,7 @@ class VentaProductoController extends Controller
                     'id_barberia' => $idBarberia,
                     'id_cliente' => $request->id_cliente,
                     'total' => $total,
-                    'fecha_venta' => now(),
+                    'fecha_venta' => now('UTC'),
                 ];
 
                 if (VentaProducto::supportsVendedor()) {
@@ -155,7 +158,7 @@ class VentaProductoController extends Controller
                                 'tipo' => 'suma',
                                 'puntos' => $puntosGanados,
                                 'motivo' => 'Puntos generados por compra de producto',
-                                'referencia' => 'venta:' . $venta->id_venta,
+                                'referencia' => 'venta:'.$venta->id_venta,
                                 'created_at' => now(),
                             ]);
                         }

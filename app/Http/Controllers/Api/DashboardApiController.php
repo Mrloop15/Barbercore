@@ -6,7 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Cita;
 use App\Models\Cliente;
 use App\Models\Producto;
-use Carbon\Carbon;
+use App\Models\VentaProducto;
+use App\Support\BusinessClock;
 use Illuminate\Http\Request;
 
 class DashboardApiController extends Controller
@@ -16,7 +17,11 @@ class DashboardApiController extends Controller
         $usuario = $request->user();
         $idBarberia = $usuario->id_barberia ?? 1;
 
-        $hoy = Carbon::today();
+        $hoy = BusinessClock::today();
+        $inicioMes = $hoy->startOfMonth();
+        $finMes = $hoy->endOfMonth();
+        [$inicioHoyUtc, $finHoyUtc] = BusinessClock::utcRange($hoy, $hoy);
+        [$inicioMesUtc, $finMesUtc] = BusinessClock::utcRange($inicioMes, $finMes);
 
         return response()->json([
             'ok' => true,
@@ -40,13 +45,17 @@ class DashboardApiController extends Controller
                 'ingresos_dia' => Cita::where('id_barberia', $idBarberia)
                     ->where('estado', 'completada')
                     ->whereDate('fecha', $hoy)
-                    ->sum('precio'),
+                    ->sum('precio') + VentaProducto::where('id_barberia', $idBarberia)
+                    ->whereBetween('fecha_venta', [$inicioHoyUtc, $finHoyUtc])
+                    ->sum('total'),
 
                 'ingresos_mes' => Cita::where('id_barberia', $idBarberia)
                     ->where('estado', 'completada')
                     ->whereMonth('fecha', $hoy->month)
                     ->whereYear('fecha', $hoy->year)
-                    ->sum('precio'),
+                    ->sum('precio') + VentaProducto::where('id_barberia', $idBarberia)
+                    ->whereBetween('fecha_venta', [$inicioMesUtc, $finMesUtc])
+                    ->sum('total'),
 
                 'clientes_inactivos' => Cliente::where('id_barberia', $idBarberia)
                     ->where('activo', 1)
@@ -58,6 +67,8 @@ class DashboardApiController extends Controller
                     ->where('activo', 1)
                     ->whereColumn('stock', '<=', 'stock_minimo')
                     ->count(),
+
+                'timezone' => BusinessClock::timezone(),
             ],
         ]);
     }

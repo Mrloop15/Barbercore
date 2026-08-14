@@ -111,7 +111,7 @@
         <tbody>
             @forelse ($ultimosCanjes as $canje)
                 <tr>
-                    <td>{{ \Carbon\Carbon::parse($canje->fecha_canje)->format('d/m/Y H:i') }}</td>
+                    <td>{{ \App\Support\BusinessClock::formatUtc($canje->fecha_canje, 'd/m/Y H:i') }}</td>
 
                     <td>
                         {{ $canje->cliente->nombre ?? 'Sin cliente' }}

@@ -10,6 +10,7 @@ use App\Models\HorarioAtencion;
 use App\Models\MovimientoPunto;
 use App\Models\Servicio;
 use App\Models\Usuario;
+use App\Support\BusinessClock;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -32,11 +33,11 @@ class CitaController extends Controller
         $periodo = $request->input('periodo', 'rango');
         $periodo = in_array($periodo, ['rango', 'hoy'], true) ? $periodo : 'rango';
         $desde = $periodo === 'hoy'
-            ? Carbon::today()
-            : Carbon::parse($request->input('desde', Carbon::today()->toDateString()));
+            ? BusinessClock::today()
+            : BusinessClock::localDate($request->input('desde', BusinessClock::today()->toDateString()));
         $hasta = $periodo === 'hoy'
-            ? Carbon::today()
-            : Carbon::parse($request->input('hasta', Carbon::today()->addDays(14)->toDateString()));
+            ? BusinessClock::today()
+            : BusinessClock::localDate($request->input('hasta', BusinessClock::today()->addDays(14)->toDateString()));
 
         if ($hasta->lt($desde)) {
             return back()->withInput()->with('error', 'La fecha final no puede ser anterior a la fecha inicial.');
@@ -83,9 +84,9 @@ class CitaController extends Controller
             ->get()
             ->keyBy('dia_semana');
 
-        $fechaInicial = Carbon::today();
+        $fechaInicial = BusinessClock::today();
         foreach (range(0, 13) as $diasAdelante) {
-            $candidata = Carbon::today()->addDays($diasAdelante);
+            $candidata = BusinessClock::today()->addDays($diasAdelante);
             $diaSemana = $candidata->dayOfWeekIso - 1;
 
             if ($horarios->get($diaSemana)?->abierto) {
@@ -103,7 +104,7 @@ class CitaController extends Controller
         $idBarberia = $usuario->id_barberia ?? 1;
 
         $datos = $request->validate([
-            'fecha' => ['required', 'date', 'after_or_equal:today'],
+            'fecha' => ['required', 'date'],
             'id_barbero' => ['required', 'integer'],
             'id_servicio' => ['required', 'integer'],
         ]);
@@ -119,7 +120,10 @@ class CitaController extends Controller
             ->whereIn('rol', ['admin', 'barbero'])
             ->firstOrFail();
 
-        $fecha = Carbon::parse($datos['fecha']);
+        $fecha = BusinessClock::localDate($datos['fecha']);
+        if ($fecha->lt(BusinessClock::today())) {
+            return response()->json(['horarios' => [], 'message' => 'La fecha seleccionada ya pasó.'], 422);
+        }
         $diaSemana = $fecha->dayOfWeekIso - 1;
         $horario = HorarioAtencion::where('id_barberia', $idBarberia)
             ->where('dia_semana', $diaSemana)
@@ -132,9 +136,9 @@ class CitaController extends Controller
             ]);
         }
 
-        $inicioJornada = Carbon::parse($fecha->toDateString() . ' ' . $horario->hora_apertura);
-        $finJornada = Carbon::parse($fecha->toDateString() . ' ' . $horario->hora_cierre);
-        $ahora = now();
+        $inicioJornada = $fecha->setTimeFromTimeString($horario->hora_apertura);
+        $finJornada = $fecha->setTimeFromTimeString($horario->hora_cierre);
+        $ahora = BusinessClock::now();
         $citasOcupadas = Cita::where('id_barberia', $idBarberia)
             ->where('id_barbero', $datos['id_barbero'])
             ->whereDate('fecha', $fecha->toDateString())
@@ -142,7 +146,7 @@ class CitaController extends Controller
             ->get(['hora_inicio', 'hora_fin']);
 
         $horariosDisponibles = [];
-        for ($inicio = $inicioJornada->copy(); $inicio->copy()->addMinutes($servicio->duracion_minutos)->lte($finJornada); $inicio->addMinutes(15)) {
+        for ($inicio = $inicioJornada->copy(); $inicio->copy()->addMinutes($servicio->duracion_minutos)->lte($finJornada); $inicio = $inicio->addMinutes(15)) {
             $fin = $inicio->copy()->addMinutes($servicio->duracion_minutos);
 
             if ($fecha->isToday() && $inicio->lte($ahora)) {
@@ -150,8 +154,8 @@ class CitaController extends Controller
             }
 
             $ocupado = $citasOcupadas->contains(function ($cita) use ($fecha, $inicio, $fin) {
-                $inicioOcupado = Carbon::parse($fecha->toDateString() . ' ' . $cita->hora_inicio);
-                $finOcupado = Carbon::parse($fecha->toDateString() . ' ' . $cita->hora_fin);
+                $inicioOcupado = $fecha->setTimeFromTimeString($cita->hora_inicio);
+                $finOcupado = $fecha->setTimeFromTimeString($cita->hora_fin);
 
                 return $inicio->lt($finOcupado) && $fin->gt($inicioOcupado);
             });
@@ -180,7 +184,7 @@ class CitaController extends Controller
             'id_cliente' => 'required|exists:clientes,id_cliente',
             'id_servicio' => 'required|exists:servicios,id_servicio',
             'id_barbero' => 'required|exists:usuarios,id_usuario',
-            'fecha' => 'required|date|after_or_equal:today',
+            'fecha' => 'required|date',
             'hora_inicio' => 'required|date_format:H:i',
             'observaciones' => 'nullable|string',
         ], [
@@ -192,6 +196,11 @@ class CitaController extends Controller
             'hora_inicio.required' => 'Selecciona la hora de inicio.',
             'hora_inicio.date_format' => 'Selecciona una hora válida.',
         ]);
+
+        $fechaLocal = BusinessClock::localDate($request->fecha);
+        if ($fechaLocal->lt(BusinessClock::today())) {
+            return back()->withInput()->with('error', 'La fecha de la cita no puede estar en el pasado.');
+        }
 
         $servicio = Servicio::where('id_barberia', $idBarberia)
             ->where('id_servicio', $request->id_servicio)
@@ -223,8 +232,8 @@ class CitaController extends Controller
                 ->with('error', 'Selecciona uno de los horarios disponibles en intervalos de 15 minutos.');
         }
 
-        $inicioCita = Carbon::parse($request->fecha . ' ' . $request->hora_inicio);
-        if ($inicioCita->lte(now())) {
+        $inicioCita = $fechaLocal->setTimeFromTimeString($request->hora_inicio);
+        if ($inicioCita->lte(BusinessClock::now())) {
             return back()
                 ->withInput()
                 ->with('error', 'La cita debe programarse en una fecha y hora futuras.');
@@ -233,7 +242,7 @@ class CitaController extends Controller
         $horaInicioSql = $horaInicio->format('H:i:s');
         $horaFinSql = $horaFin->format('H:i:s');
 
-        $diaSemana = Carbon::parse($request->fecha)->dayOfWeekIso - 1;
+        $diaSemana = $fechaLocal->dayOfWeekIso - 1;
         $horario = HorarioAtencion::where('id_barberia', $idBarberia)
             ->where('dia_semana', $diaSemana)
             ->first();
@@ -443,7 +452,7 @@ class CitaController extends Controller
                 'tipo' => 'suma',
                 'puntos' => $puntosGanados,
                 'motivo' => 'Puntos generados por cita completada',
-                'referencia' => 'cita:' . $cita->id_cita,
+                'referencia' => 'cita:'.$cita->id_cita,
                 'created_at' => now(),
             ]);
         });

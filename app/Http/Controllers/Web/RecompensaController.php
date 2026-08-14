@@ -219,7 +219,7 @@ class RecompensaController extends Controller
                 'id_cliente' => $cliente->id_cliente,
                 'id_recompensa' => $recompensa->id_recompensa,
                 'puntos_usados' => $recompensa->puntos_requeridos,
-                'fecha_canje' => now(),
+                'fecha_canje' => now('UTC'),
             ]);
 
             $cliente->decrement('puntos', $recompensa->puntos_requeridos);
@@ -229,8 +229,8 @@ class RecompensaController extends Controller
                 'id_cliente' => $cliente->id_cliente,
                 'tipo' => 'resta',
                 'puntos' => $recompensa->puntos_requeridos,
-                'motivo' => 'Canje de recompensa: ' . $recompensa->nombre,
-                'referencia' => 'recompensa:' . $recompensa->id_recompensa,
+                'motivo' => 'Canje de recompensa: '.$recompensa->nombre,
+                'referencia' => 'recompensa:'.$recompensa->id_recompensa,
                 'created_at' => now(),
             ]);
 

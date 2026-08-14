@@ -153,7 +153,7 @@ class RecompensaApiController extends Controller
                 'id_cliente' => $cliente->id_cliente,
                 'id_recompensa' => $recompensa->id_recompensa,
                 'puntos_usados' => $recompensa->puntos_requeridos,
-                'fecha_canje' => now(),
+                'fecha_canje' => now('UTC'),
             ]);
 
             MovimientoPunto::create([
@@ -161,8 +161,8 @@ class RecompensaApiController extends Controller
                 'id_cliente' => $cliente->id_cliente,
                 'tipo' => 'resta',
                 'puntos' => $recompensa->puntos_requeridos,
-                'motivo' => 'Canje de recompensa: ' . $recompensa->nombre,
-                'referencia' => 'canje:' . $canje->id_canje,
+                'motivo' => 'Canje de recompensa: '.$recompensa->nombre,
+                'referencia' => 'canje:'.$canje->id_canje,
                 'created_at' => now(),
             ]);
 

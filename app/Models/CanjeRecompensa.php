@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class CanjeRecompensa extends Model
 {
     protected $table = 'canjes_recompensas';
+
     protected $primaryKey = 'id_canje';
 
     protected $fillable = [
@@ -16,6 +17,13 @@ class CanjeRecompensa extends Model
         'puntos_usados',
         'fecha_canje',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'fecha_canje' => 'datetime',
+        ];
+    }
 
     public function cliente()
     {
